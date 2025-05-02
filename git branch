@@ -1,0 +1,58 @@
+[33mcommit 495cf4762b07dc78732509f285faee0653669dc0[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Septhyna <septinaoktavia73@gmail.com>
+Date:   Tue Apr 22 14:30:25 2025 +0700
+
+    hapus file stok_barang.sql yang salah upload
+
+[33mcommit df8d84cd07437b60d2c39e5d0f2094e7432acc40[m
+Author: Septhyna <septinaoktavia73@gmail.com>
+Date:   Tue Apr 22 14:17:34 2025 +0700
+
+    db_tls
+    
+    Menambahkan database
+
+[33mcommit cbad98c448295757826170b70cf8b7f656de3c4f[m
+Author: Septhyna <septinaoktavia73@gmail.com>
+Date:   Tue Apr 22 14:13:36 2025 +0700
+
+    hapus file db_tls.sql yang salah upload
+
+[33mcommit d2640a288748a1862b13658d333f1faf6ba4dd9a[m
+Author: Anzelikapatresia <anzelpatresia@gmail.com>
+Date:   Tue Apr 22 13:48:12 2025 +0700
+
+    database/tls
+    
+    Menambahkan database
+
+[33mcommit d8697227c89878a3b16c56b87a7352891d6df01b[m
+Author: LuthfiyyahFarah <l.f.azizah0204@gmail.com>
+Date:   Tue Apr 22 13:43:38 2025 +0700
+
+    hapus folder Project-TLS
+
+[33mcommit 4309fc259718a563c99dc2c203bf6c6d354e00b7[m
+Merge: 165e1a9 6612c95
+Author: LuthfiyyahFarah <l.f.azizah0204@gmail.com>
+Date:   Tue Apr 22 13:21:52 2025 +0700
+
+    first commit
+
+[33mcommit 165e1a92c9a3f7dca4609b4ee127dff36e264ed1[m
+Author: LuthfiyyahFarah <l.f.azizah0204@gmail.com>
+Date:   Tue Apr 22 13:14:02 2025 +0700
+
+    first commit
+
+[33mcommit 6612c958b50031c84bbaa0017bf72b8d11503b61[m
+Author: LuthfiyyahFarah <l.f.azizah0204@gmail.com>
+Date:   Tue Apr 22 11:46:43 2025 +0700
+
+    Initial commit
+
+[33mcommit 982a5840af6e8f291bdeb3210626f48f8554be36[m
+Author: LuthfiyyahFarah <l.f.azizah0204@gmail.com>
+Date:   Tue Apr 22 11:42:03 2025 +0700
+
+    Initial commit
