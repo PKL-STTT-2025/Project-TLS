@@ -104,22 +104,20 @@ class InputDefect_model extends CI_Model {
         return $this->db->get('mstworkgroup')->result();
     }
     
-    public function get_layout_by_Workgroup($Workgroup) {
-        return $this->db->get_where('mstworkgroup', ['Workgroup' => $Workgroup])->row_array();
+    public function get_layout_by_Workgroup($workgroup_name) {
+        $this->db->select('ob.style, ob.id_buyer as orc');
+        $this->db->from('operation_breakdown ob');
+        $this->db->join('mstworkgroup wg', 'ob.id_line = wg.idWG');
+        $this->db->where('wg.Workgroup', $workgroup_name);
+        $this->db->limit(1);
+        return $this->db->get()->row_array();
     }
     
-
+    
     public function get_style_by_line($Workgroup) {
         $this->db->select('DISTINCT(style)');
         $this->db->from('operation_breakdown');
         $this->db->where('style IS NOT NULL');
-        $this->db->where('style', $Workgroup);
-        return $this->db->get()->row_array();
-    }
-    
-    public function get_orc_by_line($Workgroup) {
-        $this->db->select('DISTINCT(id_buyer) as orc');
-        $this->db->from('operation_breakdown');
         $this->db->where('style', $Workgroup);
         return $this->db->get()->row_array();
     }

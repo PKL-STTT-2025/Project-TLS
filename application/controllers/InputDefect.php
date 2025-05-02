@@ -19,12 +19,14 @@ class InputDefect extends CI_Controller {
         $data['line_list'] = $this->InputDefect_model->getAlllines();
         $data['list_transaksi'] = $this->InputDefect_model->getAlltransaksi();
 
-        $Workgroup = $this->input->post('Workgroup');
-        if ($Workgroup) {
+        $Workgroup = $this->input->post('Workgroup'); 
+        if (!$Workgroup) {
             $data['Workgroup'] = $this->InputDefect_model->search_layout_by_line($Workgroup);
         } else {
             $data['Workgroup'] = $this->InputDefect_model->getAlltransaksi();
         }
+
+        $this->session->set_flashdata('Workgroup', $Workgroup);
 
         $this->load->view('templates/header', $data);
         $this->load->view('InputDefect/index', $data);
@@ -120,7 +122,6 @@ class InputDefect extends CI_Controller {
                 'jumlah' => $item['jumlah']
             ]);
         }
-
         redirect('InputDefect');
     }
 
@@ -154,7 +155,6 @@ class InputDefect extends CI_Controller {
     echo json_encode($data);
 }
 
-    // AJAX ambil data style & orc
     public function get_layout_by_Workgroup() {
         $Workgroup = $this->input->post('Workgroup');
         $layout = $this->InputDefect_model->get_layout_by_Workgroup($Workgroup);
