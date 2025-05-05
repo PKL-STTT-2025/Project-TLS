@@ -50,13 +50,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 |		my-controller/my-method	-> my_controller/my_method
 */
 
-$route['default_controller'] = 'Dashboard';
+$route['default_controller'] = 'Auth';
 $route['dashboard'] = 'Dashboard/index';
-
-
-$route['default_controller'] = 'InputDefect';
-$route['InputDefect/tambah'] = 'InputDefect/tambah';
-$route['InputDefect/getStyleAndOrc'] = 'InputDefect/getStyleAndOrc';
 
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;

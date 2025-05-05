@@ -7,7 +7,10 @@ class Dashboard extends CI_Controller
     public function index()
     {
         $data['title'] = 'Dashboard TLS';
-        $this->load->view('Dashboard_Realtime/index.php', $data);
+        $this->load->view('templates/header', $data);
+        // $this->load->view('templates/sidebar');
+        $this->load->view('Dashboard_Realtime/index.php');
+        $this->load->view('templates/footer');
     }
 
     public function reportHari()
@@ -18,7 +21,7 @@ class Dashboard extends CI_Controller
 
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar');
-        $this->load->view('Dashboard_Realtime/report_hari', $data);
+        $this->load->view('Dashboard_Realtime/report_hari',);
         $this->load->view('templates/footer');
     }
 
