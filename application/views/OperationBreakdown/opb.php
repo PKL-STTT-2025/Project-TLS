@@ -1,11 +1,38 @@
-<!DOCTYPE html>
-<html>
+<style>
+    .main-container {
+        margin-left: 240px;
+        /* pastikan ini lebih dari lebar sidebar */
+        padding: 20px;
+    }
 
-<head>
-    <title>Operation Breakdown</title>
-</head>
+    h1 {
+        font-size: 28px;
+        margin-bottom: 20px;
+        color: #333;
+    }
 
-<body>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        background-color: #fff;
+    }
+
+    th,
+    td {
+        padding: 10px;
+        border: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #007bff;
+        color: white;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+</style>
+<div style="margin-left: 50px; padding: 20px;">
     <h1>Data Operation Breakdown</h1>
     <table border="1" cellpadding="5" cellspacing="0">
         <tr>
@@ -39,6 +66,4 @@
             </tr>
         <?php endforeach; ?>
     </table>
-</body>
-
-</html>
+</div>

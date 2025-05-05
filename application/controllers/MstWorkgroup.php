@@ -16,6 +16,8 @@ class MstWorkgroup extends CI_Controller
     {
         $data['title'] = 'MstWorkgroup';
         $data['operation'] = $this->MstWorkgroup_model->getActiveOperation();
+        $this->load->view('templates/header', $data);
         $this->load->view('mstworkgroup/mstwg', $data);
+        $this->load->view('templates/footer');
     }
 }

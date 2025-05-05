@@ -16,6 +16,8 @@ class MstEmp extends CI_Controller
     {
         $data['title'] = 'MstEmp';
         $data['operation'] = $this->MstEmp_model->getActiveOperation();
+        $this->load->view('templates/header', $data);
         $this->load->view('mstemp/mstempl', $data);
+        $this->load->view('templates/footer');
     }
 }

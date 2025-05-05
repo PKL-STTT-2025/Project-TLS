@@ -16,6 +16,8 @@ class OperationBreakdown extends CI_Controller
     {
         $data['title'] = 'Operation Breakdown';
         $data['operation'] = $this->OperationBreakdown_model->getActiveOperation();
+        $this->load->view('templates/header', $data);
         $this->load->view('OperationBreakdown/opb', $data);
+        $this->load->view('templates/footer');
     }
 }
