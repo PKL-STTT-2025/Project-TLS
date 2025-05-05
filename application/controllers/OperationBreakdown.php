@@ -9,7 +9,7 @@ class OperationBreakdown extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->model('OperationBreakdown_model'); // ini cukup sekali di constructor
+        $this->load->model('OperationBreakdown_model');
     }
 
     public function index()
