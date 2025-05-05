@@ -1,100 +1,103 @@
-<?php
-defined('BASEPATH') OR exit('No direct script access allowed');
-?><!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
+
 <head>
-	<meta charset="utf-8">
-	<title>Welcome to CodeIgniter</title>
+    <title>Dashboard - Traffic Light System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background-color: rgb(148, 163, 212);
+        }
 
-	<style type="text/css">
+        .container {
+            max-width: 1000px;
+            margin: auto;
+        }
 
-	::selection { background-color: #E13300; color: white; }
-	::-moz-selection { background-color: #E13300; color: white; }
+        h2 {
+            text-align: center;
+            margin-bottom: 40px;
+        }
 
-	body {
-		background-color: #fff;
-		margin: 40px;
-		font: 13px/20px normal Helvetica, Arial, sans-serif;
-		color: #4F5155;
-	}
+        .charts {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
 
-	a {
-		color: #003399;
-		background-color: transparent;
-		font-weight: normal;
-		text-decoration: none;
-	}
-
-	a:hover {
-		color: #97310e;
-	}
-
-	h1 {
-		color: #444;
-		background-color: transparent;
-		border-bottom: 1px solid #D0D0D0;
-		font-size: 19px;
-		font-weight: normal;
-		margin: 0 0 14px 0;
-		padding: 14px 15px 10px 15px;
-	}
-
-	code {
-		font-family: Consolas, Monaco, Courier New, Courier, monospace;
-		font-size: 12px;
-		background-color: #f9f9f9;
-		border: 1px solid #D0D0D0;
-		color: #002166;
-		display: block;
-		margin: 14px 0 14px 0;
-		padding: 12px 10px 12px 10px;
-	}
-
-	#body {
-		margin: 0 15px 0 15px;
-		min-height: 96px;
-	}
-
-	p {
-		margin: 0 0 10px;
-		padding:0;
-	}
-
-	p.footer {
-		text-align: right;
-		font-size: 11px;
-		border-top: 1px solid #D0D0D0;
-		line-height: 32px;
-		padding: 0 10px 0 10px;
-		margin: 20px 0 0 0;
-	}
-
-	#container {
-		margin: 10px;
-		border: 1px solid #D0D0D0;
-		box-shadow: 0 0 8px #D0D0D0;
-	}
-	</style>
+        .chart-container {
+            width: 300px;
+            margin-bottom: 30px;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
+    <div class="container">
+        <h2>Welcome to QC Traffic Light System</h2>
 
-<div id="container">
-	<h1>Welcome to CodeIgniter!</h1>
+        <div class="charts">
+            <div class="chart-container">
+                <h4>Hari Ini</h4>
+                <canvas id="chartHari"></canvas>
+            </div>
+            <div class="chart-container">
+                <h4>Minggu Ini</h4>
+                <canvas id="chartMinggu"></canvas>
+            </div>
+            <div class="chart-container">
+                <h4>Bulan Ini</h4>
+                <canvas id="chartBulan"></canvas>
+            </div>
+        </div>
+    </div>
 
-	<div id="body">
-		<p>The page you are looking at is being generated dynamically by CodeIgniter.</p>
+    <script>
+        const dataHari = {
+            labels: ['Hijau', 'Kuning', 'Merah'],
+            datasets: [{
+                data: [70, 20, 10],
+                backgroundColor: ['#4CAF50', '#FFC107', '#F44336']
+            }]
+        };
 
-		<p>If you would like to edit this page you'll find it located at:</p>
-		<code>application/views/welcome_message.php</code>
+        const dataMinggu = {
+            labels: ['Hijau', 'Kuning', 'Merah'],
+            datasets: [{
+                data: [60, 30, 10],
+                backgroundColor: ['#4CAF50', '#FFC107', '#F44336']
+            }]
+        };
 
-		<p>The corresponding controller for this page is found at:</p>
-		<code>application/controllers/Welcome.php</code>
+        const dataBulan = {
+            labels: ['Hijau', 'Kuning', 'Merah'],
+            datasets: [{
+                data: [65, 25, 10],
+                backgroundColor: ['#4CAF50', '#FFC107', '#F44336']
+            }]
+        };
 
-		<p>If you are exploring CodeIgniter for the very first time, you should start by reading the <a href="userguide3/">User Guide</a>.</p>
-	</div>
+        const configHari = {
+            type: 'pie',
+            data: dataHari,
+        };
 
-	<p class="footer">Page rendered in <strong>{elapsed_time}</strong> seconds. <?php echo  (ENVIRONMENT === 'development') ?  'CodeIgniter Version <strong>' . CI_VERSION . '</strong>' : '' ?></p>
-</div>
+        const configMinggu = {
+            type: 'pie',
+            data: dataMinggu,
+        };
 
+        const configBulan = {
+            type: 'pie',
+            data: dataBulan,
+        };
+
+        new Chart(document.getElementById('chartHari'), configHari);
+        new Chart(document.getElementById('chartMinggu'), configMinggu);
+        new Chart(document.getElementById('chartBulan'), configBulan);
+    </script>
 </body>
+
 </html>
