@@ -8,7 +8,7 @@ class Dashboard extends CI_Controller
     {
         $data['title'] = 'Dashboard TLS';
         $this->load->view('templates/header', $data);
-        // $this->load->view('templates/sidebar');
+        $this->load->view('templates/topbar');
         $this->load->view('Dashboard_Realtime/index.php');
         $this->load->view('templates/footer');
     }
