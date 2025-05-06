@@ -27,17 +27,36 @@ class Auth extends CI_Controller
 
     private function _login()
     {
+        $this->load->helper('cookie'); // pastikan helper cookie dimuat
+
+        // Cek cookie remember_me
+        if (!$this->session->userdata('id_user')) {
+            $remember_nik = get_cookie('remember_me');
+            if ($remember_nik) {
+                $user = $this->db->get_where('master_user', ['nik' => $remember_nik])->row_array();
+                if ($user && $user['is_active'] == 1) {
+                    $data = [
+                        'id_user' => $user['id_user'],
+                        'nama' => $user['nama'],
+                        'role_id' => $user['role_id']
+                    ];
+                    $this->session->set_userdata($data);
+                    redirect('Dashboard/index');
+                    return;
+                }
+            }
+        }
+
+        // Proses login biasa
         $nik = $this->input->post('nik');
         $password = $this->input->post('password');
+        $remember = $this->input->post('remember');
 
         $user = $this->db->get_where('master_user', ['nik' => $nik])->row_array();
 
         if ($user) {
-            // Cek apakah user aktif
             if ($user['is_active'] == 1) {
-                // Cek password
                 if (password_verify($password, $user['password'])) {
-                    // Password benar, set session
                     $data = [
                         'id_user' => $user['id_user'],
                         'nama' => $user['nama'],
@@ -45,35 +64,32 @@ class Auth extends CI_Controller
                     ];
                     $this->session->set_userdata($data);
 
-                    // Redirect berdasarkan role ENUM
+                    // Set cookie jika Remember Me dicentang
+                    if ($remember) {
+                        set_cookie('remember_me', $user['nik'], 60 * 60 * 24 * 30); // 30 hari
+                    }
+
+                    // Redirect berdasarkan role
                     if ($user['role_id'] === 'Admin') {
                         redirect('Dashboard/index');
                     } elseif ($user['role_id'] === 'Supervisor') {
                         redirect('Dashboard/index');
                     } elseif ($user['role_id'] === 'QCInline') {
                         redirect('Dashboard/index');
-                    } else {
-                        // Kalau role_id aneh, logoutkan
-                        $this->session->set_flashdata('message', '<div class="alert alert-danger">Role tidak dikenali!</div>');
-                        redirect('auth');
                     }
                 } else {
-                    // Password salah
                     $this->session->set_flashdata('message', '<div class="alert alert-danger">Password salah!</div>');
                     redirect('auth');
                 }
             } else {
-                // User belum aktif
                 $this->session->set_flashdata('message', '<div class="alert alert-danger">NIK ini belum aktif. Hubungi admin!</div>');
                 redirect('auth');
             }
         } else {
-            // NIK tidak ditemukan
             $this->session->set_flashdata('message', '<div class="alert alert-danger">NIK tidak ditemukan!</div>');
             redirect('auth');
         }
     }
-
 
     public function registration()
     {
@@ -175,5 +191,17 @@ class Auth extends CI_Controller
             $this->session->set_flashdata('message', '<div class="alert alert-success">Password berhasil direset! Silakan login.</div>');
             redirect('auth');
         }
+    }
+
+    public function logout()
+    {
+        $this->session->unset_userdata('id_user');
+        $this->session->unset_userdata('nama');
+        $this->session->unset_userdata('role_id');
+
+        delete_cookie('remember_me');
+
+
+        redirect('auth');
     }
 }
