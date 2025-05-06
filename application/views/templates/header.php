@@ -51,7 +51,7 @@
                 <div class="sidebar-brand-icon rotate-n-0">
                     <i class="fas fa-traffic-light"></i>
                 </div>
-                <div class="sidebar-brand-text mx-3">Traffic Light System </div>
+                <div class="sidebar-brand-text mx-3 mt-3">TRAFFIC LIGHT SYSTEM</div>
             </a>
 
             <!-- Divider -->

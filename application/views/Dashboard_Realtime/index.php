@@ -3,7 +3,7 @@
 
     <!-- Page Heading -->
     <div id="dashboard-defect" style="display: block;">
-        <h1 class="h3 mb-4 text-gray-800">Dashboard Defect</h1>
+        <h1 class="h3 mb-4 text-gray-800 mt-3">Dashboard Defect</h1>
         <div class="container text-center mt-4">
 
             <div class="container mt-4">
