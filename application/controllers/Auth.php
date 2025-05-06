@@ -47,11 +47,11 @@ class Auth extends CI_Controller
 
                     // Redirect berdasarkan role ENUM
                     if ($user['role_id'] === 'Admin') {
-                        redirect('admin/dashboard');
+                        redirect('Dashboard/index');
                     } elseif ($user['role_id'] === 'Supervisor') {
                         redirect('Dashboard/index');
                     } elseif ($user['role_id'] === 'QCInline') {
-                        redirect('qcinline/dashboard');
+                        redirect('Dashboard/index');
                     } else {
                         // Kalau role_id aneh, logoutkan
                         $this->session->set_flashdata('message', '<div class="alert alert-danger">Role tidak dikenali!</div>');
