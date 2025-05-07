@@ -33,4 +33,23 @@ class Dashboard_model extends CI_Model
         $end = date('Y-m-t');
         return $this->get_count_by_status($start, $end);
     }
+
+    public function get_data_operator()
+    {
+        // $this->db->select('NIK, name');
+        // $this->db->from('mstemp');
+        // return $this->db->get()->result();
+
+        $query = "SELECT
+            master_opt_layout.id_employee,
+            mstemp.name AS operator_name,
+            jns_barang.name AS nama_mesin,
+            master_opt_layout.op_code AS kode_proses
+        FROM master_opt_layout
+        JOIN mstemp ON master_opt_layout.id_employee = mstemp.empID
+        JOIN jns_barang ON master_opt_layout.id_machine = jns_barang.id_jnsbarang
+        WHERE master_opt_layout.id_opb = 192;";
+
+        return $this->db->query($query)->result();
+    }
 }
