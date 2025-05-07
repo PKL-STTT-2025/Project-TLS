@@ -85,6 +85,12 @@
                     <span>Input Defect</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="<?php echo base_url('ReportOperator'); ?>">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Report Operator</span>
+                </a>
+            </li>
 
             <!-- Nav Item - Utilities Collapse Menu -->
             <li class="nav-item">
