@@ -5,6 +5,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
  */
 class Dashboard extends CI_Controller
 {
+    public function __construct()
+    {
+        parent::__construct();
+        $this->load->model('Dashboard_model'); // kalau model ini dipakai
+    }
 
     public function index()
     {
@@ -59,7 +64,7 @@ class Dashboard extends CI_Controller
 
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar');
-        $this->load->view('Dashboard_Realtime/report_hari',);
+        $this->load->view('Dashboard_Realtime/report_hari');
         $this->load->view('templates/footer');
     }
 
@@ -71,5 +76,15 @@ class Dashboard extends CI_Controller
     public function reportBulan()
     {
         $this->load->view('Dashboard_Realtime/report_bulan');
+    }
+
+    public function traffic_light()
+    {
+        $data['title'] = 'Data Operator per Line';
+        $data['operators'] = $this->Dashboard_model->get_data_operator();
+
+        $this->load->view('templates/header', $data);
+        $this->load->view('Dashboard_Realtime/traffic_light', $data);
+        $this->load->view('templates/footer');
     }
 }
