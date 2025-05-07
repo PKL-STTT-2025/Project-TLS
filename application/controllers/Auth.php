@@ -71,11 +71,11 @@ class Auth extends CI_Controller
 
                     // Redirect berdasarkan role
                     if ($user['role_id'] === 'Admin') {
-                        redirect('Dashboard/index');
+                        redirect('Dashboard/admin/index');
                     } elseif ($user['role_id'] === 'Supervisor') {
-                        redirect('Dashboard/index');
+                        redirect('Dashboard/supervisor/index');
                     } elseif ($user['role_id'] === 'QCInline') {
-                        redirect('Dashboard/index');
+                        redirect('Dashboard/qcinline/index');
                     }
                 } else {
                     $this->session->set_flashdata('message', '<div class="alert alert-danger">Password salah!</div>');
