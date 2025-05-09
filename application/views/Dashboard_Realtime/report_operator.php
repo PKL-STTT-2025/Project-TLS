@@ -18,7 +18,6 @@
     <div class="card shadow-sm mb-4">
         <div class="card-body">
             <div class="row g-4 align-items-center">
-                <!-- KIRI: Defect Terbaru -->
                 <div class="col-md-6">
                     <h6 class="text-muted mb-2">Defect Terbaru</h6>
                     <div class="p-3 rounded bg-light border">
@@ -30,31 +29,29 @@
                         <?php endif; ?>
                     </div>
                 </div>
-
-                <!-- KANAN: Info Operator -->
-                <div class="col-md-6 d-flex align-items-center">
-                    <div class="me-9">
-                        <i class="fas fa-user fa-5x text-secondary"></i>
-                    </div>
-                    <div>
-                        <h5 class="mb-1"><?= $op->operator_name ?></h5>
-                        <p class="mb-1"><small>(<?= $op->nama_mesin ?>)</small></p>
-                        <p class="mb-1"><small>(<?= $op->kode_proses ?>)</small></p>
-                        <?php
-                        $status = strtolower($op->status ?? 'active');
-                        $badgeClass = [
-                            'active' => 'bg-success',
-                        ][$status] ?? 'bg-secondary';
-                        ?>
-                        <span class="badge <?= $badgeClass ?>"><?= ucfirst($status) ?></span>
+                <div class="col-md-6">
+                    <h6 class="text-muted mb-2">Info Operator</h6>
+                    <div class="d-flex align-items-center p-1 bg-light border rounded" style="gap: 2rem;">
+                        <div>
+                            <i class="fas fa-user fa-5x text-secondary"></i>
+                        </div>
+                        <div class="ps-6">
+                            <h5 class="mb-1"><?= $op->operator_name ?></h5>
+                            <p class="mb-1"><small>(<?= $op->nama_mesin ?>)</small></p>
+                            <p class="mb-1"><small>(<?= $op->kode_proses ?>)</small></p>
+                            <?php
+                            $status = strtolower($op->status ?? 'active');
+                            $badgeClass = [
+                                'active' => 'bg-success',
+                            ][$status] ?? 'bg-secondary';
+                            ?>
+                            <span class="badge <?= $badgeClass ?>"><?= ucfirst($status) ?></span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-
-
 
     <!-- Histori Defect Operator -->
     <div class="card shadow">

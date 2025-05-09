@@ -7,6 +7,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class Dashboard extends CI_Controller
 {
 
+    public function __construct()
+    {
+        parent::__construct();
+        $this->load->model('Dashboard_model');
+    }
     public function index()
     {
 
@@ -73,8 +78,6 @@ class Dashboard extends CI_Controller
     {
         $this->load->view('Dashboard_Realtime/report_bulan');
     }
-<<<<<<< Updated upstream
-=======
 
     public function traffic_light()
     {
@@ -96,5 +99,4 @@ class Dashboard extends CI_Controller
         $this->load->view('Dashboard_Realtime/report_operator', $data);
         $this->load->view('templates/footer');
     }
->>>>>>> Stashed changes
 }

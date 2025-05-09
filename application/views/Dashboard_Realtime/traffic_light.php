@@ -1,4 +1,3 @@
-<!-- View: traffic_light.php -->
 <style>
     .grid-container {
         display: grid;
@@ -10,6 +9,15 @@
     .card-operator {
         width: 100%;
         max-width: 180px;
+    }
+
+    .card-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        height: 220px;
+        padding: 10px;
     }
 
     .card-title {
@@ -26,6 +34,33 @@
     .badge {
         font-size: 12px;
     }
+
+    .traffic-light {
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+        margin-top: 10px;
+    }
+
+    .light {
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background-color: grey;
+        border: 1px solid #aaa;
+    }
+
+    .light.red {
+        background-color: red;
+    }
+
+    .light.yellow {
+        background-color: yellow;
+    }
+
+    .light.green {
+        background-color: green;
+    }
 </style>
 
 <div class="container mt-4">
@@ -40,13 +75,28 @@
                     <p class="card-text"><small>(<?= $op->kode_proses ?>)</small></p>
 
                     <?php
-                    // Simulasi status, ganti sesuai field dari database misal $op->status
                     $status = strtolower($op->status ?? 'active');
                     $badgeClass = [
                         'active' => 'bg-success',
                     ][$status] ?? 'bg-secondary';
                     ?>
                     <span class="badge <?= $badgeClass ?>"><?= ucfirst($status) ?></span>
+
+                    <!-- Traffic light -->
+                    <div class="traffic-light mt-2">
+                        <?php
+                        $defect = isset($op->defect_count)
+                            ? $op->defect_count
+                            : rand(0, 10); // nilai acak antara 0-10S
+                        $color = 'green';
+                        if ($defect > 5) {
+                            $color = 'red';
+                        } elseif ($defect > 2) {
+                            $color = 'yellow';
+                        }
+                        echo '<span class="light ' . $color . '"></span>';
+                        ?>
+                    </div>
                 </div>
             </div>
         <?php endforeach; ?>
