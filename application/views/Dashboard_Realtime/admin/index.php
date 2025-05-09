@@ -8,29 +8,37 @@
 
             <div class="container mt-4">
 
-                <div class="row mb-4 justify-content-center">
+                <?php foreach ($operators as $operator): ?>
                     <div class="col-md-3">
-                        <div class="card text-center shadow-sm">
-                            <div class="card-body">
-                                <i class="fas fa-user fa-2x mb-2 text-secondary"></i>
-                                <h5 class="card-title">Farah</h5>
-                                <p class="card-text">Single Needle<br><small>(Kode Proses)</small></p>
-                                <span class="badge bg-success">Active</span>
+                        <a href="<?= site_url('dashboard/report_operator/' . $operator['id']); ?>" style="text-decoration: none; color: inherit;">
+                            <div class="card text-center shadow-sm">
+                                <div class="card-body">
+                                    <i class="fas fa-user fa-2x mb-2 text-secondary"></i>
+                                    <h5 class="card-title"><?= $operator['nama']; ?></h5>
+                                    <p class="card-text"><?= $operator['mesin']; ?><br><small>(<?= $operator['kode_proses']; ?>)</small></p>
+                                    <span class="badge bg-success">Active</span>
+                                </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
+                <?php endforeach; ?>
 
+
+                <?php foreach ($operators as $operator): ?>
                     <div class="col-md-3">
-                        <div class="card text-center shadow-sm">
-                            <div class="card-body">
-                                <i class="fas fa-user fa-2x mb-2 text-secondary"></i>
-                                <h5 class="card-title">Lina</h5>
-                                <p class="card-text">Single Needle<br><small>(Kode Proses)</small></p>
-                                <span class="badge bg-success">Active</span>
+                        <a href="<?= site_url('dashboard/report_operator/' . $operator['id']); ?>" style="text-decoration: none; color: inherit;">
+                            <div class="card text-center shadow-sm">
+                                <div class="card-body">
+                                    <i class="fas fa-user fa-2x mb-2 text-secondary"></i>
+                                    <h5 class="card-title"><?= $operator['nama']; ?></h5>
+                                    <p class="card-text"><?= $operator['mesin']; ?><br><small>(<?= $operator['kode_proses']; ?>)</small></p>
+                                    <span class="badge bg-success">Active</span>
+                                </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
-                </div>
+                <?php endforeach; ?>
+
                 <div class="row text-center justify-content-center">
                     <div class="col-md-3 mx-2 mb-4">
                         <h6>Persentase Today Defect</h6>

@@ -33,6 +33,8 @@ class Dashboard_model extends CI_Model
         $end = date('Y-m-t');
         return $this->get_count_by_status($start, $end);
     }
+<<<<<<< Updated upstream
+=======
 
     public function get_data_operator()
     {
@@ -52,4 +54,39 @@ class Dashboard_model extends CI_Model
 
         return $this->db->query($query)->result();
     }
+
+    public function get_operator()
+    {
+        $id_employee = 4373;
+        $id_opb = 192;
+        $query = "SELECT
+        master_opt_layout.id_employee,
+        mstemp.name AS operator_name,
+        jns_barang.name AS nama_mesin,
+        master_opt_layout.op_code AS kode_proses
+        FROM master_opt_layout
+        JOIN mstemp ON master_opt_layout.id_employee = mstemp.empID
+        JOIN jns_barang ON master_opt_layout.id_machine = jns_barang.id_jnsbarang
+        WHERE master_opt_layout.id_employee = ? AND master_opt_layout.id_opb = ?
+        LIMIT 1";
+        return $this->db->query($query, [$id_employee, $id_opb = 192])->row();
+    }
+
+    public function get_defect_operator()
+    {
+        $id_employee = 4373;
+        $id_opb = 192;
+        $query = "SELECT
+        transaksi_checking_detail.id_defect,
+        transaksi_checking_detail.id_transaksi_checking,
+        master_defect.deskripsi_defect
+        FROM transaksi_checking_detail
+        JOIN master_defect ON transaksi_checking_detail.id_defect = master_defect.id
+        JOIN transaksi_checking ON transaksi_checking_detail.id_transaksi_checking = transaksi_checking.id_transaksi_checking
+        JOIN master_opt_layout ON transaksi_checking.id_layout = master_opt_layout.id
+        WHERE master_opt_layout.id_employee = ? AND master_opt_layout.id_opb = ?
+        LIMIT 1";
+        return $this->db->query($query, [$id_employee, $id_opb = 192])->row();
+    }
+>>>>>>> Stashed changes
 }

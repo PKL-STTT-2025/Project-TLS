@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+<!-- View: traffic_light.php -->
+>>>>>>> farah
 <style>
     .grid-container {
         display: grid;
@@ -11,6 +15,7 @@
         max-width: 180px;
     }
 
+<<<<<<< HEAD
     .card-body {
         display: flex;
         flex-direction: column;
@@ -21,6 +26,8 @@
         padding: 10px;
     }
 
+=======
+>>>>>>> farah
     .card-title {
         font-size: 16px;
         margin-bottom: 4px;
@@ -35,6 +42,7 @@
     .badge {
         font-size: 12px;
     }
+<<<<<<< HEAD
 
     .traffic-light {
         display: flex;
@@ -62,6 +70,8 @@
     .light.green {
         background-color: green;
     }
+=======
+>>>>>>> farah
 </style>
 
 <div class="container mt-4">
@@ -76,12 +86,17 @@
                     <p class="card-text"><small>(<?= $op->kode_proses ?>)</small></p>
 
                     <?php
+<<<<<<< HEAD
+=======
+                    // Simulasi status, ganti sesuai field dari database misal $op->status
+>>>>>>> farah
                     $status = strtolower($op->status ?? 'active');
                     $badgeClass = [
                         'active' => 'bg-success',
                     ][$status] ?? 'bg-secondary';
                     ?>
                     <span class="badge <?= $badgeClass ?>"><?= ucfirst($status) ?></span>
+<<<<<<< HEAD
 
                     <!-- Traffic light -->
                     <div class="traffic-light mt-2">
@@ -98,6 +113,8 @@
                         echo '<span class="light ' . $color . '"></span>';
                         ?>
                     </div>
+=======
+>>>>>>> farah
                 </div>
             </div>
         <?php endforeach; ?>

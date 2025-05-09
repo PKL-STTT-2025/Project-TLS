@@ -2,6 +2,7 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 /**
  * @property CI_Session $session
+ * @property CI_Dashboard_model $Dashboard_model
  */
 class Dashboard extends CI_Controller
 {
@@ -77,14 +78,28 @@ class Dashboard extends CI_Controller
     {
         $this->load->view('Dashboard_Realtime/report_bulan');
     }
+<<<<<<< Updated upstream
+=======
 
     public function traffic_light()
     {
         $data['title'] = 'Data Operator per Line';
         $data['operators'] = $this->Dashboard_model->get_data_operator();
-
+        $data['latest_defect'] = $this->Dashboard_model->get_defect_operator();
         $this->load->view('templates/header', $data);
         $this->load->view('Dashboard_Realtime/traffic_light', $data);
         $this->load->view('templates/footer');
     }
+
+    public function report_operator()
+    {
+        $data['title'] = 'Histori Defect Operator';
+        $data['op'] = $this->Dashboard_model->get_operator();
+        $data['defects'] = $this->Dashboard_model->get_defect_operator();
+        $data['total_kunjungan'] = 5;
+        $this->load->view('templates/header', $data);
+        $this->load->view('Dashboard_Realtime/report_operator', $data);
+        $this->load->view('templates/footer');
+    }
+>>>>>>> Stashed changes
 }
