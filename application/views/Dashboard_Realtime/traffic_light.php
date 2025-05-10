@@ -1,7 +1,13 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <!-- View: traffic_light.php -->
 >>>>>>> farah
+=======
+
+<!-- View: traffic_light.php -->
+<!-- farah -->
+>>>>>>> Septhyna
 <style>
     .grid-container {
         display: grid;
@@ -16,6 +22,9 @@
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> Septhyna
     .card-body {
         display: flex;
         flex-direction: column;
@@ -26,8 +35,13 @@
         padding: 10px;
     }
 
+<<<<<<< HEAD
 =======
 >>>>>>> farah
+=======
+
+/* farah */
+>>>>>>> Septhyna
     .card-title {
         font-size: 16px;
         margin-bottom: 4px;
@@ -43,6 +57,10 @@
         font-size: 12px;
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+
+>>>>>>> Septhyna
 
     .traffic-light {
         display: flex;
@@ -70,8 +88,12 @@
     .light.green {
         background-color: green;
     }
+<<<<<<< HEAD
 =======
 >>>>>>> farah
+=======
+ /* farah */
+>>>>>>> Septhyna
 </style>
 
 <div class="container mt-4">
@@ -87,9 +109,15 @@
 
                     <?php
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
                     // Simulasi status, ganti sesuai field dari database misal $op->status
 >>>>>>> farah
+=======
+
+                    // Simulasi status, ganti sesuai field dari database misal $op->status
+//  farah
+>>>>>>> Septhyna
                     $status = strtolower($op->status ?? 'active');
                     $badgeClass = [
                         'active' => 'bg-success',
@@ -97,6 +125,10 @@
                     ?>
                     <span class="badge <?= $badgeClass ?>"><?= ucfirst($status) ?></span>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+
+>>>>>>> Septhyna
 
                     <!-- Traffic light -->
                     <div class="traffic-light mt-2">
@@ -113,8 +145,13 @@
                         echo '<span class="light ' . $color . '"></span>';
                         ?>
                     </div>
+<<<<<<< HEAD
 =======
 >>>>>>> farah
+=======
+
+<!-- farah -->
+>>>>>>> Septhyna
                 </div>
             </div>
         <?php endforeach; ?>

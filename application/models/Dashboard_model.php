@@ -88,5 +88,6 @@ class Dashboard_model extends CI_Model
         LIMIT 1";
         return $this->db->query($query, [$id_employee, $id_opb = 192])->row();
     }
+
 >>>>>>> Stashed changes
 }
