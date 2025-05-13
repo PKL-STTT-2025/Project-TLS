@@ -33,8 +33,7 @@ class Dashboard_model extends CI_Model
         $end = date('Y-m-t');
         return $this->get_count_by_status($start, $end);
     }
-<<<<<<< Updated upstream
-=======
+
 
     public function get_data_operator()
     {
@@ -89,5 +88,5 @@ class Dashboard_model extends CI_Model
         return $this->db->query($query, [$id_employee, $id_opb = 192])->row();
     }
 
->>>>>>> Stashed changes
+
 }

@@ -80,10 +80,50 @@ class transaksi_checking_model extends CI_Model
 // ];
     }
 
-    public function tambahinputdefect ($data)
+    public function tambahDataInputDefect()
     {
-        $this->db->insert('transaksi_checking', $data);
-    }
-    
+       $data = [
+        "operation_name"=> $this-> input->post('nama', true),
+        ""=> $this-> input->post('nrp', true),
+        "email"=> $this-> input->post('email', true),
+        "jurusan"=> $this-> input->post('jurusan', true)
+       ] ;
 
+        $this->db->insert ('transaksi_checking', $data);
+    }
+
+    public function hapusDataInputDefect($id)
+    {
+        //$this->db->where('id', $id);
+        $this->db->delete('transaksi_checking', ['id'=>$id]);
+    }
+
+    public function getTransaksiById($id)
+    {
+    return $this->db->get_where('transaksi_checking', ['id' => $id])->row_array();
+    }
+
+
+    public function ubahDataInputDefect()
+    {
+    $data = [
+        "nama" => $this->input->post('nama', true),
+        "nrp" => $this->input->post('nrp', true),
+        "email" => $this->input->post('email', true),
+        "jurusan" => $this->input->post('jurusan', true)
+    ];
+
+    $this->db->where('id', $this->input->post('id'));
+    $this->db->update('transaksi_checking', $data);
+    }
+
+    public function cariDataInputDefect()
+    {
+        $keyword= $this->input->post('keyword',true);
+        $this->db->like('nama',$keyword);
+        $this->db->or_like('jurusan', $keyword);
+        $this->db->or_like('nrp', $keyword);
+        $this->db->or_like('email', $keyword);
+        return $this->db->get('transaksi_checking')->result_array();
+    }
 }

@@ -34,8 +34,7 @@ class Dashboard extends CI_Controller
     {
         $this->load->view('Dashboard_Realtime/report_bulan');
     }
-<<<<<<< Updated upstream
-=======
+
 
     public function traffic_light()
     {
@@ -57,5 +56,5 @@ class Dashboard extends CI_Controller
         $this->load->view('Dashboard_Realtime/report_operator', $data);
         $this->load->view('templates/footer');
     }
->>>>>>> Stashed changes
+
 }

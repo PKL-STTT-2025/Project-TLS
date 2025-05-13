@@ -1,6 +1,5 @@
 
 <!-- View: traffic_light.php -->
-<!-- farah -->
 <style>
     .grid-container {
         display: grid;
@@ -24,8 +23,6 @@
         padding: 10px;
     }
 
-
-/* farah */
     .card-title {
         font-size: 16px;
         margin-bottom: 4px;
@@ -68,7 +65,6 @@
     .light.green {
         background-color: green;
     }
- /* farah */
 </style>
 
 <div class="container mt-4">
@@ -85,7 +81,6 @@
                     <?php
 
                     // Simulasi status, ganti sesuai field dari database misal $op->status
-//  farah
                     $status = strtolower($op->status ?? 'active');
                     $badgeClass = [
                         'active' => 'bg-success',
@@ -110,7 +105,6 @@
                         ?>
                     </div>
 
-<!-- farah -->
                 </div>
             </div>
         <?php endforeach; ?>

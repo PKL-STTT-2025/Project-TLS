@@ -51,9 +51,9 @@ class transaksi_checking extends CI_Controller
         $data['judul'] = 'Form Tambah Data Input Defect';
         $this->load->library('form_validation');
         
-        $this->form_validation->set_rules('kode_defect','Kode_Defect', 'required');
-        $this->form_validation->set_rules('deskripsi_defect', 'Deskripsi_Defect', 'required');
-        $this->form_validation->set_rules('kategori', 'Kategori', 'required');
+        $this->form_validation->set_rules('operation_name','Operation Name', 'required');
+        $this->form_validation->set_rules('operation_code', 'Operation Code', 'required');
+        $this->form_validation->set_rules('employee_name', 'Employee Name', 'required');
 
         if($this->form_validation->run()==FALSE) {
             $this->load->view('templates/header', $data);
@@ -61,13 +61,56 @@ class transaksi_checking extends CI_Controller
             $this->load->view('templates/footer');
         } else {
             $data =[
-                'kode_defect'=>$this->input->post('kode_defect'),
-                'deskripsi_defect'=>$this->input->post('deskripsi_defect'),
-                'kategori'=>$this->input->post('kategori'),
+                'operation_name'=>$this->input->post('operation_name'),
+                'operation code'=>$this->input->post('operation_code'),
+                'employee_name'=>$this->input->post('employee_name'),
             ] ;
             $this->transaksi_checking_model->tambahDataInputDefect($data);
             $this->session->set_flashdata('flash', 'Ditambahkan');
             redirect('transaksi_checking');
         }
     }
+
+    public function hapus ($id)
+    {
+        $this->transaksi_checking_model->hapusDataInputDefect($id);
+        $this->session->set_flashdata('flash', 'Dihapus');
+        redirect('transaksi_checking');
+    }
+
+    public function detail ($id)
+    {
+        $data ['judul']= 'Detail Data Input Defect';
+
+        $data['transaksi_checking'] = $this->transaksi_checking_model->getTransaksiById($id);
+        $this->load->view('templates/header', $data);
+        $this->load->view('transaksi_checking/detail', $data);
+        $this->load->view('templates/footer');
+    }
+
+    public function ubah($id)
+    {
+        $data['judul'] = 'Form Ubah Data Input Defect';
+        $data['jurusan'] = ['Teknik Informatika', 'Teknik Mesin', 'Teknik Industri'];
+        $data['transaksi_checking'] = $this->transaksi_checking_model->getTransaksiById($id); 
+
+        if (empty($data['transaksi_checking'])) {
+            show_404();
+        }
+
+        $this->form_validation->set_rules('operation_name','Operation Name', 'required');
+        $this->form_validation->set_rules('operation_code', 'Operation Code', 'required');
+        $this->form_validation->set_rules('employee_name', 'Employee Name', 'required');
+
+        if ($this->form_validation->run() == FALSE) {
+            $this->load->view('templates/header', $data);
+            $this->load->view('transaksi_checking/ubah', $data);
+            $this->load->view('templates/footer');
+        } else {
+            $this->Mahasiswa_model->ubahDataInputDefect();
+            $this->session->set_flashdata('flash', 'Diubah');
+            redirect('transaksi_checking');
+        }
+    }
+
 }
