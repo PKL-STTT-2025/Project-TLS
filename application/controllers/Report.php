@@ -1,6 +1,8 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
-
+/**
+ * @property CI_Report_model $Report_model
+ */
 class Report extends CI_Controller
 {
     public function __construct()
@@ -9,10 +11,7 @@ class Report extends CI_Controller
         $this->load->model('Report_model');
     }
 
-    public function index()
-    {
-
-    }
+    public function index() {}
 
     public function report_operator()
     {
