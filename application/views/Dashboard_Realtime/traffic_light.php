@@ -1,3 +1,4 @@
+<!-- View: traffic_light.php -->
 <style>
     .grid-container {
         display: grid;
@@ -77,10 +78,6 @@
                     <?php
 
                     // Simulasi status, ganti sesuai field dari database misal $op->status
-
-
-                    // Simulasi status, ganti sesuai field dari database misal $op->status
-
                     $status = strtolower($op->status ?? 'active');
                     $badgeClass = [
                         'active' => 'bg-success',
