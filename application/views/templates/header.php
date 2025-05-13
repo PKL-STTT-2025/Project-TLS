@@ -51,7 +51,7 @@
                 <div class="sidebar-brand-icon rotate-n-0">
                     <i class="fas fa-traffic-light"></i>
                 </div>
-                <div class="sidebar-brand-text mx-3">Traffic Light System </div>
+                <div class="sidebar-brand-text mx-3 mt-3">TRAFFIC LIGHT SYSTEM</div>
             </a>
 
             <!-- Divider -->
@@ -83,6 +83,12 @@
                 <a class="nav-link collapsed" href="<?php echo base_url('InputDefect'); ?>">
                     <i class="fas fa-keyboard"></i>
                     <span>Input Defect</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="<?php echo base_url('ReportOperator'); ?>">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Report Operator</span>
                 </a>
             </li>
 

@@ -34,7 +34,6 @@ class Dashboard_model extends CI_Model
         return $this->get_count_by_status($start, $end);
     }
 
-
     public function get_data_operator()
     {
         // $this->db->select('NIK, name');
@@ -53,6 +52,7 @@ class Dashboard_model extends CI_Model
 
         return $this->db->query($query)->result();
     }
+
 
     public function get_operator()
     {
@@ -87,6 +87,18 @@ class Dashboard_model extends CI_Model
         LIMIT 1";
         return $this->db->query($query, [$id_employee, $id_opb = 192])->row();
     }
+    public function getJumlahKunjunganQC()
+    {
+        $this->db->select('op_name, COUNT(*) as total_kunjungan');
+        $this->db->from('transaksi_checking');
+        $this->db->group_by('op_name');
+        $query = $this->db->get();
 
-
+        $result = $query->result();
+        $output = [];
+        foreach ($result as $row) {
+            $output[$row->op_name] = $row->total_kunjungan;
+        }
+        return $output;
+    }
 }

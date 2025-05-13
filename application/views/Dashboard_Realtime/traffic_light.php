@@ -1,4 +1,3 @@
-
 <!-- View: traffic_light.php -->
 <style>
     .grid-container {
@@ -19,7 +18,6 @@
         align-items: center;
         justify-content: space-between;
         height: 220px;
-        /* Bisa disesuaikan jika ingin lebih tinggi/rendah */
         padding: 10px;
     }
 
@@ -37,7 +35,6 @@
     .badge {
         font-size: 12px;
     }
-
 
     .traffic-light {
         display: flex;
@@ -84,11 +81,17 @@
                     $status = strtolower($op->status ?? 'active');
                     $badgeClass = [
                         'active' => 'bg-success',
+                        'idle' => 'bg-warning',
+                        'error' => 'bg-danger'
                     ][$status] ?? 'bg-secondary';
                     ?>
                     <span class="badge <?= $badgeClass ?>"><?= ucfirst($status) ?></span>
-
-
+                    <div class="mt-2">
+                        <?php
+                        $jumlah = isset($jumlah_kunjungan[$op->kode_proses]) ? $jumlah_kunjungan[$op->kode_proses] : 0;
+                        ?>
+                        <small> <?= $jumlah ?>x</small>
+                    </div>
                     <!-- Traffic light -->
                     <div class="traffic-light mt-2">
                         <?php

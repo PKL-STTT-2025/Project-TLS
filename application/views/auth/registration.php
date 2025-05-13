@@ -49,9 +49,9 @@
                                     </button>
                                 </form>
                                 <hr>
-                                <div class="text-center">
-                                    <a class="small" href="<?= site_url('forgot_password'); ?>">Forgot Password?</a>
-                                </div>
+                                <!--<div class="text-center">
+                                    <a class="small" href="<?= base_url('forgot_password'); ?>">Forgot Password?</a>
+                                </div>-->
                                 <div class="text-center">
                                     <a class="small" href="<?= base_url('auth'); ?>">Already have an account? Login!</a>
                                 </div>

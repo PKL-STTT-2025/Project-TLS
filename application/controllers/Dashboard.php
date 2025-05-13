@@ -1,17 +1,62 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
-
+/**
+ * @property CI_session $Session
+ * @property CI_Dashboard_model $Dashboard_model
+ * @property CI_Dashboard_Realtime $Dashboard_Realtime
+ */
 class Dashboard extends CI_Controller
 {
 
+    public function __construct()
+    {
+        parent::__construct();
+        $this->load->model('Dashboard_model');
+    }
     public function index()
+    {
+
+        $role = $this->session->userdata('role');
+        $data['title'] = 'Dashboard TLS';
+        $this->load->view('templates/header', $data);
+        $this->load->view('templates/topbar');
+
+        if ($role == 'admin') {
+            $this->load->view('Dashboard_Realtime/admin/index');
+        } elseif ($role == 'qc') {
+            $this->load->view('Dashboard_Realtime/qcinline/index');
+        } elseif ($role == 'supervisor') {
+            $this->load->view('Dashboard_Realtime/supervisor/index');
+        }
+        $this->load->view('templates/footer');
+    }
+
+    public function admin()
     {
         $data['title'] = 'Dashboard TLS';
         $this->load->view('templates/header', $data);
-        // $this->load->view('templates/sidebar');
-        $this->load->view('Dashboard_Realtime/index.php');
+        $this->load->view('templates/topbar');
+        $this->load->view('Dashboard_Realtime/admin/index');
         $this->load->view('templates/footer');
     }
+    public function supervisor()
+    {
+        $data['title'] = 'Dashboard TLS';
+        $this->load->view('templates/header', $data);
+        $this->load->view('templates/topbar');
+        $this->load->view('Dashboard_Realtime/supervisor/index');
+        $this->load->view('templates/footer');
+    }
+    public function qcinline()
+    {
+        $data['title'] = 'Dashboard TLS';
+        $this->load->view('templates/header', $data);
+        $this->load->view('templates/topbar');
+        $this->load->view('Dashboard_Realtime/qcinline/index');
+        $this->load->view('templates/footer');
+    }
+
+
 
     public function reportHari()
     {
@@ -21,7 +66,7 @@ class Dashboard extends CI_Controller
 
         $this->load->view('templates/header', $data);
         $this->load->view('templates/sidebar');
-        $this->load->view('Dashboard_Realtime/report_hari',);
+        $this->load->view('Dashboard_Realtime/report_hari');
         $this->load->view('templates/footer');
     }
 
@@ -35,12 +80,12 @@ class Dashboard extends CI_Controller
         $this->load->view('Dashboard_Realtime/report_bulan');
     }
 
-
     public function traffic_light()
     {
         $data['title'] = 'Data Operator per Line';
         $data['operators'] = $this->Dashboard_model->get_data_operator();
         $data['latest_defect'] = $this->Dashboard_model->get_defect_operator();
+        $data['jumlah_kunjungan'] = $this->Dashboard_model->getJumlahKunjunganQC();
         $this->load->view('templates/header', $data);
         $this->load->view('Dashboard_Realtime/traffic_light', $data);
         $this->load->view('templates/footer');
@@ -56,5 +101,4 @@ class Dashboard extends CI_Controller
         $this->load->view('Dashboard_Realtime/report_operator', $data);
         $this->load->view('templates/footer');
     }
-
 }
