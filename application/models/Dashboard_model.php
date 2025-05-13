@@ -52,4 +52,18 @@ class Dashboard_model extends CI_Model
 
         return $this->db->query($query)->result();
     }
+    public function getJumlahKunjunganQC()
+    {
+        $this->db->select('op_name, COUNT(*) as total_kunjungan');
+        $this->db->from('transaksi_checking');
+        $this->db->group_by('op_name');
+        $query = $this->db->get();
+
+        $result = $query->result();
+        $output = [];
+        foreach ($result as $row) {
+            $output[$row->op_name] = $row->total_kunjungan;
+        }
+        return $output;
+    }
 }
