@@ -52,6 +52,7 @@ class Dashboard_model extends CI_Model
 
         return $this->db->query($query)->result();
     }
+<<<<<<< HEAD
 
     public function get_operator()
     {
@@ -85,5 +86,20 @@ class Dashboard_model extends CI_Model
         WHERE master_opt_layout.id_employee = ? AND master_opt_layout.id_opb = ?
         LIMIT 1";
         return $this->db->query($query, [$id_employee, $id_opb = 192])->row();
+=======
+    public function getJumlahKunjunganQC()
+    {
+        $this->db->select('op_name, COUNT(*) as total_kunjungan');
+        $this->db->from('transaksi_checking');
+        $this->db->group_by('op_name');
+        $query = $this->db->get();
+
+        $result = $query->result();
+        $output = [];
+        foreach ($result as $row) {
+            $output[$row->op_name] = $row->total_kunjungan;
+        }
+        return $output;
+>>>>>>> anzel
     }
 }

@@ -1,15 +1,16 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 /**
- * @property CI_Session $session
+ * @property CI_session $Session
  * @property CI_Dashboard_model $Dashboard_model
+ * @property CI_Dashboard_Realtime $Dashboard_Realtime
  */
 class Dashboard extends CI_Controller
 {
     public function __construct()
     {
         parent::__construct();
-        $this->load->model('Dashboard_model'); // kalau model ini dipakai
+        $this->load->model('Dashboard_model');
     }
 
     public function __construct()
@@ -89,6 +90,7 @@ class Dashboard extends CI_Controller
         $data['title'] = 'Data Operator per Line';
         $data['operators'] = $this->Dashboard_model->get_data_operator();
         $data['latest_defect'] = $this->Dashboard_model->get_defect_operator();
+        $data['jumlah_kunjungan'] = $this->Dashboard_model->getJumlahKunjunganQC();
         $this->load->view('templates/header', $data);
         $this->load->view('Dashboard_Realtime/traffic_light', $data);
         $this->load->view('templates/footer');

@@ -84,11 +84,17 @@
                     $status = strtolower($op->status ?? 'active');
                     $badgeClass = [
                         'active' => 'bg-success',
+                        'idle' => 'bg-warning',
+                        'error' => 'bg-danger'
                     ][$status] ?? 'bg-secondary';
                     ?>
                     <span class="badge <?= $badgeClass ?>"><?= ucfirst($status) ?></span>
-
-
+                    <div class="mt-2">
+                        <?php
+                        $jumlah = isset($jumlah_kunjungan[$op->kode_proses]) ? $jumlah_kunjungan[$op->kode_proses] : 0;
+                        ?>
+                        <small> <?= $jumlah ?>x</small>
+                    </div>
                     <!-- Traffic light -->
                     <div class="traffic-light mt-2">
                         <?php
