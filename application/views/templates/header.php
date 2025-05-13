@@ -80,13 +80,13 @@
 
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
-                <a class="nav-link collapsed" href="<?php echo base_url('InputDefect'); ?>">
+                <a class="nav-link collapsed" href="<?php echo base_url('TransaksiChecking'); ?>">
                     <i class="fas fa-keyboard"></i>
                     <span>Input Defect</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link collapsed" href="<?php echo base_url('ReportOperator'); ?>">
+                <a class="nav-link collapsed" href="<?php echo base_url('Report/report_operator'); ?>">
                     <i class="fas fa-chart-line"></i>
                     <span>Report Operator</span>
                 </a>
@@ -110,8 +110,32 @@
                 </div>
             </li>
 
+            <!-- Nav Item - Utilities Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseMaster"
+                    aria-expanded="true" aria-controls="collapseMaster">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Master</span>
+                </a>
+                <div id="collapseMaster" class="collapse" aria-labelledby="headingUtilities"
+                    data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">QC Inline:</h6>
+                        <a class="collapse-item" href="<?php echo base_url('MasterDefect/index'); ?>">Defect</a>
+                        <h6 class="collapse-header">Base:</h6>
+                        <a class="collapse-item" href="<?php echo base_url('Jenis_Barang/index'); ?>">Daftar Mesin</a>
+                        <a class="collapse-item" href="<?php echo base_url('Operation_Layout/index'); ?>">Daftar Proses</a>
+                        <a class="collapse-item" href="<?php echo base_url('MstWorkgroup/index'); ?>">Daftar Grup Kerja</a>
+                        <a class="collapse-item" href="<?php echo base_url('MstEmp/index'); ?>">Daftar Karyawan</a>
+                        <a class="collapse-item" href="<?php echo base_url('OperationBreakdown/index'); ?>">Daftar Operation Breakdown</a>
+                        <a class="collapse-item" href="<?php echo base_url('MasterUser/index'); ?>">Daftar User</a>
+                        <a class="collapse-item" href="<?php echo base_url('MasterLine/index'); ?>">Daftar Line</a>
+                    </div>
+                </div>
+            </li>
+
             <!-- Divider -->
-            <hr class="sidebar-divider">
+            <!-- <hr class="sidebar-divider"> -->
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">

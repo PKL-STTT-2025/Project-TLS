@@ -1,6 +1,6 @@
 <?php
 
-class master_defect extends CI_Controller
+class MasterDefect extends CI_Controller
 {
     public function __construct()
     {

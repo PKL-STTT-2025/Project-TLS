@@ -19,7 +19,7 @@ class MasterUser extends CI_Controller
             $data['master_user'] = $this->MasterUser_model->getAllMaster();
         }
         $this->load->view('templates/header', $data);
-        $this->load->view('Master user/index', $data);
+        $this->load->view('Master_user/index', $data);
         $this->load->view('templates/footer');
     }
 }

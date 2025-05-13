@@ -16,19 +16,21 @@ class Dashboard extends CI_Controller
     public function index()
     {
 
-        $role = $this->session->userdata('role');
+        $role = $this->session->userdata('role_id');
         $data['title'] = 'Dashboard TLS';
-        $this->load->view('templates/header', $data);
-        $this->load->view('templates/topbar');
+
+        
 
         if ($role == 'admin') {
-            $this->load->view('Dashboard_Realtime/admin/index');
-        } elseif ($role == 'qc') {
-            $this->load->view('Dashboard_Realtime/qcinline/index');
-        } elseif ($role == 'supervisor') {
-            $this->load->view('Dashboard_Realtime/supervisor/index');
+            // $this->load->view('Dashboard_Realtime/admin/index');
+            $this->admin();
+        } else if ($role == 'qc') {
+            // $this->load->view('Dashboard_Realtime/qcinline/index');
+            $this->qcinline();
+        } else if ($role == 'Supervisor') {
+            // $this->load->view('Dashboard_Realtime/supervisor/index');
+            $this->supervisor();
         }
-        $this->load->view('templates/footer');
     }
 
     public function admin()
@@ -88,17 +90,6 @@ class Dashboard extends CI_Controller
         $data['jumlah_kunjungan'] = $this->Dashboard_model->getJumlahKunjunganQC();
         $this->load->view('templates/header', $data);
         $this->load->view('Dashboard_Realtime/traffic_light', $data);
-        $this->load->view('templates/footer');
-    }
-
-    public function report_operator()
-    {
-        $data['title'] = 'Histori Defect Operator';
-        $data['op'] = $this->Dashboard_model->get_operator();
-        $data['defects'] = $this->Dashboard_model->get_defect_operator();
-        $data['total_kunjungan'] = 5;
-        $this->load->view('templates/header', $data);
-        $this->load->view('Dashboard_Realtime/report_operator', $data);
         $this->load->view('templates/footer');
     }
 }
