@@ -1,6 +1,6 @@
 <div class="container p-5">
     <title>Transaksi Checking</title>
-    <form method="post" action="<?= base_url('transaksi_checking/index'); ?>">
+    <form method="post" action="<?= base_url('TransaksiChecking/index'); ?>">
         <div class="row">
             <div class="col-md-4">
                 <label>Line:</label>
@@ -21,6 +21,30 @@
                     <?php endforeach; ?>
                 </select>
             </div>
+            
+                        <!-- jQuery AJAX -->
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script>
+                $('#line').change(function() {
+                    var line = $(this).val();
+                    if(line != '') {
+                        $.ajax({
+                            url: "<?= base_url('transaksi_checking/get_style_by_line'); ?>",
+                            method: "POST",
+                            data: {line: line},
+                            dataType: "json",
+                            success: function(data) {
+                                $('#style').empty().append('<option value="">-- Pilih Style --</option>');
+                                $.each(data, function(key, value) {
+                                    $('#style').append('<option value="' + value.style + '">' + value.style + '</option>');
+                                });
+                            }
+                        });
+                    } else {
+                        $('#style').html('<option value="">-- Pilih Style --</option>');
+                    }
+                });
+            </script>
 
             <div class="col-md-4 mt-4">
                 <button type="submit" class="btn btn-primary">Search</button>
@@ -50,19 +74,19 @@
         </div>
     </div>
 
-    <div class="row mt-3">
-        <div class="col-md-6">
+    <div class="row mt 3">
+        <div class="col md 6">
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
                     <th>No</th>
-                    <th>ID Layout</th>
-                    <th>User</th>
-                    <th>Op Code</th>
-                    <th>Op Name</th>
-                    <th>Employee</th>
-                    <th>Machine</th>
-                    <th>Ada Defect</th>
+                    <th>Kode Proses</th>
+                    <th>Nama Proses</th>
+                    <th>Nama Operator</th>
+                    <!-- <th>Kode Defect</th>
+                    <th>Deskripsi Defect</th>
+                    <th>Kategori</th> -->
+                    <th>Aksi</th>
                     <th>Masalah Selesai</th>
                     </tr>
                 </thead>
@@ -81,9 +105,9 @@
                             <td><?= $i++; ?></td>
                             <td><?= $transaksi['line_list']; ?></td>
                             <td><?= $transaksi['style_list']; ?></td>
-                                <a href="<?= base_url(); ?>transaksi_checking/detail/<?= $transaksi['id']; ?>" class="btn btn-info">Detail</a>
-                                <a href="<?= base_url(); ?>transaksi_checking/ubah/<?= $transaksi['id']; ?>" class="btn btn-warning">Ubah</a>
-                                <a href="<?= base_url(); ?>transaksi_checking/hapus/<?= $transaksi['id']; ?>" class="btn btn-danger" onclick="return confirm('Yakin?');">Hapus</a>
+                                <a href="<?= base_url(); ?>TransaksiChecking/detail/<?= $transaksi['id']; ?>" class="btn btn-info">Detail</a>
+                                <a href="<?= base_url(); ?>TransaksiChecking/ubah/<?= $transaksi['id']; ?>" class="btn btn-warning">Ubah</a>
+                                <a href="<?= base_url(); ?>TransaksiChecking/hapus/<?= $transaksi['id']; ?>" class="btn btn-danger" onclick="return confirm('Yakin?');">Hapus</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>

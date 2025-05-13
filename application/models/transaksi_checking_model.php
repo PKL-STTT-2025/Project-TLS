@@ -44,6 +44,13 @@ class transaksi_checking_model extends CI_Model
         }
     }
 
+    public function getStyleByLine($line)
+    {
+        $this->db->where('style', $line);
+        $this->db->group_by('style');
+        return $this->db->get('operation_breakdown')->result_array();
+    }
+
     // public function getlayoutbyline($line)
     // {
     //     $this->db->where('line_name', $line);
@@ -107,10 +114,9 @@ class transaksi_checking_model extends CI_Model
     public function ubahDataInputDefect()
     {
     $data = [
-        "nama" => $this->input->post('nama', true),
-        "nrp" => $this->input->post('nrp', true),
-        "email" => $this->input->post('email', true),
-        "jurusan" => $this->input->post('jurusan', true)
+        "operation_name" => $this->input->post('operation_name', true),
+        "operation_code" => $this->input->post('operation_code', true),
+        "employee_name" => $this->input->post('employee_name', true),
     ];
 
     $this->db->where('id', $this->input->post('id'));
@@ -120,10 +126,19 @@ class transaksi_checking_model extends CI_Model
     public function cariDataInputDefect()
     {
         $keyword= $this->input->post('keyword',true);
-        $this->db->like('nama',$keyword);
-        $this->db->or_like('jurusan', $keyword);
-        $this->db->or_like('nrp', $keyword);
-        $this->db->or_like('email', $keyword);
+        $this->db->like('operation_name',$keyword);
+        $this->db->or_like('operation_code', $keyword);
+        $this->db->or_like('employee_name', $keyword);
         return $this->db->get('transaksi_checking')->result_array();
+    }
+
+    public function getAllOperationCode()
+    {
+        $query = $this->db->get('master_opt_layout');
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return array(); 
+        }
     }
 }
