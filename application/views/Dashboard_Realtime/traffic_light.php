@@ -75,12 +75,19 @@
                     <p class="card-text"><small>(<?= $op->kode_proses ?>)</small></p>
 
                     <?php
+
+                    // Simulasi status, ganti sesuai field dari database misal $op->status
+
+
+                    // Simulasi status, ganti sesuai field dari database misal $op->status
+
                     $status = strtolower($op->status ?? 'active');
                     $badgeClass = [
                         'active' => 'bg-success',
                     ][$status] ?? 'bg-secondary';
                     ?>
                     <span class="badge <?= $badgeClass ?>"><?= ucfirst($status) ?></span>
+
 
                     <!-- Traffic light -->
                     <div class="traffic-light mt-2">
@@ -97,6 +104,7 @@
                         echo '<span class="light ' . $color . '"></span>';
                         ?>
                     </div>
+
                 </div>
             </div>
         <?php endforeach; ?>

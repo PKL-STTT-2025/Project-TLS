@@ -1,6 +1,31 @@
 <div class="container">
 
     <title>Transaksi Checking</title>
+    <form method="post" action="<?= base_url('transaksi_checking/index'); ?>">
+        <div class="row">
+            <div class="col-md-4">
+                <label>Line:</label>
+                <select class="form-control" name="Workgroup" id="Workgroup" required>
+                    <option value="">-- Pilih Line --</option>
+                    <?php foreach ($line_list as $line): ?>
+                        <option value="<?= $line['Workgroup']; ?>"><?= $line['Workgroup']; ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label>Style:</label>
+                <select class="form-control" name="style" id="style" required>
+                    <option value="">-- Pilih Style --</option>
+                    <?php foreach ($style_list as $style): ?>
+                        <option value="<?= $style['style']; ?>"><?= $style['style']; ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div> 
+        </div>
+        </br>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
 
     <?php if ($this->session->flashdata('flash')) : ?>
         <div class="row mt-3">
@@ -30,11 +55,15 @@
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th scope="col">No</th>
-                        <th scope="col">Kode Proses</th>
-                        <th scope="col">Nama Operator</th>
-                        <th scope="col">Jenis Defect</th>
-                        <th scope="col">Aksi</th>
+                    <th>No</th>
+                    <th>ID Layout</th>
+                    <th>User</th>
+                    <th>Op Code</th>
+                    <th>Op Name</th>
+                    <th>Employee</th>
+                    <th>Machine</th>
+                    <th>Ada Defect</th>
+                    <th>Masalah Selesai</th>
                     </tr>
                 </thead>
                 <?php if (!empty($transaksi_checking)) : ?>
@@ -42,7 +71,7 @@
                         <?php endforeach; ?>
                 <?php else : ?>
                         <tr>
-                            <td colspan="4" class="text-center">Belum ada data.</td>
+                            <td colspan="10" class="text-center">Belum ada data.</td>
                         </tr>
                     <?php endif; ?>
                 <tbody>
@@ -50,13 +79,11 @@
                     <?php foreach ($transaksi_checking as $transaksi) : ?>
                         <tr>
                             <td><?= $i++; ?></td>
-                            <td><?= $transaksi['op_code']; ?></td>
-                            <td><?= $transaksi['employee_name']; ?></td>
-                            <td><?= $transaksi['ada_defect']; ?></td>
-                            <td>
+                            <td><?= $transaksi['line_list']; ?></td>
+                            <td><?= $transaksi['style_list']; ?></td>
                                 <a href="<?= base_url(); ?>transaksi_checking/detail/<?= $transaksi['id']; ?>" class="btn btn-info">Detail</a>
                                 <a href="<?= base_url(); ?>transaksi_checking/ubah/<?= $transaksi['id']; ?>" class="btn btn-warning">Ubah</a>
-                                <a href="<?= base_url(); ?>transaksi_checkingq/hapus/<?= $transaksi['id']; ?>" class="btn btn-danger" onclick="return confirm('Yakin?');">Hapus</a>
+                                <a href="<?= base_url(); ?>transaksi_checking/hapus/<?= $transaksi['id']; ?>" class="btn btn-danger" onclick="return confirm('Yakin?');">Hapus</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
