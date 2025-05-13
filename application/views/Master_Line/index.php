@@ -28,6 +28,7 @@
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
+                        <th scope="col">No.</th>
                         <th scope="col">Line Name</th>
                         <th scope="col">SPV</th>
                     </tr>
@@ -46,8 +47,8 @@
                     <?php foreach ($master_line as $line) : ?>
                         <tr>
                             <td><?= $i++; ?></td>
-                            <td><?= $line['line_name']; ?></td>
-                            <td><?= $line['spv']; ?></td>
+                            <td><?= $line->line_name; ?></td>
+                            <td><?= $line->spv; ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
