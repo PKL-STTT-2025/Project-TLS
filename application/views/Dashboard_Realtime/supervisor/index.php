@@ -33,53 +33,73 @@
                 </div>
                 <div class="row text-center justify-content-center">
                     <div class="col-md-3 mx-2 mb-4">
-                        <h6>Persentase Today Defect</h6>
-                        <div class="chart-container">
-                            <canvas id="chartToday"></canvas>
-                        </div>
-                        <div class="mt-2 small">
-                            <span style="color:#ff4d4d">● 3 Operator</span><br>
-                            <span style="color:#ffcc00">● 4 Operator</span><br>
-                            <span style="color:#66cc66">● 18 Operator</span>
+
+                        <div class="card shadow mb-4">
+                            <!--Card Header -->
+                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0 font-weight-bold text-primary">Persentase Today Defect</h6>
+                            </div>
+                            <!-- Card Body -->
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="chartToday"></canvas>
+                                </div>
+                                <div class="mt-2 small">
+                                    <span style="color:#ff4d4d">● 3 Operator</span><br>
+                                    <span style="color:#ffcc00">● 4 Operator</span><br>
+                                    <span style="color:#66cc66">● 18 Operator</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <!-- WEEK -->
                     <div class="col-md-3 mx-2 mb-4">
-                        <h6>Persentase Week Defect</h6>
-                        <div class="chart-container">
-                            <canvas id="chartWeek"></canvas>
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0 font-weight-bold text-primary">Persentase Week Defect</h6>
+                            </div>
+                            <!-- Card Body -->
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="chartWeek"></canvas>
+                                </div>
+                                <div class="mt-2 small">
+                                    <span style="color:#ff4d4d">● 3 Operator</span><br>
+                                    <span style="color:#ffcc00">● 4 Operator</span><br>
+                                    <span style="color:#66cc66">● 18 Operator</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="mt-2 small">
-                            <span style="color:#ff4d4d">● 3 Operator</span><br>
-                            <span style="color:#ffcc00">● 4 Operator</span><br>
-                            <span style="color:#66cc66">● 18 Operator</span>
+
+                        <!-- MONTH -->
+                        <div class="col-md-3 mx-2 mb-4">
+                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0 font-weight-bold text-primary">Persentase Month Defect</h6>
+                            </div>
+                            <!-- Card Body -->
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="chartMonth"></canvas>
+                                </div>
+                                <div class="mt-2 small">
+                                    <span style="color:#ff4d4d">● 3 Operator</span><br>
+                                    <span style="color:#ffcc00">● 4 Operator</span><br>
+                                    <span style="color:#66cc66">● 18 Operator</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- MONTH -->
-                    <div class="col-md-3 mx-2 mb-4">
-                        <h6>Persentase Month Defect</h6>
-                        <div class="chart-container">
-                            <canvas id="chartMonth"></canvas>
-                        </div>
-                        <div class="mt-2 small">
-                            <span style="color:#ff4d4d">● 3 Operator</span><br>
-                            <span style="color:#ffcc00">● 4 Operator</span><br>
-                            <span style="color:#66cc66">● 18 Operator</span>
-                        </div>
-                    </div>
                 </div>
+
 
             </div>
 
 
         </div>
 
-
     </div>
-
-</div>
 
 
 

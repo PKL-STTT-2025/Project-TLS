@@ -1,7 +1,8 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
+
 /**
- * @property CI_session $Session
+ * @property CI_session $session
  * @property CI_Dashboard_model $Dashboard_model
  * @property CI_Dashboard_Realtime $Dashboard_Realtime
  */
@@ -13,23 +14,24 @@ class Dashboard extends CI_Controller
         parent::__construct();
         $this->load->model('Dashboard_model');
     }
+
+
     public function index()
     {
 
+        // Menentukan role pengguna
         $role = $this->session->userdata('role_id');
         $data['title'] = 'Dashboard TLS';
 
-        
-
         if ($role == 'admin') {
-            // $this->load->view('Dashboard_Realtime/admin/index');
             $this->admin();
-        } else if ($role == 'qc') {
-            // $this->load->view('Dashboard_Realtime/qcinline/index');
+        } elseif ($role == 'qc') {
             $this->qcinline();
-        } else if ($role == 'Supervisor') {
-            // $this->load->view('Dashboard_Realtime/supervisor/index');
+        } elseif ($role == 'supervisor') {
             $this->supervisor();
+        } else {
+            // Handle invalid role if needed
+            show_404();
         }
     }
 
@@ -41,6 +43,7 @@ class Dashboard extends CI_Controller
         $this->load->view('Dashboard_Realtime/admin/index');
         $this->load->view('templates/footer');
     }
+
     public function supervisor()
     {
         $data['title'] = 'Dashboard TLS';
@@ -49,6 +52,7 @@ class Dashboard extends CI_Controller
         $this->load->view('Dashboard_Realtime/supervisor/index');
         $this->load->view('templates/footer');
     }
+
     public function qcinline()
     {
         $data['title'] = 'Dashboard TLS';
@@ -58,28 +62,25 @@ class Dashboard extends CI_Controller
         $this->load->view('templates/footer');
     }
 
-
-
     public function reportHari()
     {
-        $data['judul'] = 'Report Per Hari';
-        $data['hari'] = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
-        $data['jumlah'] = [5, 8, 3, 10, 6, 2, 4];
-
-        $this->load->view('templates/header', $data);
-        $this->load->view('templates/sidebar');
-        $this->load->view('Dashboard_Realtime/report_hari');
-        $this->load->view('templates/footer');
+        // Mengambil data untuk laporan hari
+        $data['report_hari'] = $this->Dashboard_model->get_daily_report();
+        $this->load->view('Dashboard_Realtime/report_hari', $data);
     }
 
     public function reportMinggu()
     {
-        $this->load->view('Dashboard_Realtime/report_minggu');
+        // Mengambil data untuk laporan minggu
+        $data['report_minggu'] = $this->Dashboard_model->get_mingguan();
+        $this->load->view('Dashboard_Realtime/report_minggu', $data);
     }
 
     public function reportBulan()
     {
-        $this->load->view('Dashboard_Realtime/report_bulan');
+        // Mengambil data untuk laporan bulan
+        $data['report_bulan'] = $this->Dashboard_model->get_bulanan();
+        $this->load->view('Dashboard_Realtime/report_bulan', $data);
     }
 
     public function traffic_light()
@@ -88,6 +89,8 @@ class Dashboard extends CI_Controller
         $data['operators'] = $this->Dashboard_model->get_data_operator();
         $data['latest_defect'] = $this->Dashboard_model->get_defect_operator();
         $data['jumlah_kunjungan'] = $this->Dashboard_model->getJumlahKunjunganQC();
+
+        // Menampilkan view traffic light
         $this->load->view('templates/header', $data);
         $this->load->view('Dashboard_Realtime/traffic_light', $data);
         $this->load->view('templates/footer');

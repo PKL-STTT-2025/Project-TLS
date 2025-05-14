@@ -101,4 +101,15 @@ class Dashboard_model extends CI_Model
         }
         return $output;
     }
+
+
+    public function get_daily_report()
+    {
+        // Contoh query: ambil jumlah defect per hari dari tabel defect
+        $this->db->select('DAYNAME(tanggal) AS hari, COUNT(*) AS jumlah');
+        $this->db->from('defect');
+        $this->db->group_by('DAYNAME(tanggal)');
+        $query = $this->db->get();
+        return $query->result_array();
+    }
 }

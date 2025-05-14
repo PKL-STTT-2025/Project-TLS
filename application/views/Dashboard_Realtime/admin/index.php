@@ -41,10 +41,15 @@
 
                 <div class="row text-center justify-content-center">
                     <div class="col-md-3 mx-2 mb-4">
-                        <h6>Persentase Today Defect</h6>
-                        <div class="chart-container">
-                            <canvas id="chartToday"></canvas>
+                        <div class="col-md-4">
+                            <div class="card text-center mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">Persentase Today Defect</h5>
+                                    <canvas id="todayDefectChart"></canvas>
+                                </div>
+                            </div>
                         </div>
+
                         <div class="mt-2 small">
                             <span style="color:#ff4d4d">● 3 Operator</span><br>
                             <span style="color:#ffcc00">● 4 Operator</span><br>
@@ -54,9 +59,13 @@
 
                     <!-- WEEK -->
                     <div class="col-md-3 mx-2 mb-4">
-                        <h6>Persentase Week Defect</h6>
-                        <div class="chart-container">
-                            <canvas id="chartWeek"></canvas>
+                        <div class="col-md-4">
+                            <div class="card text-center mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">Persentase Today Defect</h5>
+                                    <canvas id="todayDefectChart"></canvas>
+                                </div>
+                            </div>
                         </div>
                         <div class="mt-2 small">
                             <span style="color:#ff4d4d">● 3 Operator</span><br>
@@ -67,10 +76,15 @@
 
                     <!-- MONTH -->
                     <div class="col-md-3 mx-2 mb-4">
-                        <h6>Persentase Month Defect</h6>
-                        <div class="chart-container">
-                            <canvas id="chartMonth"></canvas>
+                        <div class="col-md-4">
+                            <div class="card text-center mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">Persentase Today Defect</h5>
+                                    <canvas id="todayDefectChart"></canvas>
+                                </div>
+                            </div>
                         </div>
+
                         <div class="mt-2 small">
                             <span style="color:#ff4d4d">● 3 Operator</span><br>
                             <span style="color:#ffcc00">● 4 Operator</span><br>
