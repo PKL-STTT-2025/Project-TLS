@@ -7,7 +7,7 @@
                 <select class="form-control" name="Workgroup" id="Workgroup" required>
                     <option value="">-- Pilih Line --</option>
                     <?php foreach ($line_list as $line): ?>
-                        <option value="<?= $line['Workgroup']; ?>"><?= $line['Workgroup']; ?></option>
+                        <option value="<?= $line['idWG']; ?>"><?= $line['Workgroup']; ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -16,35 +16,45 @@
                 <label>Style:</label>
                 <select class="form-control" name="style" id="style" required>
                     <option value="">-- Pilih Style --</option>
-                    <?php foreach ($style_list as $style): ?>
-                        <option value="<?= $style['style']; ?>"><?= $style['style']; ?></option>
-                    <?php endforeach; ?>
                 </select>
             </div>
             
-                        <!-- jQuery AJAX -->
-            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-            <script>
-                $('#line').change(function() {
-                    var line = $(this).val();
-                    if(line != '') {
-                        $.ajax({
-                            url: "<?= base_url('transaksi_checking/get_style_by_line'); ?>",
-                            method: "POST",
-                            data: {line: line},
-                            dataType: "json",
-                            success: function(data) {
-                                $('#style').empty().append('<option value="">-- Pilih Style --</option>');
-                                $.each(data, function(key, value) {
-                                    $('#style').append('<option value="' + value.style + '">' + value.style + '</option>');
+                 <!-- jQuery AJAX -->
+                <script>
+                    $(document).ready(function() {
+
+                        $('#Workgroup').change(function() {
+                            var line = $(this).val();
+                            // console.log(line);
+
+                            if (line != '') {
+                                $.ajax({
+                                    url: "<?= base_url('TransaksiChecking/getStyleByLine'); ?>",
+                                    method: "POST",
+                                    data: {
+                                        Workgroup: line
+                                    },
+                                    dataType: "json",
+                                    success: function(response) {
+                                        // console.log(response)
+                                        $("#style").empty();
+                                        $("#style").append('<option value="">-- Pilih Style --</option>');
+
+                                        $.each(response, function(index, item) {
+                                            // console.log(index, item)
+                                            $("#style").append('<option value="' + item.id_operation_breakdown + '">' + item.style + " | "  + item.date_created  + '</option>');
+                                        });
+                                    },
+                                    error: function(xhr, status, error) {
+                                        console.log("Error: " + xhr.responseText);
+                                    }
                                 });
+                            } else {
+                                $('#style').empty();
                             }
                         });
-                    } else {
-                        $('#style').html('<option value="">-- Pilih Style --</option>');
-                    }
-                });
-            </script>
+                    });
+                </script>
 
             <div class="col-md-4 mt-4">
                 <button type="submit" class="btn btn-primary">Search</button>
@@ -98,19 +108,29 @@
                             <td colspan="10" class="text-center">Belum ada data.</td>
                         </tr>
                     <?php endif; ?>
-                <tbody>
-                    <?php $i = 1; ?>
-                    <?php foreach ($transaksi_checking as $transaksi) : ?>
+                    <tbody>
+                    <?php if (!empty($transaksi_checking)) : ?>
+                        <?php $i = 1; ?>
+                        <?php foreach ($transaksi_checking as $transaksi) : ?>
+                            <tr>
+                                <td><?= $i++; ?></td>
+                                <td><?= $transaksi['operation_code'] ?? '-' ?></td>
+                                <td><?= $transaksi['operation_name'] ?? '-' ?></td>
+                                <td><?= $transaksi['employee_name'] ?? '-' ?></td>
+                                <td>
+                                    <a href="<?= base_url('transaksi_checking/detail/'.$transaksi['id']) ?>" class="btn btn-info">Detail</a>
+                                    <a href="<?= base_url('transaksi_checking/ubah/'.$transaksi['id']) ?>" class="btn btn-warning">Ubah</a>
+                                    <a href="<?= base_url('transaksi_checking/hapus/'.$transaksi['id']) ?>" class="btn btn-danger" onclick="return confirm('Yakin?');">Hapus</a>
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else : ?>
                         <tr>
-                            <td><?= $i++; ?></td>
-                            <td><?= $transaksi['line_list']; ?></td>
-                            <td><?= $transaksi['style_list']; ?></td>
-                                <a href="<?= base_url(); ?>TransaksiChecking/detail/<?= $transaksi['id']; ?>" class="btn btn-info">Detail</a>
-                                <a href="<?= base_url(); ?>TransaksiChecking/ubah/<?= $transaksi['id']; ?>" class="btn btn-warning">Ubah</a>
-                                <a href="<?= base_url(); ?>TransaksiChecking/hapus/<?= $transaksi['id']; ?>" class="btn btn-danger" onclick="return confirm('Yakin?');">Hapus</a>
-                            </td>
+                            <td colspan="6" class="text-center">Belum ada data.</td>
                         </tr>
-                    <?php endforeach; ?>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>

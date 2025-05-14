@@ -1,16 +1,26 @@
 <div class="container">
     <div class="row at mt-3">
-        <div class="col-md-6">
+        <!-- <div class="col-md-6"> -->
 
             <div class="card">
                 <div class="card-header">
                     Form Tambah Input Defect
                 </div>
                 <div class="card-body">
-                <form action="" method="post">
+                <form method="post" action="<?= base_url('transaksi_checking/tambah'); ?>">
+                <div class="col-md-12">
+                    <label>Nama Operator</label>
+                    <select class="form-control" name="employee_name" id="employee_name" required>
+                        <option value="">-- Pilih Kode Proses --</option>
+                        <?php foreach ($employee_name as $nama): ?>
+                            <option value="<?= $nama['employee_name']; ?>"><?= $nama['employee_name']; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
                 <div class="col-md-12">
                     <label>Kode Proses</label>
-                    <select class="form-control" name="operation_code" id="operation_code" required>
+                    <select class="form-control" name="op_code" id="op_code" required>
                         <option value="">-- Pilih Kode Proses --</option>
                         <?php foreach ($op_code as $operation): ?>
                             <option value="<?= $operation['op_code']; ?>"><?= $operation['op_code']; ?></option>
@@ -18,11 +28,15 @@
                     </select>
                 </div>
 
-            <!-- <div class="form-group">
-                    <label for="deskripsi_defect">Deskripsi Defect</label>
-                    <input type="text" name="deskripsi_defect" class="form-control" id="deskripsi_defect">
-                    <small class="form-text text-danger"><?= form_error('deskripsi_defect');?></small>
-                  </div> -->
+                <div class="col-md-12">
+                    <label>Nama Proses</label>
+                    <select class="form-control" name="op_name" id="op_name" required>
+                        <option value="">-- Pilih Kode Proses --</option>
+                        <?php foreach ($op_name as $proses): ?>
+                            <option value="<?= $proses['op_name']; ?>"><?= $proses['op_name']; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
 
             <div class="card-body">
             <form action="<?= base_url('transaksi_checking/tambah'); ?>" method="post">

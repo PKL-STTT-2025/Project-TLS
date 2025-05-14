@@ -44,11 +44,28 @@ class transaksi_checking_model extends CI_Model
         }
     }
 
-    public function getStyleByLine($line)
-    {
-        $this->db->where('style', $line);
-        $this->db->group_by('style');
-        return $this->db->get('operation_breakdown')->result_array();
+    public function getStyleByLine($Workgroup) {
+        // $this->db->select('DISTINCT(style)');
+        // $this->db->from('operation_breakdown');
+        // $this->db->where('style IS NOT NULL');
+        // $this->db->where('style', $style);
+        // return $this->db->get()->row_array();
+
+        $query = "SELECT
+                t1.id AS id_operation_breakdown,
+                t1.style,
+                t1.date_created,
+                `mstWorkgroup`.`Workgroup`,
+                `mstWorkgroup`.`idWG` AS id_master_workgroup
+            FROM 
+                `operation_breakdown` AS t1
+            JOIN `master_line` ON `master_line`.`id` = t1.id_line
+            JOIN `mstWorkgroup` ON `mstWorkgroup`.`idWG` = `master_line`.`line_name`
+            WHERE  `mstWorkgroup`.`idWG` = $Workgroup
+            ORDER BY `t1`.`date_created` DESC;";
+
+        $result = $this->db->query($query);
+        return $result->result_array();
     }
 
     // public function getlayoutbyline($line)
@@ -133,6 +150,16 @@ class transaksi_checking_model extends CI_Model
     }
 
     public function getAllOperationCode()
+    {
+        $query = $this->db->get('master_opt_layout');
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return array(); 
+        }
+    }
+
+    public function getAllOperationName()
     {
         $query = $this->db->get('master_opt_layout');
         if ($query->num_rows() > 0) {

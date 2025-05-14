@@ -18,7 +18,7 @@ class TransaksiChecking extends CI_Controller
     
         // digunakan untuk menampilkan data style dan line
         $data['line_list'] = $this->transaksi_checking_model->getAlllines();
-        $data['style_list'] = $this->transaksi_checking_model->getAllStyles();
+        // $data['style_list'] = $this->transaksi_checking_model->getAllStyles();
 
          // Jika user sudah pilih Line dan klik Search
         if ($this->input->post('Workgroup')) {
@@ -31,7 +31,7 @@ class TransaksiChecking extends CI_Controller
             $data['transaksi_checking'] = $this->transaksi_checking_model->cariTransaksiChecking();
         } else {
             // Awalnya kosong
-            $data['TransaksiChecking'] = [];
+            // $data['transaksi_checking'] = [];
         }
 
         $this->load->view('templates/header', $data);
@@ -39,13 +39,18 @@ class TransaksiChecking extends CI_Controller
         $this->load->view('templates/footer');
     }
 
-        public function get_style_by_line()
-    {
-        $line = $this->input->post('Workgroup');
-        $this->load->model('transaksi_checking_model');
-        $data = $this->transaksi_checking_model->getStyleByLine($line);
-        echo json_encode($data);
+    public function getStyleByLine()
+    {   
+        // masih bingung yang ini  (workgroup)sama style
+        $Workgroup = (int)$this->input->post('Workgroup');
+
+        // var_dump((int)$Workgroup);
+        // die;
+
+        $response = $this->transaksi_checking_model->getStyleByLine($Workgroup);
+        echo json_encode($response); 
     }
+
 
     // public function getlayoutbyline()
     // {
@@ -58,14 +63,20 @@ class TransaksiChecking extends CI_Controller
     {
         $data['judul'] = 'Form Tambah Data Input Defect';
         $this->load->library('form_validation');
-
-        $data['op_code'] = $this->transaksi_checking_model->getAllOperationCode();
         
         $this->form_validation->set_rules('operation_code','Operation code', 'required');
         $this->form_validation->set_rules('kode_defect', 'Kode Defect', 'required');
         $this->form_validation->set_rules('deskripsi_defect', 'Deskripsi Defect ', 'required');
         $this->form_validation->set_rules('kategori', 'Kategori', 'required');
 
+        $data['op_code'] = $this->transaksi_checking_model->getAllOperationCode();
+        $data['op_name'] = $this->transaksi_checking_model->getAllOperationName();
+
+        echo "<pre>";
+        print_r($data['op_code']);
+        echo "</pre>";
+        exit;
+        
         if($this->form_validation->run()==FALSE) {
             $this->load->view('templates/header', $data);
             $this->load->view('transaksi_checking/tambah', $data);
