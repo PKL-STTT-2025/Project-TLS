@@ -86,7 +86,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link collapsed" href="<?php echo base_url('Report/report_operator'); ?>">
+                <a class="nav-link collapsed" href="<?php echo base_url('ReportOperator/Operator'); ?>">
                     <i class="fas fa-chart-line"></i>
                     <span>Report Operator</span>
                 </a>

@@ -22,7 +22,7 @@ class OperationBreakdown_model extends CI_Model
     public function cariOPB()
     {
         $keyword = $this->input->post('keyword');
-        $this->db->like('name', $keyword);
+        $this->db->like('style', $keyword);
 
         return $this->db->get('operation_breakdown')->result_array();
     }

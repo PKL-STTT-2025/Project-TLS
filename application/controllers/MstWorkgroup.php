@@ -1,8 +1,7 @@
 <?php
-defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
- * @property MstWorkgroup $MstWorkgroup_model
+ * @property CI_MstWorkgroup_model $MstWorkgroup_model
  */
 class MstWorkgroup extends CI_Controller
 {
@@ -10,12 +9,17 @@ class MstWorkgroup extends CI_Controller
     {
         parent::__construct();
         $this->load->model('MstWorkgroup_model');
+        $this->load->library('session');
+        $this->load->helper('form');
     }
 
     public function index()
     {
-        $data['title'] = 'MstWorkgroup';
-        $data['operation'] = $this->MstWorkgroup_model->getActiveOperation();
+        $data['title'] = 'Master Workgroup';
+        $data['mstworkgroup'] = $this->MstWorkgroup_model->getAllLine();
+        if ($this->input->post('keyword')) {
+            $data['mstworkgroup'] = $this->MstWorkgroup_model->cariWG();
+        }
         $this->load->view('templates/header', $data);
         $this->load->view('mstworkgroup/mstwg', $data);
         $this->load->view('templates/footer');

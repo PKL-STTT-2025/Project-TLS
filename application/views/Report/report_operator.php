@@ -62,7 +62,7 @@
             <div class="container-fluid">
                 <div class="row justify-content-center text-center">
                     <?php
-                    $histori = $this->Report_model->get_defect_operator();
+                    $histori = $defects;
                     if (empty($histori)) {
                         $total_kunjungan = isset($total_kunjungan) ? $total_kunjungan : 0;
                     ?>

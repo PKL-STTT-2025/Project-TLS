@@ -1,58 +1,60 @@
-<style>
-    .main-container {
-        margin-left: 240px;
-        /* pastikan ini lebih dari lebar sidebar */
-        padding: 20px;
-    }
+<div class="container">
+    <title>Daftar Workgroup</title>
 
-    h1 {
-        font-size: 28px;
-        margin-bottom: 20px;
-        color: #333;
-    }
+    <?php if ($this->session->flashdata('flash')) : ?>
+        <div class="row mt-3">
+            <div class="col-md-6 text-center">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    Daftar Workgroup <strong><?= $this->session->flashdata('flash'); ?></strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
 
-    table {
-        border-collapse: collapse;
-        width: 100%;
-        background-color: #fff;
-    }
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <h2>Daftar Workgroup</h2>
+            <form action="" method="post" class="d-flex mt-3">
+                <input type="text" name="keyword" class="form-control me-2" placeholder="Search..." aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+        </div>
+    </div>
 
-    th,
-    td {
-        padding: 10px;
-        border: 1px solid #ddd;
-    }
-
-    th {
-        background-color: #007bff;
-        color: white;
-    }
-
-    tr:nth-child(even) {
-        background-color: #f9f9f9;
-    }
-</style>
-
-<div style="margin-left: 50px; padding: 20px;">
-    <h1>Data Work Group</h1>
-    <table border="1" cellpadding="5" cellspacing="0">
-        <tr>
-            <th>ID</th>
-            <th>Workgroup</th>
-            <th>Active</th>
-            <th>Id Div</th>
-            <th>Id Group Shift</th>
-            <th>Zone</th>
-        </tr>
-        <?php foreach ($operation as $row): ?>
-            <tr>
-                <td><?= $row->idWG ?></td>
-                <td><?= $row->Workgroup ?></td>
-                <td><?= $row->Active ?></td>
-                <td><?= $row->idDiv ?></td>
-                <td><?= $row->idGroupShift ?></td>
-                <td><?= $row->zona ?></td>
-            </tr>
-        <?php endforeach; ?>
-    </table>
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>ID WG</th>
+                        <th>Workgroup</th>
+                        <th>Active</th>
+                        <th>ID Div</th>
+                        <th>ID Group Shift</th>
+                        <th>Zona</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (!empty($mstworkgroup)) : ?>
+                        <?php $i = 1; ?>
+                        <?php foreach ($mstworkgroup as $wg) : ?>
+                            <tr>
+                                <td><?= $wg['idWG']; ?></td>
+                                <td><?= $wg['Workgroup']; ?></td>
+                                <td><?= $wg['Active']; ?></td>
+                                <td><?= $wg['idDiv']; ?></td>
+                                <td><?= $wg['idGroupShift']; ?></td>
+                                <td><?= $wg['zona']; ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else : ?>
+                        <tr>
+                            <td colspan="5" class="text-center">Tidak ada data Workgroup.</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
