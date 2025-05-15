@@ -64,24 +64,25 @@ class Dashboard extends CI_Controller
 
     public function reportHari()
     {
-        // Mengambil data untuk laporan hari
-        $data['report_hari'] = $this->Dashboard_model->get_daily_report();
-        $this->load->view('Dashboard_Realtime/report_hari', $data);
+        $data['title'] = 'Laporan Harian Defect';
+        $data['report'] = $this->Dashboard_model->get_harian();
+        $this->load->view('Report_Defect/report_hari', $data);
     }
 
     public function reportMinggu()
     {
-        // Mengambil data untuk laporan minggu
-        $data['report_minggu'] = $this->Dashboard_model->get_mingguan();
-        $this->load->view('Dashboard_Realtime/report_minggu', $data);
+        $data['title'] = 'Laporan Mingguan Defect';
+        $data['report'] = $this->Dashboard_model->get_mingguan();
+        $this->load->view('Report_Defect/report_minggu', $data);
     }
 
     public function reportBulan()
     {
-        // Mengambil data untuk laporan bulan
-        $data['report_bulan'] = $this->Dashboard_model->get_bulanan();
-        $this->load->view('Dashboard_Realtime/report_bulan', $data);
+        $data['title'] = 'Laporan Bulanan Defect';
+        $data['report'] = $this->Dashboard_model->get_bulanan();
+        $this->load->view('Report_Defect/report_bulan', $data);
     }
+
 
     public function traffic_light()
     {

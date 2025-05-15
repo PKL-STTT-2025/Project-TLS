@@ -42,7 +42,6 @@
                         <?php $i = 1; ?>
                         <?php foreach ($master_user as $user) : ?>
                             <tr>
-                                <td><?= $i++; ?></td>
                                 <td><?= $user['id_user']; ?></td>
                                 <td><?= $user['nama']; ?></td>
                                 <td><?= $user['NIK']; ?></td>

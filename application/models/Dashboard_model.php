@@ -4,18 +4,15 @@ class Dashboard_model extends CI_Model
 
     private function get_count_by_status($start_date, $end_date)
     {
-        $this->db->select('status, COUNT(*) as jumlah');
-        $this->db->where("DATE(waktu_update) >=", $start_date);
-        $this->db->where("DATE(waktu_update) <=", $end_date);
-        $this->db->group_by('status');
-        return $this->db->get('dashboard')->result();
+        $this->db->select(' COUNT(*) as jumlah');
+        $this->db->where("DATE(tanggal) >=", $start_date);
+        $this->db->where("DATE(tanggal) <=", $end_date);
+        return $this->db->get('transaksi_checking')->result();
     }
 
     public function get_harian()
     {
         $today = date('Y-m-d');
-        $this->db->select('status, COUNT(*) as jumlah');
-        $this->db->where("DATE(waktu_update) >=", $today);
         return $this->get_count_by_status($today, $today);
     }
 
@@ -100,16 +97,5 @@ class Dashboard_model extends CI_Model
             $output[$row->op_name] = $row->total_kunjungan;
         }
         return $output;
-    }
-
-
-    public function get_daily_report()
-    {
-        // Contoh query: ambil jumlah defect per hari dari tabel defect
-        $this->db->select('DAYNAME(tanggal) AS hari, COUNT(*) AS jumlah');
-        $this->db->from('defect');
-        $this->db->group_by('DAYNAME(tanggal)');
-        $query = $this->db->get();
-        return $query->result_array();
     }
 }

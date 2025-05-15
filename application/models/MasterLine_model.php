@@ -23,8 +23,8 @@ class MasterLine_model extends CI_Model
     public function cariMasterLine()
     {
         $keyword = $this->input->post('keyword');
-        $this->db->like('line name', $keyword);
+        $this->db->like('spv', $keyword);
 
-        return $this->db->get('master_line')->result_array();
+        return $this->db->get('master_line')->result();
     }
 }

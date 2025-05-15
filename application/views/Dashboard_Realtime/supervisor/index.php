@@ -31,109 +31,74 @@
                         </div>
                     </div>
                 </div>
-                <div class="row text-center justify-content-center">
-                    <div class="col-md-3 mx-2 mb-4">
-
-                        <div class="card shadow mb-4">
-                            <!--Card Header -->
-                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <!-- TODAY -->
+                <div class="row justify-content-center mb-4">
+                    <!-- Doughnut Chart -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card shadow">
+                            <div class="card-header py-3">
                                 <h6 class="m-0 font-weight-bold text-primary">Persentase Today Defect</h6>
                             </div>
-                            <!-- Card Body -->
                             <div class="card-body">
-                                <div class="chart-container">
-                                    <canvas id="chartToday"></canvas>
+                                <div class="chart-pie pt-4 pb-2" style="height: 250px;">
+                                    <canvas id="ChartTodayPie"></canvas>
                                 </div>
-                                <div class="mt-2 small">
-                                    <span style="color:#ff4d4d">● 3 Operator</span><br>
-                                    <span style="color:#ffcc00">● 4 Operator</span><br>
-                                    <span style="color:#66cc66">● 18 Operator</span>
+                                <div class="mt-4 text-center small">
+                                    <span class="mr-2"><i class="fas fa-circle text-primary"></i> 3 Operator</span>
+                                    <span class="mr-2"><i class="fas fa-circle text-success"></i> 4 Operator</span>
+                                    <span class="mr-2"><i class="fas fa-circle text-info"></i> 18 Operator</span>
                                 </div>
                             </div>
                         </div>
                     </div>
+
 
                     <!-- WEEK -->
-                    <div class="col-md-3 mx-2 mb-4">
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <div class="col-md-4 mb-4">
+                        <div class="card shadow">
+                            <div class="card-header py-3">
                                 <h6 class="m-0 font-weight-bold text-primary">Persentase Week Defect</h6>
                             </div>
-                            <!-- Card Body -->
                             <div class="card-body">
-                                <div class="chart-container">
-                                    <canvas id="chartWeek"></canvas>
+                                <div class="chart-pie pt-4 pb-2" style="height: 250px;">
+                                    <canvas id="ChartWeekPie"></canvas>
                                 </div>
-                                <div class="mt-2 small">
-                                    <span style="color:#ff4d4d">● 3 Operator</span><br>
-                                    <span style="color:#ffcc00">● 4 Operator</span><br>
-                                    <span style="color:#66cc66">● 18 Operator</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- MONTH -->
-                        <div class="col-md-3 mx-2 mb-4">
-                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                <h6 class="m-0 font-weight-bold text-primary">Persentase Month Defect</h6>
-                            </div>
-                            <!-- Card Body -->
-                            <div class="card-body">
-                                <div class="chart-container">
-                                    <canvas id="chartMonth"></canvas>
-                                </div>
-                                <div class="mt-2 small">
-                                    <span style="color:#ff4d4d">● 3 Operator</span><br>
-                                    <span style="color:#ffcc00">● 4 Operator</span><br>
-                                    <span style="color:#66cc66">● 18 Operator</span>
+                                <div class="mt-4 text-center small">
+                                    <span class="mr-2"><i class="fas fa-circle text-primary"></i> 3 Operator</span>
+                                    <span class="mr-2"><i class="fas fa-circle text-success"></i> 4 Operator</span>
+                                    <span class="mr-2"><i class="fas fa-circle text-info"></i> 18 Operator</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
+                    <!-- MONTH -->
+
+                    <div class="col-md-4 mb-4">
+                        <div class="card shadow">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Persentase Month Defect</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-pie pt-4 pb-2" style="height: 250px;">
+                                    <canvas id="ChartMonthPie"></canvas>
+                                </div>
+                                <div class="mt-4 text-center small">
+                                    <span class="mr-2"><i class="fas fa-circle text-primary"></i> 3 Operator</span>
+                                    <span class="mr-2"><i class="fas fa-circle text-success"></i> 4 Operator</span>
+                                    <span class="mr-2"><i class="fas fa-circle text-info"></i> 18 Operator</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
-
-            </div>
-
-
-        </div>
-
-    </div>
-
-
-
-
-</div>
-<!-- End of Page Wrapper -->
-
-<!-- Scroll to Top Button-->
-<a class="scroll-to-top rounded" href="#page-top">
-    <i class="fas fa-angle-up"></i>
-</a>
-
-<!-- Logout Modal-->
-<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                <a class="btn btn-primary" href="<?= base_url('auth'); ?>">Logout</a>
             </div>
         </div>
     </div>
 </div>
-
+<!-- CHART.JS SCRIPT -->
 <script>
-    const createChart = (id, data) => {
+    const createDoughnutChart = (id, data, title) => {
         new Chart(document.getElementById(id), {
             type: 'doughnut',
             data: {
@@ -149,10 +114,15 @@
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        display: false
+                        display: false,
+
                     },
-                    tooltip: {
-                        enabled: true
+                    title: {
+                        display: true,
+                        text: title,
+                        font: {
+                            size: 14
+                        }
                     }
                 },
                 cutout: '70%'
@@ -160,7 +130,8 @@
         });
     };
 
-    createChart('chartToday', [10, 20, 70]);
-    createChart('chartWeek', [15, 25, 60]);
-    createChart('chartMonth', [5, 35, 60]);
+    // Contoh data (kamu tinggal ganti sesuai kebutuhan)
+    createDoughnutChart('ChartTodayPie', [10, 20, 70], 'Today Defect');
+    createDoughnutChart('ChartWeekPie', [15, 25, 60], 'Week Defect');
+    createDoughnutChart('ChartMonthPie', [5, 35, 60], 'Month Defect');
 </script>

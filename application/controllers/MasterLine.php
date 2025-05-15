@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @property CI_MasterLine_model $MasterLine_model
+ * @property CI_input $input
+ */
 class MasterLine extends CI_Controller
 {
 
@@ -17,7 +21,7 @@ class MasterLine extends CI_Controller
         if ($this->input->post('keyword')) {
             $data['master_line'] = $this->MasterLine_model->cariMasterLine();
         } else {
-            $data['master_line'] = $this->MasterLine_model->getAllLine();  // GANTI dari 'users' jadi 'master_line'
+            $data['master_line'] = $this->MasterLine_model->getAllLine();
         }
 
         $this->load->view('templates/header', $data);
