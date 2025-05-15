@@ -5,6 +5,16 @@
     <h2>Tambah Data Input Defect</h2>
     <form method="post" action="<?= base_url('TransaksiChecking/simpan'); ?>">
 
+        <div class="form-group">
+            <label>Line</label>
+            <input type="text" class="form-control" id="id_workgroup" value="<?= $line_name ?>" readonly>
+        </div>
+
+        <div class="form-group">
+            <label>Style</label>
+            <input type="text" class="form-control"  value="<?= $style_name ?>" readonly>
+        </div>
+
         <!-- Nama Operator -->
         <div class="form-group">
             <label>Nama Operator</label>

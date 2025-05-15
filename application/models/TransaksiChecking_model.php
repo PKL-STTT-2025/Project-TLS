@@ -202,4 +202,13 @@ class TransaksiChecking_model extends CI_Model
         $query = $this->db->get();
         return $query->result_array();
     }
+
+    public function getById ($id)
+    {
+        return $this->db->get_where('mstworkgroup', ['idWG' => $id])->row();
+    }
+    public function getStyleById ($id)
+    {
+        return $this->db->get_where('operation_breakdown', ['id' => $id])->row();
+    }
 }

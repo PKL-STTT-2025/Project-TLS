@@ -55,10 +55,6 @@
                         });
                     });
                 </script>
-
-            <div class="col-md-4 mt-4">
-                <button type="submit" class="btn btn-primary">Add</button>
-            </div>
         </div>
     </form>
 
@@ -76,8 +72,9 @@
     <div class="row mt-3">
         <div class="col-md-6">
             <h2>Transaksi Checking</h2>
-            <a href="<?= base_url(); ?>TransaksiChecking/tambah" class="btn btn-primary">Add Data Input Defect</a>
-            <form action="" method="post" class="d-flex mt-3">
+            <a href="#" id="btnAdd" class="btn btn-success">Add</a>
+            <!-- <a href="<?= base_url(); ?>TransaksiChecking/tambah?Workgroup=<?= $line; ?>&style=<?= $style; ?>" class="btn btn-primary">Add Data Input Defect</a> -->
+            <form action=""  class="d-flex mt-3">
                 <input type="text" name="keyword" class="form-control me-2" placeholder="Search..." aria-label="Search">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
@@ -111,19 +108,21 @@
                     <tbody>
                     <?php if (!empty($TransaksiChecking)) : ?>
                         <?php $i = 1; ?>
-                        <?php foreach ($TransaksiChecking as $transaksi) : ?>
+                        <?php foreach ($TransaksiChecking as $transaksi) : ?> 
                             <tr>
                                 <td><?= $i++; ?></td>
+                                <td><?= $transaksi['employee_name'] ?? '-' ?></td>
                                 <td><?= $transaksi['operation_code'] ?? '-' ?></td>
                                 <td><?= $transaksi['operation_name'] ?? '-' ?></td>
-                                <td><?= $transaksi['employee_name'] ?? '-' ?></td>
+                                <td><?= $transaksi['kode_defect'] ?? '-' ?></td>
+                                <td><?= $transaksi['deskripsi_defect'] ?? '-' ?></td>
+                                <td><?= $transaksi['kategori'] ?? '-' ?></td>
                                 <td>
-                                    <a href="<?= base_url('transaksi_checking/detail/'.$transaksi['id']) ?>" class="btn btn-info">Detail</a>
-                                    <a href="<?= base_url('transaksi_checking/ubah/'.$transaksi['id']) ?>" class="btn btn-warning">Ubah</a>
-                                    <a href="<?= base_url('transaksi_checking/hapus/'.$transaksi['id']) ?>" class="btn btn-danger" onclick="return confirm('Yakin?');">Hapus</a>
+                                    <a href="<?= base_url('TransaksiChecking/detail/'.$transaksi['id_transaksi_checking']) ?>" class="btn btn-info">Detail</a>
+                                    <a href="<?= base_url('TransaksiChecking/ubah/'.$transaksi['id_transaksi_checking']) ?>" class="btn btn-warning">Ubah</a>
+                                    <a href="<?= base_url('TransaksiChecking/hapus/'.$transaksi['id_transaksi_checking']) ?>" class="btn btn-danger" onclick="return confirm('Yakin?');">Hapus</a>
                                 </td>
-                                <td>
-                                </td>
+                                <td><?= ($transaksi['masalah_selesai'] === '1') ? "Done": "Not Done"  ?></td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else : ?>
@@ -137,3 +136,19 @@
     </div>
 </div>
 
+<script>
+    $('#btnAdd').on('click', function(e) {
+        e.preventDefault(); // Cegah link langsung jalan
+        var line = $('#Workgroup').val(); // Ambil value dropdown
+
+        // Buat URL baru
+        var url = '<?= base_url("TransaksiChecking/tambah") ?>';
+
+        if (line !== '') {
+            url += '?line=' + encodeURIComponent(line);
+        }
+
+        // Redirect ke URL baru
+        window.location.href = url;
+    });
+</script>

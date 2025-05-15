@@ -34,7 +34,7 @@ class TransaksiChecking extends CI_Controller
             // Awalnya kosong
             // $data['transaksi_checking'] = [];
         }
-
+        
         $this->load->view('templates/header', $data);
         $this->load->view('TransaksiChecking/index', $data);
         $this->load->view('templates/footer');
@@ -89,7 +89,27 @@ class TransaksiChecking extends CI_Controller
         $data['operation_code'] = $this->TransaksiChecking_model->getAllOperationCode();
         $data['defect_list'] = $this->TransaksiChecking_model->getAllDefect();
         
+        // load data line dari url
+        $id = $this->input->get('line'); 
+        $data['line'] = $id;
+
+        $this->load->model('TransaksiChecking_model');
+        $line = $this->TransaksiChecking_model->getById($id);
+
+        $data['line_name'] = $line ? $line->Workgroup : '';
+        $data['Workgroup'] = $line;
+            
         
+        // load data style dari url
+        $id = $this->input->get('style'); 
+        $data['style'] = $id;
+
+        $this->load->model('TransaksiChecking_model');
+        $style = $this->TransaksiChecking_model->getStyleById($id);
+
+        $data['style_name'] = $style ? $style->style : '';
+        $data['style'] = $style;
+            
         
         if($this->form_validation->run()==FALSE) {
             $this->load->view('templates/header', $data);
