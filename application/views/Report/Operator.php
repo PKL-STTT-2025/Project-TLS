@@ -81,9 +81,9 @@
                 <label>Style:</label>
                 <select class="form-control" name="style" id="style" required>
                     <option value="">-- Pilih Style --</option>
-                    <?php foreach ($style_list as $style): ?>
+                    <!-- <?php foreach ($style_list as $style): ?>
                         <option value="<?= $style['style']; ?>"><?= $style['style']; ?></option>
-                    <?php endforeach; ?>
+                    <?php endforeach; ?> -->
                 </select>
             </div>
 
@@ -144,3 +144,30 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function() {
+        $('#Workgroup').change(function() {
+            var selectedLine = $(this).val();
+
+            if (selectedLine !== '') {
+                $.ajax({
+                    url: "<?= base_url('ReportOperator/get_styles_by_line'); ?>",
+                    method: "POST",
+                    data: {
+                        Workgroup: line
+                    },
+                    dataType: "json",
+                    success: function(data) {
+                        $('#style').html('<option value="">-- Pilih Style --</option>');
+                        $.each(data, function(index, value) {
+                            $('#style').append('<option value="' + value.style + '">' + value.style + '</option>');
+                        });
+                    }
+                });
+            } else {
+                $('#style').html('<option value="">-- Pilih Style --</option>');
+            }
+        });
+    });
+</script>

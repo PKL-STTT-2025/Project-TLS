@@ -45,6 +45,13 @@ class ReportOperator extends CI_Controller
         $this->load->view('templates/footer');
     }
 
+    public function get_styles_by_line()
+    {
+        $line = $this->input->post('line');
+
+        echo "Line yang dikirim: "($line);
+    }
+
     public function report_operator()
     {
         $data['title'] = 'Histori Defect Operator';
