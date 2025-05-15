@@ -57,7 +57,7 @@
                 </script>
 
             <div class="col-md-4 mt-4">
-                <button type="submit" class="btn btn-primary">Search</button>
+                <button type="submit" class="btn btn-primary">Add</button>
             </div>
         </div>
     </form>
@@ -76,7 +76,7 @@
     <div class="row mt-3">
         <div class="col-md-6">
             <h2>Transaksi Checking</h2>
-            <a href="<?= base_url(); ?>transaksi_checking/tambah" class="btn btn-primary">Tambah Data Input Defect</a>
+            <a href="<?= base_url(); ?>TransaksiChecking/tambah" class="btn btn-primary">Add Data Input Defect</a>
             <form action="" method="post" class="d-flex mt-3">
                 <input type="text" name="keyword" class="form-control me-2" placeholder="Search..." aria-label="Search">
                 <button class="btn btn-outline-success" type="submit">Search</button>
@@ -90,18 +90,18 @@
                 <thead>
                     <tr>
                     <th>No</th>
+                    <th>Nama Operator</th>
                     <th>Kode Proses</th>
                     <th>Nama Proses</th>
-                    <th>Nama Operator</th>
-                    <!-- <th>Kode Defect</th>
+                    <th>Kode Defect</th>
                     <th>Deskripsi Defect</th>
-                    <th>Kategori</th> -->
+                    <th>Kategori</th>
                     <th>Aksi</th>
                     <th>Masalah Selesai</th>
                     </tr>
                 </thead>
-                <?php if (!empty($transaksi_checking)) : ?>
-                        <?php foreach ($transaksi_checking as $transaksi) : ?>
+                <?php if (!empty($TransaksiChecking)) : ?>
+                        <?php foreach ($TransaksiChecking as $transaksi) : ?>
                         <?php endforeach; ?>
                 <?php else : ?>
                         <tr>
@@ -109,9 +109,9 @@
                         </tr>
                     <?php endif; ?>
                     <tbody>
-                    <?php if (!empty($transaksi_checking)) : ?>
+                    <?php if (!empty($TransaksiChecking)) : ?>
                         <?php $i = 1; ?>
-                        <?php foreach ($transaksi_checking as $transaksi) : ?>
+                        <?php foreach ($TransaksiChecking as $transaksi) : ?>
                             <tr>
                                 <td><?= $i++; ?></td>
                                 <td><?= $transaksi['operation_code'] ?? '-' ?></td>

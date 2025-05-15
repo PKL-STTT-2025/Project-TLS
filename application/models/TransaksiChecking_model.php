@@ -1,6 +1,6 @@
 <?php
 
-class transaksi_checking_model extends CI_Model
+class TransaksiChecking_model extends CI_Model
 {
     public function __construct()
     {
@@ -106,15 +106,31 @@ class transaksi_checking_model extends CI_Model
 
     public function tambahDataInputDefect()
     {
-       $data = [
-        "operation_name"=> $this-> input->post('nama', true),
-        ""=> $this-> input->post('nrp', true),
-        "email"=> $this-> input->post('email', true),
-        "jurusan"=> $this-> input->post('jurusan', true)
-       ] ;
-
-        $this->db->insert ('transaksi_checking', $data);
+        $empID = $this->input->post('empID', true);
+        $operationcode = $this->input->post('op_code', true);
+        $kodeDefect = $this->input->post('kode_defect', true);
+        
+        $this->db->select('name')->from('mstemp')->where('empID', $empID)->limit(1);
+        $operator = $this->db->get()->row_array();
+        
+        $this->db->select('op_name')->from('master_opt_layout')->where('id', $operationcode)->limit(1);
+        $proses = $this->db->get()->row_array();
+        
+        $data = [
+            'empID' => $empID,
+            'employee_name' => $operator['name'] ?? 'Unknown',
+            'operation_code' => $operationcode,
+            'operation_name' => $proses['op_name'] ?? 'Unknown',
+            'kode_defect' => $kodeDefect,
+            'deskripsi_defect' => $this->input->post('deskripsi_defect', true),
+            'kategori' => $this->input->post('kategori', true),
+            // 'tanggal_input' => date('Y-m-d H:i:s')
+        ];
+        
+        $this->db->insert('transaksi_checking', $data);
+        return $this->db->insert_id();
     }
+        
 
     public function hapusDataInputDefect($id)
     {
@@ -149,14 +165,24 @@ class transaksi_checking_model extends CI_Model
         return $this->db->get('transaksi_checking')->result_array();
     }
 
+    public function getAllMasterEmployee()
+    {
+        $this->db->select('empID, name');
+        $this->db->from('mstemp');
+        $query = $this->db->get();
+    
+    // echo $this->db->last_query(); 
+    // die();
+    
+    return $query->result_array();
+    }
+
     public function getAllOperationCode()
     {
-        $query = $this->db->get('master_opt_layout');
-        if ($query->num_rows() > 0) {
-            return $query->result_array();
-        } else {
-            return array(); 
-        }
+        $this->db->select('op_code, op_name');
+        $this->db->from('master_opt_layout');
+        $query = $this->db->get();
+        return $query->result_array();
     }
 
     public function getAllOperationName()
@@ -167,5 +193,13 @@ class transaksi_checking_model extends CI_Model
         } else {
             return array(); 
         }
+    }
+
+    public function getAllDefect()
+    {
+        $this->db->select('kode_defect, deskripsi_defect, kategori');
+        $this->db->from('master_defect');
+        $query = $this->db->get();
+        return $query->result_array();
     }
 }
