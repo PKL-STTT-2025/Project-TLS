@@ -39,14 +39,6 @@ class ReportOperator_model extends CI_Model
             return array();
         }
     }
-    public function getStylesByLine($line)
-    {
-        $this->db->select('style');
-        $this->db->distinct();
-        $this->db->where('Workgroup', $line);
-        $query = $this->db->get('operation_breakdown');
-        return $query->result_array();
-    }
 
 
     public function getFilteredReport($line, $style)
@@ -57,9 +49,33 @@ class ReportOperator_model extends CI_Model
         return $query->result();
     }
 
-    public function get_data_operator()
+    public function getStyleByLine($Workgroup)
     {
-        $id_opb = $this->input->post('id_opb');
+        $query = "SELECT
+                t1.id AS id_operation_breakdown,
+                t1.style,
+                t1.date_created,
+                mstWorkgroup.Workgroup,
+                mstWorkgroup.idWG AS id_master_workgroup
+            FROM 
+                operation_breakdown AS t1
+            JOIN master_line ON master_line.id = t1.id_line
+            JOIN mstWorkgroup ON mstWorkgroup.idWG = master_line.line_name
+            WHERE  mstWorkgroup.idWG = $Workgroup
+            ORDER BY t1.date_created DESC;";
+
+        $result = $this->db->query($query);
+        return $result->result_array();
+    }
+    public function get_data_operator_by_line_and_style($line, $style)
+    {
+        $this->db->where('id_line', $line);
+        $this->db->where('style', $style);
+        return $this->db->get('operation_breakdown')->result();
+    }
+
+    public function get_data_operator($id_opb)
+    {
         $query = "SELECT
             master_opt_layout.id_employee,
             mstemp.name AS operator_name,
@@ -73,9 +89,8 @@ class ReportOperator_model extends CI_Model
         return $this->db->query($query, [$id_opb])->result();
     }
 
-    public function get_operator()
+    public function get_operator($id_employee, $id_opb)
     {
-        $id_opb = $this->input->post('id_opb');
         $query = "SELECT
         master_opt_layout.id_employee,
         mstemp.name AS operator_name,
@@ -85,12 +100,11 @@ class ReportOperator_model extends CI_Model
         JOIN mstemp ON master_opt_layout.id_employee = mstemp.empID
         JOIN jns_barang ON master_opt_layout.id_machine = jns_barang.id_jnsbarang
         WHERE master_opt_layout.id_employee = ? AND master_opt_layout.id_opb = ?";
-        return $this->db->query($query, [$id_opb])->result();
+        return $this->db->query($query, [$id_employee, $id_opb])->result_array();
     }
 
-    public function get_defect_operator()
+    public function get_defect_operator($id_employee, $id_opb)
     {
-        $id_opb = $this->input->post('id_opb');
         $query = "SELECT
         transaksi_checking_detail.id_defect,
         transaksi_checking_detail.id_transaksi_checking,
@@ -99,8 +113,8 @@ class ReportOperator_model extends CI_Model
         JOIN master_defect ON transaksi_checking_detail.id_defect = master_defect.id
         JOIN transaksi_checking ON transaksi_checking_detail.id_transaksi_checking = transaksi_checking.id_transaksi_checking
         JOIN master_opt_layout ON transaksi_checking.id_layout = master_opt_layout.id
-        WHERE master_opt_layout.id_opb = ?";
-        return $this->db->query($query, [$id_opb])->result();
+        WHERE master_opt_layout.id_employee = ? AND master_opt_layout.id_opb = ?";
+        return $this->db->query($query, [$id_employee, $id_opb])->result_array();
     }
 
     public function getJumlahKunjunganQC()

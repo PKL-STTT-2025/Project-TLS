@@ -6,7 +6,6 @@
 
 </div>
 <!-- End of Content Wrapper -->
-</body>
 <!-- Footer -->
 <footer class="sticky-footer bg-white">
     <div class="container my-auto">
@@ -16,6 +15,7 @@
     </div>
 </footer>
 <!-- End of Footer -->
+</body>
 
 <!-- Custom scripts for all pages-->
 <script src="<?= base_url('assets/'); ?>js/sb-admin-2.min.js"></script>

@@ -14,10 +14,8 @@ class ReportOperator extends CI_Controller
         $this->load->library('session');
     }
 
-    public function index() {}
 
-
-    public function Operator()
+    public function index()
     {
         $data['title'] = 'Operator per Line';
         $data['Report_Operator'] = $this->ReportOperator_model->getAllReportOperator();
@@ -32,31 +30,37 @@ class ReportOperator extends CI_Controller
 
             // filter di model berdasarkan Line dan Style
             $data['Report_Operator'] = $this->ReportOperator_model->getFilteredReport($line, $style);
+            $data['operators'] = $this->ReportOperator_model->get_data_operator_by_line_and_style($line, $style);
         } elseif ($this->input->post('keyword')) {
             $data['Report_Operator'] = $this->ReportOperator_model->cariReportOperator();
         } else {
             // Awalnya kosong
             $data['Report_Operator'] = [];
         }
+        // $id_employee = $this->input->post('id_employee');
+        // $id_opb = $this->input->post('id_opb');
         $data['jumlah_kunjungan'] = $this->ReportOperator_model->getJumlahKunjunganQC();
-        $data['operators'] = $this->ReportOperator_model->get_data_operator();
         $this->load->view('templates/header', $data);
         $this->load->view('Report/Operator', $data);
         $this->load->view('templates/footer');
     }
 
-    public function get_styles_by_line()
+    public function getStyleByLine()
     {
-        $line = $this->input->post('line');
+        // masih bingung yang ini  (workgroup)sama style
+        $Workgroup = (int)$this->input->post('Workgroup');
 
-        echo "Line yang dikirim: "($line);
+        // var_dump((int)$Workgroup);
+        // die;
+
+        $response = $this->ReportOperator_model->getStyleByLine($Workgroup);
+        echo json_encode($response);
     }
-
-    public function report_operator()
+    public function report_operator($id_employee, $id_opb)
     {
         $data['title'] = 'Histori Defect Operator';
-        $data['op'] = $this->ReportOperator_model->get_operator();
-        $data['defects'] = $this->ReportOperator_model->get_defect_operator();
+        $data['op'] = $this->ReportOperator_model->get_operator($id_employee, $id_opb);
+        $data['defects'] = $this->ReportOperator_model->get_defect_operator($id_employee, $id_opb);
         $data['total_kunjungan'] = 5;
         $this->load->view('templates/header', $data);
         $this->load->view('Report/report_operator', $data);

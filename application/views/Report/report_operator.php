@@ -35,18 +35,25 @@
                         <div>
                             <i class="fas fa-user fa-5x text-secondary"></i>
                         </div>
-                        <div class="ps-6">
-                            <h5 class="mb-1"><?= $op->operator_name ?></h5>
-                            <p class="mb-1"><small>(<?= $op->nama_mesin ?>)</small></p>
-                            <p class="mb-1"><small>(<?= $op->kode_proses ?>)</small></p>
-                            <?php
-                            $status = strtolower($op->status ?? 'active');
-                            $badgeClass = [
-                                'active' => 'bg-success',
-                            ][$status] ?? 'bg-secondary';
-                            ?>
-                            <span class="badge <?= $badgeClass ?>"><?= ucfirst($status) ?></span>
-                        </div>
+
+                        <?php if (!empty($op)): ?>
+                            <?php $operator = $op[0]; ?>
+                            <div class="ps-6">
+                                <h5 class="mb-1"><?= $operator['operator_name'] ?></h5>
+                                <p class="mb-1"><small><?= $operator['nama_mesin'] ?></small></p>
+                                <p class="mb-1"><small><?= $operator['kode_proses'] ?></small></p>
+                                <?php
+                                $status = strtolower($operator['status'] ?? 'active');
+                                $badgeClass = [
+                                    'active' => 'bg-success',
+                                ][$status] ?? 'bg-secondary';
+                                ?>
+                                <span class="badge <?= $badgeClass ?>"><?= ucfirst($status) ?></span>
+                            </div>
+                        <?php else: ?>
+                            <p>Data operator tidak ditemukan.</p>
+                        <?php endif; ?>
+
                     </div>
                 </div>
             </div>
@@ -69,9 +76,10 @@
                         <div class="row text-center mb-4">
                             <?php for ($i = 1; $i <= 12; $i++) :
                                 $color = ($i <= $total_kunjungan) ? '#4caf50' : '#e0e0e0';
+                                $textColor = ($i <= $total_kunjungan) ? '#ffffff' : '#000000';
                             ?>
                                 <div class="col-4 mb-3">
-                                    <div style="width: 40px; height: 40px; border-radius: 50%; background-color: <?= $color ?>; display: flex; align-items: center; justify-content: center;font-weight: bold;">
+                                    <div style="width: 40px; height: 40px; border-radius: 50%; background-color: <?= $color ?>; display: flex; align-items: center; justify-content: center;font-weight: bold; color: <?= $textColor ?>;">
                                         <?= $i ?>
                                     </div>
                                 </div>
