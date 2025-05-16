@@ -62,28 +62,6 @@ class Dashboard extends CI_Controller
         $this->load->view('templates/footer');
     }
 
-    public function reportHari()
-    {
-        $data['title'] = 'Laporan Harian Defect';
-        $data['report'] = $this->Dashboard_model->get_harian();
-        $this->load->view('Report_Defect/report_hari', $data);
-    }
-
-    public function reportMinggu()
-    {
-        $data['title'] = 'Laporan Mingguan Defect';
-        $data['report'] = $this->Dashboard_model->get_mingguan();
-        $this->load->view('Report_Defect/report_minggu', $data);
-    }
-
-    public function reportBulan()
-    {
-        $data['title'] = 'Laporan Bulanan Defect';
-        $data['report'] = $this->Dashboard_model->get_bulanan();
-        $this->load->view('Report_Defect/report_bulan', $data);
-    }
-
-
     public function traffic_light()
     {
         $data['title'] = 'Data Operator per Line';

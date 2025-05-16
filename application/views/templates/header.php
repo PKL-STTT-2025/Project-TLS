@@ -103,9 +103,9 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Data Report:</h6>
-                        <a class="collapse-item" href="<?php echo base_url('Dashboard/reportHari'); ?>">Report/Hari</a>
-                        <a class="collapse-item" href="<?php echo base_url('Dashboard/reportMinggu'); ?>">Report/Minggu</a>
-                        <a class="collapse-item" href="<?php echo base_url('Dashboard/reportBulan'); ?>">Report/Bulan</a>
+                        <a class="collapse-item" href="<?php echo base_url('Report_Defect/reportHari'); ?>">Report/Hari</a>
+                        <a class="collapse-item" href="<?php echo base_url('Report_Defect/reportMinggu'); ?>">Report/Minggu</a>
+                        <a class="collapse-item" href="<?php echo base_url('Report_Defect/reportBulan'); ?>">Report/Bulan</a>
                     </div>
                 </div>
             </li>
@@ -144,6 +144,7 @@
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
+
 
         </ul>
         <!-- End of Sidebar -->
