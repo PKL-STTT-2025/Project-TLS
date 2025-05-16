@@ -1,5 +1,11 @@
 <div class="container p-5">
     <title>Transaksi Checking</title>
+        <?php if ($this->session->flashdata('success')): ?>
+        <div class="alert alert-success">
+            <?= $this->session->flashdata('success') ?>
+        </div>
+    <?php endif; ?>
+
     <form method="post" action="<?= base_url('TransaksiChecking/index'); ?>">
         <div class="row">
             <div class="col-md-4">

@@ -110,11 +110,11 @@ class TransaksiChecking_model extends CI_Model
         $operationcode = $this->input->post('op_code', true);
         $kodeDefect = $this->input->post('kode_defect', true);
         
-        $this->db->select('name')->from('mstemp')->where('empID', $empID)->limit(1);
-        $operator = $this->db->get()->row_array();
+        $this->db->select('name')->from('mstemp')->limit(5);
+        $operators = $this->db->get()->result_array();
         
-        $this->db->select('op_name')->from('master_opt_layout')->where('id', $operationcode)->limit(1);
-        $proses = $this->db->get()->row_array();
+        $this->db->select('op_name')->from('master_opt_layout')->limit(5);
+        $proses = $this->db->get()->result_array();
         
         $data = [
             'empID' => $empID,
@@ -130,8 +130,12 @@ class TransaksiChecking_model extends CI_Model
         $this->db->insert('transaksi_checking', $data);
         return $this->db->insert_id();
     }
-        
 
+    public function insert($data)
+    {
+        $this->db->insert('transaksi_checking', $data);
+    }
+    
     public function hapusDataInputDefect($id)
     {
         //$this->db->where('id', $id);
@@ -140,7 +144,7 @@ class TransaksiChecking_model extends CI_Model
 
     public function getTransaksiById($id)
     {
-    return $this->db->get_where('transaksi_checking', ['id' => $id])->row_array();
+    return $this->db->get_where('transaksi_checking', ['id_transaksi_checking' => $id])->row_array();
     }
 
 
@@ -152,9 +156,15 @@ class TransaksiChecking_model extends CI_Model
         "employee_name" => $this->input->post('employee_name', true),
     ];
 
-    $this->db->where('id', $this->input->post('id'));
+    $this->db->where('id_transaksi_checking', $this->input->post('id_transaksi_checking'));
     $this->db->update('transaksi_checking', $data);
     }
+    public function update($id, $data)
+    {
+        $this->db->where('id_transaksi_checking', $id);
+        $this->db->update('transaksi_checking', $data);
+    }
+
 
     public function cariDataInputDefect()
     {
@@ -197,7 +207,7 @@ class TransaksiChecking_model extends CI_Model
 
     public function getAllDefect()
     {
-        $this->db->select('kode_defect, deskripsi_defect, kategori');
+        $this->db->select('kode_defect, deskripsi_defect, kategori_defect');
         $this->db->from('master_defect');
         $query = $this->db->get();
         return $query->result_array();
@@ -210,5 +220,7 @@ class TransaksiChecking_model extends CI_Model
     public function getStyleById ($id)
     {
         return $this->db->get_where('operation_breakdown', ['id' => $id])->row();
+       
     }
+    
 }

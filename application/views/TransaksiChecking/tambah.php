@@ -12,7 +12,8 @@
 
         <div class="form-group">
             <label>Style</label>
-            <input type="text" class="form-control"  value="<?= $style_name ?>" readonly>
+            <input type="text" class="form-control" id="id"  value="<?= $style_name ?>" readonly>
+
         </div>
 
         <!-- Nama Operator -->
@@ -28,54 +29,52 @@
 
         <!-- Kode Proses + Nama Proses -->
         <div class="form-group">
-            <label>Kode Proses</label>
-            <select class="form-control" name="op_code" id="op_code" required>
-                <option value="">-- Pilih Kode Proses --</option>
-                <?php foreach ($operation_code as $oc): ?>
-                    <option 
-                        value="<?= $oc['op_code']; ?>" 
-                        data-op-name="<?= htmlspecialchars($oc['op_name']); ?>">
-                        <?= $oc['op_code']; ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-
-         <!-- Nama Proses (otomatis muncul)  -->
-        <div class="form-group">
             <label>Nama Proses</label>
-            <input type="text" class="form-control" id="op_name" readonly placeholder="Akan muncul otomatis">
-        </div>
-
-        <!-- Kode Defect -->
-        <div class="form-group">
-            <label>Kode Defect</label>
-            <select class="form-control" name="kode_defect" id="kode_defect" required>
-                <option value="">-- Pilih Kode Defect --</option>
-                <?php foreach ($defect_list as $def): ?>
+            <select class="form-control" name="op_name" id="op_name" required>
+                <option value="">-- Pilih Nama Proses --</option>
+                <?php foreach ($operation_name as $on): ?>
                     <option 
-                        value="<?= $def['kode_defect']; ?>" 
-                        data-defect-name="<?= htmlspecialchars($def['kode_defect']); ?>">
-                        <?= $def['kode_defect']; ?>
+                        value="<?= $on['op_name']; ?>" 
+                        data-op-code="<?= htmlspecialchars($on['op_code']); ?>">
+                        <?= $on['op_name']; ?>
                     </option>
                 <?php endforeach; ?>
             </select>
         </div>
 
-        <!-- Nama Defect (otomatis muncul) -->
+         <!-- Kode Proses (otomatis muncul)  -->
+        <div class="form-group">
+            <label>Kode Proses</label>
+            <input type="text" class="form-control" name="op_code" id="op_code" readonly>
+        </div>
+
+        <!--Nama Defect -->
         <div class="form-group">
             <label>Nama Defect</label>
-            <input type="text" class="form-control" id="deskripsi_defect" readonly placeholder="Akan muncul otomatis">
+            <select class="form-control" name="deskripsi_defect" id="deskripsi_defect" required>
+                <option value="">-- Pilih Nama Defect --</option>
+                <?php foreach ($defect_list as $def): ?>
+                    <option 
+                        value="<?= $def['deskripsi_defect']; ?>" 
+                        data-kode-defect="<?= htmlspecialchars($def['kode_defect']); ?>" 
+                        data-kategori-defect="<?= htmlspecialchars($def['kategori_defect']); ?>">
+                        <?= $def['deskripsi_defect']; ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <!-- Kode Defect (otomatis muncul) -->
+        <div class="form-group">
+            <label>Kode Defect</label>
+            <input type="text" class="form-control" name="kode_defect" id="kode_defect" readonly>
         </div>
 
         <!-- Kategori Defect -->
         <div class="form-group">
             <label>Kategori Defect</label>
-            <select class="form-control" name="kategori" required>
-                <option value="">-- Pilih Kategori --</option>
-                <option value="Major">Major</option>
-                <option value="Minor">Minor</option>
-            </select>
+            <input type="text" class="form-control" name="kategori_defect" id="kategori_defect" readonly>
+            <input type="hidden" name="kategori" id="kategori_input">
         </div>
 
         <!-- Tombol Simpan -->
@@ -86,16 +85,23 @@
             <script>
                     $(document).ready(function () {
                 // Nama Proses otomatis
-                $('#op_code').on('change', function () {
-                    var nama = $(this).find(':selected').data('op-name');
-                    $('#op_name').val(nama || '');
+                $('#op_name').on('change', function () {
+                    var kode = $(this).find(':selected').data('op-code');
+                    $('#op_code').val(kode || '');
                 });
 
-                // Nama Defect otomatis
-                $('#kode_defect').on('change', function () {
-                    var defectName = $(this).find(':selected').data('deskripsi_defect');
-                    $('#deskripsi_defect').val(defectName || '');
+                     $(document).ready(function () {
+                    // Saat Nama Defect dipilih
+                    $('#deskripsi_defect').on('change', function () {
+                        var kodeDefect = $(this).find(':selected').data('kode-defect');
+                        var kategori = $(this).find(':selected').data('kategori-defect');
+
+                        $('#kode_defect').val(kodeDefect || '');
+                        $('#kategori_defect').val(kategori || '');
+                        $('#kategori_input').val(kategori || '');
+                    });
                 });
+
             });
         </script>
 </div>
