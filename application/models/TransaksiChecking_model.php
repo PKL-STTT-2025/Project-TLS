@@ -224,5 +224,21 @@ class TransaksiChecking_model extends CI_Model
     {
         return $this->db->get_where('operation_breakdown', ['id' => $id])->row();
     }
-        
+
+    public function getUserById ($id)
+    {
+        $this->db->select('name');
+        $this->db->from('mstemp');
+        $this->db->where('empID', $id);
+        return $this->db->get()->row();
+    }
+
+    public function getLineById($id)
+    {
+        $this->db->select('Workgroup');
+        $this->db->from('mstworkgroup');
+        $this->db->where('idWG', $id);
+        return $this->db->get()->row();
+    }
+
 }

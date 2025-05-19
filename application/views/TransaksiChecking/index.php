@@ -105,10 +105,9 @@
                                 <td><?= $i++; ?></td>
                                 <td><?= $transaksi['id_workgroup'] ?? '-' ?></td>
                                 <td><?= $transaksi['id_style'] ?? '-' ?></td>
-                                <td><?= $transaksi['empID'] ?? '-' ?></td>
                                 <td><?= $transaksi['employee_name'] ?? '-' ?></td>
-                                <td><?= $transaksi['operation_code'] ?? '-' ?></td>
-                                <td><?= $transaksi['operation_name'] ?? '-' ?></td>
+                                <td><?= $transaksi['op_code'] ?? '-' ?></td>
+                                <td><?= $transaksi['op_name'] ?? '-' ?></td>
                                 <td><?= $transaksi['kode_defect'] ?? '-' ?></td>
                                 <td><?= $transaksi['deskripsi_defect'] ?? '-' ?></td>
                                 <td><?= $transaksi['kategori'] ?? '-' ?></td>

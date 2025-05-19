@@ -8,6 +8,7 @@
         <div class="form-group">
             <label>Line</label>
             <input type="text" class="form-control" id="id_workgroup" value="<?= $line_name ?>" readonly>
+            <input type="hidden" name="id_workgroup" value="<?= $line ?>">
         </div>
 
         <div class="form-group">

@@ -25,6 +25,7 @@ class TransaksiChecking extends CI_Controller
             $data['selected_line'] = $this->input->get('Workgroup');
             $data['style_list'] = $this->TransaksiChecking_model->getStyleByLine($data['selected_line']);
         } 
+        // $data['line_name'] = $this->TransaksiChecking_model->getLineById()
 
          // Jika user sudah pilih Line dan klik Search
         if ($this->input->post('Workgroup')) {
@@ -128,6 +129,8 @@ class TransaksiChecking extends CI_Controller
             $this->load->view('templates/footer');
         } else {
             $data =[
+                'id_workgroup'=>$this->input->post('id_workgroup'),
+                'id_style'=>$this->input->post('id_style'),
                 'empID'=>$this->input->post('empID'),
                 'employee_name'=>$this->input->post('employee_name'),
                 'operation_code'=>$this->input->post('operation_code'),
@@ -144,9 +147,13 @@ class TransaksiChecking extends CI_Controller
 
     public function simpan()
     {
-            $data = [
+        $emp_data = $this->TransaksiChecking_model->getUserById($this->input->post('empID'));  
+        $emp_name = isset($emp_data->name) ? $emp_data->name : '';
+        $data = [
+                'id_workgroup'      => $this->input->post('id_workgroup'),
+                'id_style'          => $this->input->post('id_style'),
                 'id_employee'       => $this->input->post('empID'), 
-                'employee_name'     => $this->input->post('employee_name'),
+                'employee_name'     => $emp_name,
                 'op_name'           => $this->input->post('op_name'),
                 'op_code'           => $this->input->post('op_code'),
                 'kode_defect'       => $this->input->post('kode_defect'), 
@@ -162,9 +169,10 @@ class TransaksiChecking extends CI_Controller
         
             $this->TransaksiChecking_model->insert($data);
         
+        
             $this->session->set_flashdata('success', 'Data berhasil disimpan!');
             redirect('TransaksiChecking');
-        }
+     }
 
     public function hapus ($id)
     {
@@ -227,7 +235,7 @@ class TransaksiChecking extends CI_Controller
 
     }
 
-        public function update()
+        public function update($id)
     {
         $id = $this->input->post('id_transaksi_checking');
         $data = [
