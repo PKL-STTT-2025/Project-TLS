@@ -1,8 +1,14 @@
-<div class="container">
-    <h3>Input Defect Detail</h3>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Detail Input Defect</h2>
+        </div>
+    </div>
     <div class="row mt-3">
         <div class="col-md-6">
             <ul class="list-group">
+                <li class="list-group-item">Line : <?= $transaksi_checking['id_workgroup'] ?></li>
+                <li class="list-group-item">Style : <?= $transaksi_checking['id_style'] ?></li>
                 <li class="list-group-item">Nama Operator : <?= $transaksi_checking['employee_name'] ?></li>
                 <li class="list-group-item">Nama Proses : <?= $transaksi_checking['op_name'] ?></li>
                 <li class="list-group-item">Kode Proses : <?= $transaksi_checking['op_code'] ?></li>
@@ -14,6 +20,7 @@
         </div>
     </div>
 </div>
+
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>

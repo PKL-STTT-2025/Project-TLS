@@ -133,13 +133,16 @@ class TransaksiChecking_model extends CI_Model
 
     public function insert($data)
     {
+        $id_workgroup = $this->input->post('id_workgroup');
+        $id_style = $this->input->post('id_style');
+
         $this->db->insert('transaksi_checking', $data);
     }
     
     public function hapusDataInputDefect($id)
     {
         //$this->db->where('id', $id);
-        $this->db->delete('transaksi_checking', ['id'=>$id]);
+        $this->db->delete('transaksi_checking', ['id_transaksi_checking'=>$id]);
     }
 
     public function getTransaksiById($id)
@@ -217,10 +220,9 @@ class TransaksiChecking_model extends CI_Model
     {
         return $this->db->get_where('mstworkgroup', ['idWG' => $id])->row();
     }
-    public function getStyleById ($id)
+    public function getStyleById($id)
     {
         return $this->db->get_where('operation_breakdown', ['id' => $id])->row();
-       
     }
-    
+        
 }

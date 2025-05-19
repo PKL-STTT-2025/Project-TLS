@@ -12,8 +12,8 @@
 
         <div class="form-group">
             <label>Style</label>
-            <input type="text" class="form-control" id="id"  value="<?= $style_name ?>" readonly>
-
+            <input type="text" class="form-control" id="id_style" value="<?= $style_name ?>" readonly>
+            <input type="hidden" name="id_style" value="<?= $id_style ?>">
         </div>
 
         <!-- Nama Operator -->
@@ -22,7 +22,7 @@
             <select class="form-control" name="empID" required>
                 <option value="">-- Pilih Nama Operator --</option>
                 <?php foreach ($operators as $op): ?>
-                    <option value="<?= $op['empID']; ?>"><?= $op['name']; ?></option>
+                    <option value="<?= $op['empID'] ?>"><?= $op['name'] ?></option>
                 <?php endforeach; ?>
             </select>
         </div>
@@ -77,11 +77,6 @@
             <input type="hidden" name="kategori" id="kategori_input">
         </div>
 
-        <!-- Tombol Simpan -->
-        <button type="submit" class="btn btn-success mt-3">Simpan</button>
-        <a href="<?= base_url('TransaksiChecking'); ?>" class="btn btn-secondary mt-3">Kembali</a>
-    </form>
-
             <script>
                     $(document).ready(function () {
                 // Nama Proses otomatis
@@ -104,4 +99,9 @@
 
             });
         </script>
+
+        <!-- Tombol Simpan -->
+        <button type="submit" class="btn btn-success mt-3">Simpan</button>
+        <a href="<?= base_url('TransaksiChecking'); ?>" class="btn btn-secondary mt-3">Kembali</a>
+    </form>
 </div>

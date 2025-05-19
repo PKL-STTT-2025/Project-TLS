@@ -16,10 +16,15 @@ class TransaksiChecking extends CI_Controller
         $data['TransaksiChecking'] = $this->TransaksiChecking_model->getAllTransaksiChecking();
         // if ($this->input->post('keyword')) {
         //     $data['TransaksiChecking'] = $this->transaksi_checking_model->cariTransaksiChecking();
-    
+        
         // digunakan untuk menampilkan data style dan line
         $data['line_list'] = $this->TransaksiChecking_model->getAlllines();
         // $data['style_list'] = $this->transaksi_checking_model->getAllStyles();
+
+        if($this->input->get('Workgroup'))  { 
+            $data['selected_line'] = $this->input->get('Workgroup');
+            $data['style_list'] = $this->TransaksiChecking_model->getStyleByLine($data['selected_line']);
+        } 
 
          // Jika user sudah pilih Line dan klik Search
         if ($this->input->post('Workgroup')) {
@@ -76,7 +81,11 @@ class TransaksiChecking extends CI_Controller
     {
         $data['judul'] = 'Form Tambah Data Input Defect';
         $this->load->library('form_validation');
-        
+
+        // Validasi form
+        $this->form_validation->set_rules('id_workgroup', 'Line', 'required');
+        $this->form_validation->set_rules('id_style', 'Style', 'required');
+        $this->form_validation->set_rules('empID', 'Employee ID', 'required');
         $this->form_validation->set_rules('employee_name', 'Employee Name', 'required');
         $this->form_validation->set_rules('op_name', 'Operation Name', 'required');
         $this->form_validation->set_rules('op_code', 'Operation code', 'required');
@@ -91,7 +100,7 @@ class TransaksiChecking extends CI_Controller
         $data['defect_list'] = $this->TransaksiChecking_model->getAllDefect();
         
         // load data line dari url
-        $id = $this->input->get('line'); 
+        $id = $this->input->get('Workgroup'); 
         $data['line'] = $id;
 
         // $this->load->model('TransaksiChecking_model');
@@ -102,14 +111,14 @@ class TransaksiChecking extends CI_Controller
             
         
         // load data style dari url
-        $id = $this->input->get('style');
+        $id_style = $this->input->get('style');
         // var_dump($id_style); exit;
-        $data['style'] = $id;    
+        $data['style'] = $id_style;    
         // $this->load->model('TransaksiChecking_model');
-        $style = $this->TransaksiChecking_model->getStyleById($id);
+        $style = $this->TransaksiChecking_model->getStyleById($id_style);
         
-        $data['style_name'] = $style ? $style->style : '';
-        $data['style'] = $style;
+        $data['style_name'] = $style ? $style->style : 'Style tidak ditemukan';
+        $data['id_style'] = $id_style;
         
             
         
@@ -135,21 +144,27 @@ class TransaksiChecking extends CI_Controller
 
     public function simpan()
     {
-        $data = [
-            'employee_name' => $this->input->post('employee_name'),
-            'op_name' => $this->input->post('op_name'),
-            'op_code' => $this->input->post('op_code'),
-            'kode_defect' => $this->input->post('kode_defect'),
-            'deskripsi_defect' => $this->input->post('deskripsi_defect'),
-            'kategori_defect' => $this->input->post('kategori_defect'),
-        ];
-
-        // Simpan data pakai model
-        $this->TransaksiChecking_model->insert($data);
-        // Buat session flashdata untuk notif berhasil simpan
-        $this->session->set_flashdata('success', 'Data berhasil disimpan');
-        redirect('TransaksiChecking');
-    }
+            $data = [
+                'id_employee'       => $this->input->post('empID'), 
+                'employee_name'     => $this->input->post('employee_name'),
+                'op_name'           => $this->input->post('op_name'),
+                'op_code'           => $this->input->post('op_code'),
+                'kode_defect'       => $this->input->post('kode_defect'), 
+                'deskripsi_defect'  => $this->input->post('deskripsi_defect'),
+                'kategori_defect'   => $this->input->post('kategori_defect'),
+            ];
+        
+            // Optional: cek apakah semua data wajib sudah ada
+            if (!$data['id_employee'] || !$data['kode_defect']) {
+                $this->session->set_flashdata('error', 'Gagal menyimpan. Data wajib belum lengkap.');
+                redirect('TransaksiChecking/tambah');
+            }
+        
+            $this->TransaksiChecking_model->insert($data);
+        
+            $this->session->set_flashdata('success', 'Data berhasil disimpan!');
+            redirect('TransaksiChecking');
+        }
 
     public function hapus ($id)
     {
@@ -194,10 +209,22 @@ class TransaksiChecking extends CI_Controller
             $this->load->view('TransaksiChecking/ubah', $data);
             $this->load->view('templates/footer');
         } else {
-            $this->TransaksChecking_model->ubahDataInputDefect();
+            $this->TransaksiChecking_model->ubahDataInputDefect();
             $this->session->set_flashdata('flash', 'Diubah');
             redirect('TransaksiChecking');
         }
+
+        // Optional: cek apakah semua data wajib sudah ada
+        if (!$data['id_employee'] || !$data['kode_defect']) {
+            $this->session->set_flashdata('error', 'Gagal menyimpan. Data wajib belum lengkap.');
+            redirect('TransaksiChecking/ubah');
+        }
+    
+        $this->TransaksiChecking_model->ubahDataInputDefect ($data, $id);
+    
+        $this->session->set_flashdata('success', 'Data berhasil disimpan!');
+        redirect('TransaksiChecking');
+
     }
 
         public function update()
@@ -211,7 +238,7 @@ class TransaksiChecking extends CI_Controller
             'deskripsi_defect' => $this->input->post('deskripsi_defect'),
             'kategori_defect' => $this->input->post('kategori_defect'),
         ];
-
+        
         $this->TransaksiChecking_model->update($id, $data);
         redirect('TransaksiChecking');
     }
