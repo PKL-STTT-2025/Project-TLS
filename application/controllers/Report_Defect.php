@@ -92,4 +92,16 @@ class Report_Defect extends CI_Controller
         $this->load->view('Report_Defect/report_bulan', $data);
         $this->load->view('templates/footer');
     }
+
+    public function getStyleByLine()
+    {
+        // masih bingung yang ini  (workgroup)sama style
+        $Workgroup = (int)$this->input->post('Workgroup');
+
+        // var_dump((int)$Workgroup);
+        // die;
+
+        $response = $this->Report_Defect_model->getStyleByLine($Workgroup);
+        echo json_encode($response);
+    }
 }

@@ -1,5 +1,6 @@
 <div class="container p-5">
     <title>Report Harian</title>
+    <h2 class="text-center mb-4">Report Harian</h2>
     <form method="post" action="<?= base_url('Report_Defect/reportHari'); ?>">
         <div class="row">
             <div class="col-md-4">
@@ -7,7 +8,7 @@
                 <select class="form-control" name="Workgroup" id="Workgroup" required>
                     <option value="">-- Pilih Line --</option>
                     <?php foreach ($line_list as $line): ?>
-                        <option value="<?= $line['Workgroup']; ?>"><?= $line['Workgroup']; ?></option>
+                        <option value="<?= $line['idWG']; ?>"><?= $line['Workgroup']; ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -16,17 +17,53 @@
                 <label>Style:</label>
                 <select class="form-control" name="style" id="style" required>
                     <option value="">-- Pilih Style --</option>
-                    <?php foreach ($style_list as $style): ?>
-                        <option value="<?= $style['style']; ?>"><?= $style['style']; ?></option>
-                    <?php endforeach; ?>
                 </select>
             </div>
 
-            <div class="col-md-4 mt-4">
-                <button type="submit" class="btn btn-primary">Search</button>
-            </div>
+            <!-- jQuery AJAX -->
+            <script>
+                $(document).ready(function() {
+
+                    $('#Workgroup').change(function() {
+                        var line = $(this).val();
+                        // console.log(line);
+
+                        if (line != '') {
+                            $.ajax({
+                                url: "<?= base_url('Report_Defect/getStyleByLine'); ?>",
+                                method: "POST",
+                                data: {
+                                    Workgroup: line
+                                },
+                                dataType: "json",
+                                success: function(response) {
+                                    // console.log(response)
+                                    $("#style").empty();
+                                    $("#style").append('<option value="">-- Pilih Style --</option>');
+
+                                    $.each(response, function(index, item) {
+                                        // console.log(index, item)
+                                        $("#style").append('<option value="' + item.id_operation_breakdown + '">' + item.style + " | " + item.date_created + '</option>');
+                                    });
+                                },
+                                error: function(xhr, status, error) {
+                                    console.log("Error: " + xhr.responseText);
+                                }
+                            });
+                        } else {
+                            $('#style').empty();
+                        }
+                    });
+                });
+            </script>
         </div>
     </form>
+
+    <div class="col-md-4 mt-4">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+</div>
+</form>
 </div>
 
 
