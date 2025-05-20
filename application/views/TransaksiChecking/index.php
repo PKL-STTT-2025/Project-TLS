@@ -72,12 +72,10 @@
                 <?php endif; ?>
             </div>
             
-            <form action="" class="d-flex mt-3">
+            <form action="<?= base_url('TransaksiChecking/index') ?>" method="get" class="d-flex mt-3">
                 <input type="text" name="keyword" class="form-control me-2" placeholder="Search..." aria-label="Search">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
-        </div>
-    </div>
 
     <div class="row mt-3">
         <div class="col-md-12">
@@ -110,7 +108,7 @@
                                 <td><?= $transaksi['op_name'] ?? '-' ?></td>
                                 <td><?= $transaksi['kode_defect'] ?? '-' ?></td>
                                 <td><?= $transaksi['deskripsi_defect'] ?? '-' ?></td>
-                                <td><?= $transaksi['kategori'] ?? '-' ?></td>
+                                <td><?= $transaksi['kategori_defect'] ?? '-' ?></td>
                                 <td>
                                     <a href="<?= base_url('TransaksiChecking/detail/'.$transaksi['id_transaksi_checking']) ?>" class="btn btn sm btn-info">Detail</a>
                                     <a href="<?= base_url('TransaksiChecking/ubah/'.$transaksi['id_transaksi_checking']) ?>" class="btn btn sm btn-warning">Ubah</a>

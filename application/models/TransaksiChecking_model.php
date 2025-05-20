@@ -20,7 +20,11 @@ class TransaksiChecking_model extends CI_Model
     public function cariTransaksiChecking()
     {
     $keyword = $this->input->post('keyword', true);
-    $this->db->like('op_name', $keyword);
+    $this->db->like('employee_name', $keyword);
+    $this->db->or_like('op_name', $keyword);
+    $this->db->or_like('op_code', $keyword);
+    $this->db->or_like('deskripsi_defect', $keyword);
+    $this->db->or_like('kategori_defect', $keyword);
     return $this->db->get('transaksi_checking')->result_array();
     }
 
@@ -151,12 +155,19 @@ class TransaksiChecking_model extends CI_Model
     }
 
 
-    public function ubahDataInputDefect()
+    public function ubahDataInputDefect($id)
     {
     $data = [
-        "operation_name" => $this->input->post('operation_name', true),
-        "operation_code" => $this->input->post('operation_code', true),
+        "id_workgroup" => $this->input->post('id_workgroup', true),
+        "id_style" => $this->input->post('id_style', true),
+        "empID" => $this->input->post('empID', true),
         "employee_name" => $this->input->post('employee_name', true),
+        "op_name" => $this->input->post('op_name', true),
+        "op_code" => $kodeDefect,
+        "kode_defect" => $this->input->post('kode_defect', true),
+        "deskripsi_defect" => $this->input->post('deskripsi_defect', true),
+        "kategori_defect" => $this->input->post('kategori_defect', true),
+        
     ];
 
     $this->db->where('id_transaksi_checking', $this->input->post('id_transaksi_checking'));
@@ -166,6 +177,7 @@ class TransaksiChecking_model extends CI_Model
     {
         $this->db->where('id_transaksi_checking', $id);
         $this->db->update('transaksi_checking', $data);
+        return $this->db->affected_rows();
     }
 
 
@@ -240,5 +252,15 @@ class TransaksiChecking_model extends CI_Model
         $this->db->where('idWG', $id);
         return $this->db->get()->row();
     }
+
+    // public function searchData($keyword)
+    // {
+    //     $this->db->like('employee_name', $keyword);
+    //     $this->db->or_like('op_name', $keyword);
+    //     $this->db->or_like('op_code', $keyword);
+    //     $this->db->or_like('deskripsi_defect', $keyword);
+    //     $this->db->or_like('kategori_defect', $keyword);
+    //     return $this->db->get('transaksi_checking')->result_array();
+    // }
 
 }
