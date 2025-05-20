@@ -25,7 +25,9 @@ class TransaksiChecking extends CI_Controller
             $data['selected_line'] = $this->input->get('Workgroup');
             $data['style_list'] = $this->TransaksiChecking_model->getStyleByLine($data['selected_line']);
         } 
-        // $data['line_name'] = $this->TransaksiChecking_model->getLineById()
+        
+        $id_line = $this->input->post('id_line'); 
+        $this->TransaksiChecking_model->getLineById($id_line); 
 
          // Jika user sudah pilih Line dan klik Search
         if ($this->input->post('Workgroup')) {

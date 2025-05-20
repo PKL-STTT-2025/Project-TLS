@@ -32,7 +32,7 @@
                         <th scope="col">No</th>
                         <th scope="col">Kode Defect</th>
                         <th scope="col">Deskripsi Defect</th>
-                        <th scope="col">Kategori</th>
+                        <th scope="col">Kategori Defect</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -42,7 +42,7 @@
                             <td><?= $i++; ?></td>
                             <td><?= $defect['kode_defect']; ?></td>
                             <td><?= $defect['deskripsi_defect']; ?></td>
-                            <td><?= $defect['kategori']; ?></td>
+                            <td><?= $defect['kategori_defect']; ?></td>
                             
                             </td>
                         </tr>

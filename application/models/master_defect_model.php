@@ -21,7 +21,7 @@ class master_defect_model extends CI_Model
     public function findDefects()
     {
     $keyword = $this->input->post('keyword', true);
-    $this->db->like('kategori', $keyword);
+    $this->db->like('kategori_defect', $keyword);
     return $this->db->get('master_defect')->result_array();
     }
 }
