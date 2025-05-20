@@ -28,6 +28,14 @@ class ReportOperator_model extends CI_Model
         } else {
             return array();
         }
+        //     $query = "
+        //     SELECT DISTINCT ml.id, wg.Workgroup AS line_name
+        //     FROM operation_breakdown ob
+        //     JOIN master_line ml ON ob.id_line = ml.id
+        //     JOIN mstworkgroup wg ON ml.line_name = wg.idWG
+        //     ORDER BY wg.Workgroup ASC
+        // ";
+        //     return $this->db->query($query)->result();
     }
 
     public function getAllStyles()
@@ -38,25 +46,40 @@ class ReportOperator_model extends CI_Model
         } else {
             return array();
         }
+        //     $query = "
+        //     SELECT DISTINCT ob.id, ob.style 
+        //     FROM operation_breakdown ob
+        //     ORDER BY ob.style ASC
+        // ";
+        //     return $this->db->query($query)->result();
     }
 
 
     public function getFilteredReport($line, $style)
     {
-        // Ambil bagian kode style-nya doang
+
         $styleOnly = explode(' | ', $style)[0];
 
-        $this->db->select('*');
-        $this->db->from('operation_breakdown ob');
-        $this->db->join('master_line ml', 'ml.id = ob.id_line');
-        $this->db->join('mstworkgroup wg', 'wg.idWG = ml.line_name');
-        $this->db->where('wg.Workgroup', $line);
-        $this->db->where('ob.id', $styleOnly);
-        $query = $this->db->get();
+        $query = "
+    SELECT mol.*, ob.style, ml.line_name, wg.Workgroup,
+           mol.id_employee,
+           emp.name AS operator_name,
+           jb.name AS nama_mesin,
+           mol.op_code AS kode_proses
+    FROM master_opt_layout mol
+    JOIN operation_breakdown ob ON mol.id_opb = ob.id
+    JOIN master_line ml ON ml.id = ob.id_line
+    JOIN mstworkgroup wg ON wg.idWG = ml.line_name
+    LEFT JOIN mstemp emp ON emp.empID = mol.id_employee
+    LEFT JOIN jns_barang jb ON jb.id_jnsbarang = mol.id_machine
+    WHERE ml.id = ? -- ambil line dari master_line.id
+      AND ob.style = ?
+      AND mol.date_deleted IS NULL
+    ";
 
-        return $query->result_array();
+        $result = $this->db->query($query, [$line, $styleOnly]);
+        return $result->result();
     }
-
 
 
     public function getStyleByLine($Workgroup)
@@ -92,21 +115,34 @@ class ReportOperator_model extends CI_Model
         }
     }
 
-    public function getOpbByLineAndStyle($line, $style)
+    public function getOpbByLineAndStyle($line, $style, $Workgroup)
     {
-        $this->db->select('id');
-        $this->db->from('operation_breakdown');
-        $this->db->where('id_line', $line);
-        $this->db->where('style', $style);
-        $this->db->limit(1);
-        $query = $this->db->get();
+        $sql = "SELECT 
+                t1.id AS id_operation_breakdown,
+                t1.style,
+                t1.date_created,
+                mstWorkgroup.Workgroup,
+                mstWorkgroup.idWG AS id_master_workgroup
+            FROM operation_breakdown AS t1
+            JOIN master_line ON master_line.id = t1.id_line
+            JOIN mstWorkgroup ON mstWorkgroup.idWG = master_line.line_name
+            WHERE mstWorkgroup.idWG = ?
+              AND t1.id_line = ?
+              AND t1.style = ?
+              AND t1.parent_id IS NULL
+            ORDER BY t1.date_created DESC
+            LIMIT 1";
+
+        $query = $this->db->query($sql, array($Workgroup, $line, $style));
 
         if ($query->num_rows() > 0) {
-            return $query->row()->id;
+            return $query->row(); // hasil objek row
         } else {
             return null;
         }
     }
+
+
 
 
     public function get_data_operator($id_opb)

@@ -90,7 +90,9 @@
                         <select class="form-control" name="Workgroup" id="Workgroup" required>
                             <option value="">-- Pilih Line --</option>
                             <?php foreach ($line_list as $line): ?>
-                                <option value="<?= $line['idWG']; ?>"><?= $line['Workgroup']; ?></option>
+                                <option value="<?= $line['idWG']; ?>" <?= set_select('Workgroup', $line['idWG']) ?>>
+                                    <?= $line['Workgroup']; ?>
+                                </option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -190,8 +192,6 @@
                             </div>
                         </div>
                     <?php endforeach; ?>
-                <?php else: ?>
-                    <p class="text-center">Silakan pilih Line dan Style untuk melihat operator.</p>
                 <?php endif; ?>
             </div>
         </div>

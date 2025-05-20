@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 /**
- * @property CI_session $Session
+ * @property CI_session $session
  * @property CI_Dashboard_model $Dashboard_model
  * @property CI_Dashboard_Realtime $Dashboard_Realtime
  */
@@ -19,7 +19,7 @@ class Dashboard extends CI_Controller
         $role = $this->session->userdata('role_id');
         $data['title'] = 'Dashboard TLS';
 
-        
+
 
         if ($role == 'admin') {
             // $this->load->view('Dashboard_Realtime/admin/index');
