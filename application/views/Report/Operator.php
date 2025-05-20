@@ -83,7 +83,7 @@
     <div class="content">
         <div class="container p-3">
             <title>Report operator</title>
-            <form method="post" action="<?= base_url('Report/index'); ?>">
+            <form method="post" action="<?= base_url('ReportOperator/index'); ?>">
                 <div class="row">
                     <div class="col-md-4">
                         <label>Line:</label>
@@ -144,51 +144,55 @@
         <div class="container mt-1">
             <h3 class="text-center mb-4"><?= $title ?> - LINE <?= strtoupper($line_name ?? '') ?></h3>
             <div class="grid-container">
-                <?php foreach ($operators as $op): ?>
-                    <div class="card text-center shadow-sm card-operator">
-                        <div class="card-body">
-                            <i class="fas fa-user fa-2x mb-2 text-secondary"></i>
-                            <a href="<?= base_url('ReportOperator/report_operator/' . $op->operator_name); ?>">
-                                <h5 class="card-title"><?= $op->operator_name ?></h5>
-                                <p class="card-text"><small>(<?= $op->nama_mesin ?>)</small></p>
-                                <p class="card-text"><small>(<?= $op->kode_proses ?>)</small></p>
-                            </a>
+                <?php if (!empty($operators)): ?>
+                    <?php foreach ($operators as $op): ?>
+                        <div class="card text-center shadow-sm card-operator">
+                            <div class="card-body">
+                                <i class="fas fa-user fa-2x mb-2 text-secondary"></i>
+                                <a href="<?= base_url('ReportOperator/report_operator/' . $op->operator_name); ?>">
+                                    <h5 class="card-title"><?= $op->operator_name ?></h5>
+                                    <p class="card-text"><small>(<?= $op->nama_mesin ?>)</small></p>
+                                    <p class="card-text"><small>(<?= $op->kode_proses ?>)</small></p>
+                                </a>
 
-                            <?php
+                                <?php
 
-                            // Simulasi status, ganti sesuai field dari database misal $op->status
-                            $status = strtolower($op->status ?? 'active');
-                            $badgeClass = [
-                                'active' => 'bg-success',
-                                'idle' => 'bg-warning',
-                                'error' => 'bg-danger'
-                            ][$status] ?? 'bg-secondary';
-                            ?>
-                            <span class="badge <?= $badgeClass ?>"><?= ucfirst($status) ?></span>
-                            <div class="mt-2">
-                                <?php
-                                $jumlah = isset($jumlah_kunjungan[$op->kode_proses]) ? $jumlah_kunjungan[$op->kode_proses] : 0;
+                                // Simulasi status, ganti sesuai field dari database misal $op->status
+                                $status = strtolower($op->status ?? 'active');
+                                $badgeClass = [
+                                    'active' => 'bg-success',
+                                    'idle' => 'bg-warning',
+                                    'error' => 'bg-danger'
+                                ][$status] ?? 'bg-secondary';
                                 ?>
-                                <small> <?= $jumlah ?>x</small>
-                            </div>
-                            <!-- Traffic light -->
-                            <div class="traffic-light mt-2">
-                                <?php
-                                $defect = isset($op->defect_count)
-                                    ? $op->defect_count
-                                    : rand(0, 10); // nilai acak antara 0-10S
-                                $color = 'green';
-                                if ($defect > 5) {
-                                    $color = 'red';
-                                } elseif ($defect > 2) {
-                                    $color = 'yellow';
-                                }
-                                echo '<span class="light ' . $color . '"></span>';
-                                ?>
+                                <span class="badge <?= $badgeClass ?>"><?= ucfirst($status) ?></span>
+                                <div class="mt-2">
+                                    <?php
+                                    $jumlah = isset($jumlah_kunjungan[$op->kode_proses]) ? $jumlah_kunjungan[$op->kode_proses] : 0;
+                                    ?>
+                                    <small> <?= $jumlah ?>x</small>
+                                </div>
+                                <!-- Traffic light -->
+                                <div class="traffic-light mt-2">
+                                    <?php
+                                    $defect = isset($op->defect_count)
+                                        ? $op->defect_count
+                                        : rand(0, 10); // nilai acak antara 0-10S
+                                    $color = 'green';
+                                    if ($defect > 5) {
+                                        $color = 'red';
+                                    } elseif ($defect > 2) {
+                                        $color = 'yellow';
+                                    }
+                                    echo '<span class="light ' . $color . '"></span>';
+                                    ?>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                <?php endforeach; ?>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p class="text-center">Silakan pilih Line dan Style untuk melihat operator.</p>
+                <?php endif; ?>
             </div>
         </div>
     </div>

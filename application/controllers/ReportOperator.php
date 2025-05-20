@@ -17,29 +17,67 @@ class ReportOperator extends CI_Controller
 
     public function index()
     {
+        // $data['title'] = 'Operator per Line';
+        // $data['operators'] = [];
+        // $data['Report_Operator'] = $this->ReportOperator_model->getAllReportOperator();
+        // // digunakan untuk menampilkan data style dan line
+        // $data['line_list'] = $this->ReportOperator_model->getAlllines();
+        // $data['style_list'] = $this->ReportOperator_model->getAllStyles();
+
+        // // Jika user sudah pilih Line dan klik Search
+        // if ($this->input->post('Workgroup')) {
+        //     $line = $this->input->post('Workgroup');
+        //     $style = $this->input->post('style');
+
+        //     // filter di model berdasarkan Line dan Style
+        //     $data['operators'] = $this->ReportOperator_model->getFilteredReport($line, $style);
+        //     // $data['operators'] = $this->ReportOperator_model->get_data_operator_by_line_and_style($line, $style);
+        // } elseif ($this->input->post('keyword')) {
+        //     $data['Report_Operator'] = $this->ReportOperator_model->cariReportOperator();
+        // } else {
+        //     // Awalnya kosong
+        //     $data['Report_Operator'] = [];
+        // }
+
+        // // $id_employee = $this->input->post('id_employee');
+        // // $id_opb = $this->input->post('id_opb');
+        // $data['jumlah_kunjungan'] = $this->ReportOperator_model->getJumlahKunjunganQC();
+        // $this->load->view('templates/header', $data);
+        // $this->load->view('Report/Operator', $data);
+        // $this->load->view('templates/footer');
         $data['title'] = 'Operator per Line';
-        $data['Report_Operator'] = $this->ReportOperator_model->getAllReportOperator();
-        // digunakan untuk menampilkan data style dan line
+        $data['operators'] = [];
+        $data['Report_Operator'] = [];
+        $data['line_name'] = '';
+
+        // Dropdown data
         $data['line_list'] = $this->ReportOperator_model->getAlllines();
         $data['style_list'] = $this->ReportOperator_model->getAllStyles();
 
-        // Jika user sudah pilih Line dan klik Search
+        // Kalau tombol search diklik
+
         if ($this->input->post('Workgroup')) {
             $line = $this->input->post('Workgroup');
             $style = $this->input->post('style');
 
-            // filter di model berdasarkan Line dan Style
-            $data['Report_Operator'] = $this->ReportOperator_model->getFilteredReport($line, $style);
-            $data['operators'] = $this->ReportOperator_model->get_data_operator_by_line_and_style($line, $style);
-        } elseif ($this->input->post('keyword')) {
-            $data['Report_Operator'] = $this->ReportOperator_model->cariReportOperator();
-        } else {
-            // Awalnya kosong
-            $data['Report_Operator'] = [];
+            // Cari id_opb dulu
+            $id_opb = $this->ReportOperator_model->getOpbByLineAndStyle($line, $style);
+
+            if ($id_opb) {
+                // Kalau ketemu, ambil operatornya
+                $operators = $this->ReportOperator_model->get_data_operator($id_opb);
+                $data['operators'] = $operators;
+            }
+
+            // Ambil nama line
+            $line_name = $this->ReportOperator_model->getLineName($line);
+            $data['line_name'] = $line_name;
         }
-        // $id_employee = $this->input->post('id_employee');
-        // $id_opb = $this->input->post('id_opb');
+
+        // Data statistik kunjungan QC
         $data['jumlah_kunjungan'] = $this->ReportOperator_model->getJumlahKunjunganQC();
+
+        // Load view
         $this->load->view('templates/header', $data);
         $this->load->view('Report/Operator', $data);
         $this->load->view('templates/footer');

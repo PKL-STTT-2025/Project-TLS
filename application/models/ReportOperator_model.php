@@ -43,11 +43,21 @@ class ReportOperator_model extends CI_Model
 
     public function getFilteredReport($line, $style)
     {
-        $this->db->where('Workgroup', $line);
-        $this->db->where('style', $style);
-        $query = $this->db->get('mstworkgroup');
-        return $query->result();
+        // Ambil bagian kode style-nya doang
+        $styleOnly = explode(' | ', $style)[0];
+
+        $this->db->select('*');
+        $this->db->from('operation_breakdown ob');
+        $this->db->join('master_line ml', 'ml.id = ob.id_line');
+        $this->db->join('mstworkgroup wg', 'wg.idWG = ml.line_name');
+        $this->db->where('wg.Workgroup', $line);
+        $this->db->where('ob.id', $styleOnly);
+        $query = $this->db->get();
+
+        return $query->result_array();
     }
+
+
 
     public function getStyleByLine($Workgroup)
     {
@@ -67,12 +77,37 @@ class ReportOperator_model extends CI_Model
         $result = $this->db->query($query);
         return $result->result_array();
     }
-    public function get_data_operator_by_line_and_style($line, $style)
+
+    public function getLineName($idWG)
     {
+        $this->db->select('Workgroup');
+        $this->db->from('mstworkgroup');
+        $this->db->where('idWG', $idWG);
+        $query = $this->db->get();
+
+        if ($query->num_rows() > 0) {
+            return $query->row()->Workgroup;
+        } else {
+            return null;
+        }
+    }
+
+    public function getOpbByLineAndStyle($line, $style)
+    {
+        $this->db->select('id');
+        $this->db->from('operation_breakdown');
         $this->db->where('id_line', $line);
         $this->db->where('style', $style);
-        return $this->db->get('operation_breakdown')->result();
+        $this->db->limit(1);
+        $query = $this->db->get();
+
+        if ($query->num_rows() > 0) {
+            return $query->row()->id;
+        } else {
+            return null;
+        }
     }
+
 
     public function get_data_operator($id_opb)
     {
