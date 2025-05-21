@@ -86,6 +86,12 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link collapsed" href="<?php echo base_url('Supervisor/index'); ?>">
+                    <i class="fas fa-keyboard"></i>
+                    <span>List Checking Time</span>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link collapsed" href="<?php echo base_url('ReportOperator/index'); ?>">
                     <i class="fas fa-chart-line"></i>
                     <span>Report Operator</span>
