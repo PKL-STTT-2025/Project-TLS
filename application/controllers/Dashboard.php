@@ -27,11 +27,8 @@ class Dashboard extends CI_Controller
             $this->admin();
         } elseif ($role == 'qc') {
             $this->qcinline();
-        } elseif ($role == 'supervisor') {
+        } elseif ($role == 'Supervisor') {
             $this->supervisor();
-        } else {
-            // Handle invalid role if needed
-            show_404();
         }
     }
 

@@ -63,7 +63,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item <?= $this->uri->segment(1) == 'Dashboard' ? 'active' : ''; ?>">
-                <a class="nav-link" href="<?= base_url('dashboard'); ?>">
+                <a class="nav-link" href="<?= base_url('Dashboard'); ?>">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>

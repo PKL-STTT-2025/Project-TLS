@@ -1,7 +1,7 @@
 <div class="container p-5">
     <title>Report Harian</title>
     <h2 class="text-center mb-4">Report Harian</h2>
-    <form method="post" action="<?= base_url('Report_Defect/reportHari'); ?>">
+    <form id="reportForm" method="post" action="<?= base_url('Report_Defect/reportHari'); ?>">
         <div class="row">
             <div class="col-md-4">
                 <label>Line:</label>
@@ -56,16 +56,14 @@
                     });
                 });
             </script>
-        </div>
+            <div class="col-md-4 mt-4">
+                <button type="button" class="btn btn-primary" id="searchBtn">Search</button>
+            </div>
+        </div> <!-- penutup .row -->
     </form>
-
-    <div class="col-md-4 mt-4">
-        <button type="submit" class="btn btn-primary">Search</button>
-    </div>
 </div>
 </form>
 </div>
-
 
 
 <!-- Grafik -->
@@ -77,11 +75,30 @@
             </div>
         </div>
     </div>
-
 </div>
 
 <!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.getElementById('searchBtn').addEventListener('click', function() {
+        // Ambil nilai form
+        const workgroup = document.getElementById('Workgroup').value;
+        const style = document.getElementById('style').value;
+
+        if (!workgroup || !style) {
+            alert('Silakan pilih Line dan Style terlebih dahulu.');
+            return;
+        }
+
+        // Simulasi data dummy berdasarkan pilihan (bisa diganti dengan AJAX ke server nantinya)
+        const dummyData = [Math.floor(Math.random() * 20), 15, 9, 12, Math.floor(Math.random() * 20)];
+
+        // Update chart
+        chart.data.datasets[0].data = dummyData;
+        chart.update();
+    });
+</script>
 
 <script>
     const ctx = document.getElementById('chartHarian').getContext('2d');
@@ -98,6 +115,8 @@
     }
 
     // Buat array warna sesuai data
+    // const barColors = defectData.map(() => 'rgba(52, 88, 150, 0.8)'); // biru navy transparan
+
     const barColors = defectData.map(value => {
         if (value >= 15) {
             // Merah range
@@ -121,7 +140,7 @@
                 backgroundColor: barColors,
                 borderColor: 'rgba(0,0,0,0.1)',
                 borderWidth: 1,
-                borderRadius: 5
+                borderRadius: 2,
             }]
         },
         options: {
