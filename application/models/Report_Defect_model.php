@@ -11,6 +11,28 @@ class Report_Defect_model extends CI_Model
             return array();
         }
     }
+
+    public function get_dummy_defect_data()
+    {
+        // Dummy data defect
+        $data = [
+            ['jenis_defect' => 'Puckering', 'jumlah' => 40],
+            ['jenis_defect' => 'Dirty Soil', 'jumlah' => 30],
+            ['jenis_defect' => 'Broken Stitch', 'jumlah' => 15],
+            ['jenis_defect' => 'Skip Stitch', 'jumlah' => 10],
+            ['jenis_defect' => 'Open Seam', 'jumlah' => 40],
+            ['jenis_defect' => 'Shading', 'jumlah' => 5],
+            ['jenis_defect' => 'Wrong Label', 'jumlah' => 8],
+        ];
+
+        // Urutkan dari jumlah terbesar
+        usort($data, function ($a, $b) {
+            return $b['jumlah'] - $a['jumlah'];
+        });
+
+        return $data;
+    }
+
     public function cariReportDefect()
     {
         $keyword = $this->input->post('keyword', true);

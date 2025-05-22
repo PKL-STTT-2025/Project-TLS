@@ -16,6 +16,9 @@ class Report_Defect extends CI_Controller
         $data['title'] = 'Report Harian Defect';
         $data['report_hari'] = $this->Report_Defect_model->getAllReportDefect();
 
+        $this->load->model('Report_Defect_model');
+        $data['defects'] = $this->Report_Defect_model->get_dummy_defect_data();
+
 
         // digunakan untuk menampilkan data style dan line
         $data['line_list'] = $this->Report_Defect_model->getAlllines();
@@ -44,6 +47,9 @@ class Report_Defect extends CI_Controller
         $data['title'] = 'Report Mingguan Defect';
         $data['report_minggu'] = $this->Report_Defect_model->getAllReportDefect();
 
+        $this->load->model('Report_Defect_model');
+        $data['defects'] = $this->Report_Defect_model->get_dummy_defect_data();
+
         // digunakan untuk menampilkan data style dan line
         $data['line_list'] = $this->Report_Defect_model->getAlllines();
         $data['style_list'] = $this->Report_Defect_model->getAllStyles();
@@ -70,6 +76,10 @@ class Report_Defect extends CI_Controller
     {
         $data['title'] = 'Report Bulanan Defect';
         $data['report_bulan'] = $this->Report_Defect_model->getAllReportDefect();
+
+
+        $this->load->model('Report_Defect_model');
+        $data['defects'] = $this->Report_Defect_model->get_dummy_defect_data();
 
         // digunakan untuk menampilkan data style dan line
         $data['line_list'] = $this->Report_Defect_model->getAlllines();

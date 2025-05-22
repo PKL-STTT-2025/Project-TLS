@@ -67,88 +67,74 @@
 
 
 <!-- Grafik -->
-<div class="card shadow mb-4">
-    <div class="card-header py-3">
-        <div class="card-body">
-            <div class="chart-bar" style="height:300px;">
-                <canvas id="chartHarian"></canvas>
-            </div>
-        </div>
-    </div>
+<div class="container" style="margin-top: 20px;">
+    <canvas id="paretoChart" style="height: 300px; width: 100%;"></canvas>
+
 </div>
 
-<!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
-    document.getElementById('searchBtn').addEventListener('click', function() {
-        // Ambil nilai form
-        const workgroup = document.getElementById('Workgroup').value;
-        const style = document.getElementById('style').value;
+    const defectData = <?php echo json_encode($defects); ?>;
 
-        if (!workgroup || !style) {
-            alert('Silakan pilih Line dan Style terlebih dahulu.');
-            return;
-        }
+    const labels = defectData.map(item => item.jenis_defect);
+    const defectCounts = defectData.map(item => item.jumlah);
 
-        // Simulasi data dummy berdasarkan pilihan (bisa diganti dengan AJAX ke server nantinya)
-        const dummyData = [Math.floor(Math.random() * 20), 15, 9, 12, Math.floor(Math.random() * 20)];
-
-        // Update chart
-        chart.data.datasets[0].data = dummyData;
-        chart.update();
-    });
-</script>
-
-<script>
-    const ctx = document.getElementById('chartHarian').getContext('2d');
-
-    // Data jumlah defect per hari (contoh, nanti tinggal replace dari PHP/JSON/AJAX)
-    const defectData = [12, 19, 7, 15, 10];
-
-    // Function generate warna random dalam range RGB yang diinginkan
-    function getRandomColor(minR, maxR, minG, maxG, minB, maxB) {
-        const r = Math.floor(Math.random() * (maxR - minR + 1)) + minR;
-        const g = Math.floor(Math.random() * (maxG - minG + 1)) + minG;
-        const b = Math.floor(Math.random() * (maxB - minB + 1)) + minB;
-        return `rgba(${r}, ${g}, ${b}, 0.8)`;
-    }
-
-    // Buat array warna sesuai data
-    // const barColors = defectData.map(() => 'rgba(52, 88, 150, 0.8)'); // biru navy transparan
-
-    const barColors = defectData.map(value => {
-        if (value >= 15) {
-            // Merah range
-            return getRandomColor(200, 255, 0, 70, 0, 70);
-        } else if (value >= 8) {
-            // Kuning range
-            return getRandomColor(200, 255, 200, 255, 0, 70);
-        } else {
-            // Hijau range
-            return getRandomColor(0, 70, 200, 255, 0, 70);
-        }
+    const total = defectCounts.reduce((a, b) => a + b, 0);
+    let cumulative = 0;
+    const cumulativePercentage = defectCounts.map(count => {
+        cumulative += count;
+        return ((cumulative / total) * 100).toFixed(2);
     });
 
-    const chart = new Chart(ctx, {
+    const ctx = document.getElementById('paretoChart').getContext('2d');
+    const paretoChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'],
+            labels: labels,
             datasets: [{
-                label: 'Jumlah Defect',
-                data: defectData,
-                backgroundColor: barColors,
-                borderColor: 'rgba(0,0,0,0.1)',
-                borderWidth: 1,
-                borderRadius: 2,
-            }]
+                    label: 'Jumlah Defect',
+                    data: defectCounts,
+                    backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                    yAxisID: 'y',
+                },
+                {
+                    type: 'line',
+                    label: 'Kumulatif (%)',
+                    data: cumulativePercentage,
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.3)',
+                    yAxisID: 'y1',
+                    tension: 0.4,
+                    fill: false,
+                }
+            ]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
                 y: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Jumlah Defect'
+                    }
+                },
+                y1: {
+                    beginAtZero: true,
+                    position: 'right',
+                    min: 0,
+                    max: 100,
+                    ticks: {
+                        callback: (value) => value + '%'
+                    },
+                    grid: {
+                        drawOnChartArea: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Kumulatif (%)'
+                    }
                 }
             }
         }
