@@ -7,43 +7,58 @@
     <?php endif; ?>
 
     <div class="card mb-4">
-        <div class="card-header bg-warning text-black">
-            <h5>Pilih Line dan Style</h5>
-        </div>
-        <div class="card-body">
-            <form id="selectionForm" method="get" action="<?= site_url('TransaksiChecking') ?>">
-                <div class="row">
-                    <div class="col-md-4">
-                        <label>Line:</label>
-                        <select class="form-control" name="Workgroup" id="Workgroup" required>
-                            <option value="">-- Pilih Line --</option>
-                            <?php foreach ($line_list as $line): ?>
-                                <option value="<?= $line['idWG']; ?>" 
-                                    <?= ($this->input->get('Workgroup') == $line['idWG']) ? 'selected' : '' ?>>
-                                    <?= $line['Workgroup']; ?>
+    <div class="card-header bg-warning text-black">
+        <h5>Form Pemilihan Line, Style, Warna & ORC</h5>
+    </div>
+    <div class="card-body">
+        <form id="selectionForm" method="get" action="<?= site_url('TransaksiChecking') ?>">
+            <div class="row">
+                <!-- Line -->
+                <div class="col-md-3">
+                    <label>Line:</label>
+                    <select class="form-control" name="Workgroup" id="Workgroup" required>
+                        <option value="">-- Pilih Line --</option>
+                        <?php foreach ($line_list as $line): ?>
+                            <option value="<?= $line['idWG']; ?>" 
+                                <?= ($this->input->get('Workgroup') == $line['idWG']) ? 'selected' : '' ?>>
+                                <?= $line['Workgroup']; ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <!-- Style -->
+                <div class="col-md-3">
+                    <label>Style:</label>
+                    <select class="form-control" name="style" id="style" required <?= empty($this->input->get('Workgroup')) ? 'disabled' : '' ?>>
+                        <option value="">-- Pilih Style --</option>
+                        <?php if(!empty($style_list)): ?>
+                            <?php foreach ($style_list as $style): ?>
+                                <option value="<?= $style['id_operation_breakdown']; ?>" 
+                                    <?= ($this->input->get('style') == $style['id_operation_breakdown']) ? 'selected' : '' ?>>
+                                    <?= $style['style']; ?> (<?= date('d/m/Y', strtotime($style['date_created'])); ?>)
                                 </option>
                             <?php endforeach; ?>
-                        </select>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label>Style:</label>
-                        <select class="form-control" name="style" id="style" required <?= empty($this->input->get('Workgroup')) ? 'disabled' : '' ?>>
-                            <option value="">-- Pilih Style --</option>
-                            <?php if(!empty($style_list)): ?>
-                                <?php foreach ($style_list as $style): ?>
-                                    <option value="<?= $style['id_operation_breakdown']; ?>" 
-                                        <?= ($this->input->get('style') == $style['id_operation_breakdown']) ? 'selected' : '' ?>>
-                                        <?= $style['style']; ?> (<?= date('d/m/Y', strtotime($style['date_created'])); ?>)
-                                    </option>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </select>
-                    </div>
+                        <?php endif; ?>
+                    </select>
                 </div>
-            </form>
-        </div>
+
+                <!-- Color -->
+                <div class="col-md-3">
+                    <label>Color:</label>
+                    <input type="text" class="form-control" id="color" name="color">
+                </div>
+
+                <!-- ORC -->
+                <div class="col-md-3">
+                    <label>ORC:</label>
+                    <input type="text" class="form-control" id="ORC" name="orc">
+                </div>
+            </div>
+        </form>
     </div>
+</div>
+
 
     <?php if ($this->session->flashdata('flash')) : ?>
         <div class="row mt-3">
@@ -85,12 +100,8 @@
                         <th>No</th>
                         <th>Line</th>
                         <th>Style</th>
-                        <th>Nama Operator</th>
-                        <th>Kode Proses</th>
-                        <th>Nama Proses</th>
-                        <th>Kode Defect</th>
-                        <th>Deskripsi Defect</th>
-                        <th>Kategori</th>
+                        <th>Color</th>
+                        <th>ORC</th>
                         <th>Aksi</th>
                         <th>Masalah Selesai</th>
                     </tr>
@@ -103,12 +114,8 @@
                                 <td><?= $i++; ?></td>
                                 <td><?= $transaksi['id_workgroup'] ?? '-' ?></td>
                                 <td><?= $transaksi['id_style'] ?? '-' ?></td>
-                                <td><?= $transaksi['employee_name'] ?? '-' ?></td>
-                                <td><?= $transaksi['op_code'] ?? '-' ?></td>
-                                <td><?= $transaksi['op_name'] ?? '-' ?></td>
-                                <td><?= $transaksi['kode_defect'] ?? '-' ?></td>
-                                <td><?= $transaksi['deskripsi_defect'] ?? '-' ?></td>
-                                <td><?= $transaksi['kategori_defect'] ?? '-' ?></td>
+                                <td><?= $transaksi['color'] ?? '-' ?></td>
+                                <td><?= $transaksi['orc'] ?? '-' ?></td>
                                 <td>
                                     <a href="<?= base_url('TransaksiChecking/detail/'.$transaksi['id_transaksi_checking']) ?>" class="btn btn sm btn-info">Detail</a>
                                     <a href="<?= base_url('TransaksiChecking/ubah/'.$transaksi['id_transaksi_checking']) ?>" class="btn btn sm btn-warning">Ubah</a>
@@ -176,5 +183,5 @@ $(document).ready(function() {
             $('#selectionForm').submit();
         }
     });
-});
+}); 
 </script>

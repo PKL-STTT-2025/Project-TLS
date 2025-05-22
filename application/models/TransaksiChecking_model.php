@@ -17,9 +17,9 @@ class TransaksiChecking_model extends CI_Model
             return array(); 
         }
     }
-    public function cariTransaksiChecking()
+    public function cariTransaksiChecking($keyword)
     {
-    $keyword = $this->input->post('keyword', true);
+    $this->input->post('keyword', true);
     $this->db->like('employee_name', $keyword);
     $this->db->or_like('op_name', $keyword);
     $this->db->or_like('op_code', $keyword);
@@ -149,9 +149,40 @@ class TransaksiChecking_model extends CI_Model
         $this->db->delete('transaksi_checking', ['id_transaksi_checking'=>$id]);
     }
 
-    public function getTransaksiById($id)
+    public function getTransaksiById($transaksi_id)
     {
-    return $this->db->get_where('transaksi_checking', ['id_transaksi_checking' => $id])->row_array();
+        $this->db->select('t.*, w.Workgroup, o.style, e.name as employee_name');
+        $this->db->from('transaksi_checking t');
+        $this->db->join('mstworkgroup w', 'w.idWG = t.id_workgroup', 'left');
+        $this->db->join('operation_breakdown o', 'o.id = t.id_style', 'left');
+        $this->db->join('mstemp e', 'e.empID = t.id_employee', 'left');
+        $this->db->where('t.id_transaksi_checking', $transaksi_id);
+        $transaksi = $this->db->get()->row_array();
+
+        if (!$transaksi) {
+            return false;
+        }
+        $this->db->select('DISTINCT(t.op_name), t.op_code, m.name as machine_name');
+        $this->db->from('transaksi_checking t');
+        $this->db->join('master_opt_layout l', 'l.op_code = t.op_code', 'left');
+        $this->db->join('jns_barang m', 'm.id_jnsbarang = l.id_machine', 'left');
+        $this->db->where('t.id_transaksi_checking', $transaksi_id);
+        $operations = $this->db->get()->result_array();
+
+
+        foreach ($operations as &$op) {
+            $this->db->select('t.id_transaksi_checking, t.kode_defect, d.deskripsi_defect, d.kategori_defect');
+            $this->db->from('transaksi_checking t');
+            $this->db->join('master_defect d', 'd.kode_defect = t.kode_defect', 'left');
+            $this->db->where('t.id_transaksi_checking', $transaksi_id);
+            $this->db->where('t.op_name', $op['op_name']);
+            $op['defects'] = $this->db->get()->result_array();
+        }
+
+        return [
+            'transaksi' => $transaksi,
+            'operations' => $operations
+        ];
     }
 
 
@@ -181,14 +212,14 @@ class TransaksiChecking_model extends CI_Model
     }
 
 
-    public function cariDataInputDefect()
-    {
-        $keyword= $this->input->post('keyword',true);
-        $this->db->like('operation_name',$keyword);
-        $this->db->or_like('operation_code', $keyword);
-        $this->db->or_like('employee_name', $keyword);
-        return $this->db->get('transaksi_checking')->result_array();
-    }
+    // public function cariDataInputDefect()
+    // {
+    //     $keyword= $this->input->post('keyword',true);
+    //     $this->db->like('operation_name',$keyword);
+    //     $this->db->or_like('operation_code', $keyword);
+    //     $this->db->or_like('employee_name', $keyword);
+    //     return $this->db->get('transaksi_checking')->result_array();
+    // }
 
     public function getAllMasterEmployee()
     {
@@ -262,5 +293,64 @@ class TransaksiChecking_model extends CI_Model
     //     $this->db->or_like('kategori_defect', $keyword);
     //     return $this->db->get('transaksi_checking')->result_array();
     // }
+    // Dalam TransaksiChecking_model.php
+    public function getLimitedEmployee($limit = 2)
+    {
+        $this->db->select('*');
+        $this->db->from('mstemp'); 
+        $this->db->limit($limit);
+        return $this->db->get()->result_array();
+    }
+    public function getLimitedOperation($limit = 2)
+{
+    $this->db->select('*');
+    $this->db->from('master_opt_layout'); 
+    $this->db->limit($limit);
+    return $this->db->get()->result_array();
+}
 
+public function getLayoutWithMesin($limit = 2)
+{
+    $this->db->select('
+        l.op_code,
+        l.op_name,
+        m.name as nama_mesin
+    ');
+    $this->db->from('master_opt_layout l');
+    $this->db->join('jns_barang m', 'm.id_jnsbarang = l.id_machine', 'left');
+    $this->db->limit($limit);
+    return $this->db->get()->result();
+}
+
+public function getCodeandDeskripsiDefectByID($id)
+{
+    $this->db->select('kode_defect, deskripsi_defect, kategori_defect');
+    $this->db->from('master_defect');
+    $this->db->where_in('id', $id);
+    return $this->db->get()->row();
+
+}
+public function simpanTransaksi($data)
+{
+    $this->db->insert('transaksi_checking', $data);
+    return $this->db->insert_id();
+}
+
+public function simpanDetail($data)
+{
+    $this->db->insert('transaksi_checking_detail', $data);
+    return $this->db->insert_id();
+}
+
+public function simpanDefect($data)
+{
+    $this->db->insert('transaksi_defect', $data);
+    return $this->db->insert_id();
+}
+
+public function getDefectByDescription($description)
+{
+    $this->db->where('deskripsi_defect', $description);
+    return $this->db->get('master_defect')->row();
+}
 }
