@@ -52,16 +52,28 @@
     .traffic-light {
         display: flex;
         justify-content: center;
-        align-items: center;
-        margin-top: 15px;
+        gap: 5px;
+        margin-top: 10px;
     }
 
     .light {
-        width: 24px;
-        height: 24px;
+        width: 15px;
+        height: 15px;
         border-radius: 50%;
+        background-color: grey;
+        border: 1px solid #aaa;
+    }
+
+    .light.red {
         background-color: red;
-        border: 2px solid #aaa;
+    }
+
+    .light.yellow {
+        background-color: yellow;
+    }
+
+    .light.green {
+        background-color: green;
     }
 </style>
 
@@ -70,63 +82,71 @@
     <form method="post" action="<?= base_url('Supervisor/detail'); ?>">
 
         <div class="grid-container">
-            <?php foreach ($layouts as $layout): ?>
-                <div class="card text-center shadow-sm card-operator">
-                    <div class="card-body">
-                        <div class="avatar-icon">
-                            <i class="fas fa-user-circle"></i>
-                        </div>
+            <?php if (!empty($layouts)): ?>
+                <?php foreach ($layouts as $item): ?>
+                    <div class="card text-center shadow-sm card-operator">
+                        <div class="card-body">
+                            <div class="avatar-icon">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
 
-                        <h5 class="card-title"><?= htmlspecialchars($layout->op_name) ?></h5>
-                        <p class="card-text"><small>(<?= htmlspecialchars($layout->op_code) ?>)</small></p>
-                        <p class="card-text"><small><?= htmlspecialchars($layout->nama_mesin) ?></small></p>
+                            <h5 class="card-title"><?= htmlspecialchars($item->op_name) ?></h5>
+                            <p class="card-text"><small>(<?= htmlspecialchars($item->op_code) ?>)</small></p>
+                            <p class="card-text"><small><?= htmlspecialchars($item->nama_mesin) ?></small></p>
 
-                        <!-- Dropdown Nama Operator -->
-                        <div class="form-group">
-                            <select class="form-control" name="empID[]" required>
-                                <option value="">-- Pilih Nama Operator --</option>
+                            <!-- Tampilkan Nama Operator Langsung -->
+                            <div class="form-group">
                                 <?php foreach ($operators as $op): ?>
-                                    <option value="<?= $op['empID'] ?>"><?= $op['name'] ?></option>
+                                    <p><?= htmlspecialchars($op['name']) ?></p>
                                 <?php endforeach; ?>
-                            </select>
-                        </div>
+                            </div>
+                            <!-- Tombol untuk membuka modal -->
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#defectsModal">
+                                Lihat Defect
+                            </button>
 
-                        <!-- Dropdown Nama Defect -->
-                        <div class="defect-group mb-2">
-                            <div class="row">
-                                <div class="col-7">
-                                    <select class="form-control" name="defect[][deskripsi_defect]" required>
-                                        <option value="">-- Defect --</option>
-                                        <?php foreach ($defect_list as $def): ?>
-                                            <option value="<?= htmlspecialchars($def['deskripsi_defect']); ?>">
-                                                <?= htmlspecialchars($def['deskripsi_defect']); ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-
-                                <div class="col-3">
-                                    <input type="number" name="defect[][jumlah_defect]" min="1" value="1" class="form-control" required>
-                                </div>
-
-                                <div class="col-2">
-                                    <button type="button" class="btn text-danger remove-defect" style="font-size: 20px; font-weight: bold; line-height: 1;">×</button>
+                            <!-- Modal -->
+                            <div class="modal fade" id="defectsModal" tabindex="-1" role="dialog" aria-labelledby="defectsModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="defectsModalLabel">Daftar Defect</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <?php foreach ($operation_defects as $od): ?>
+                                                <p><?= htmlspecialchars($od['deskripsi_defect']) ?></p>
+                                            <?php endforeach; ?>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Tombol tambah defect -->
-                        <div class="text-center mt-2">
-                            <button type="button" class="btn btn-primary btn-sm add-defect">+ Tambah Defect</button>
-                        </div>
-
-
-                        <div class="traffic-light">
-                            <span class="light" style="background-color: red;"></span>
+                            <div class="traffic-light mt-2">
+                                <?php
+                                $defect = isset($op->defect_count)
+                                    ? $op->defect_count
+                                    : rand(0, 10); // nilai acak antara 0-10S
+                                $color = 'green';
+                                if ($defect > 5) {
+                                    $color = 'red';
+                                } elseif ($defect > 2) {
+                                    $color = 'yellow';
+                                }
+                                echo '<span class="light ' . $color . '"></span>';
+                                ?>
+                            </div>
                         </div>
                     </div>
-                </div>
-            <?php endforeach; ?>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p class="text-center text-muted">Tidak ada data layout yang tersedia.</p>
+            <?php endif; ?>
         </div>
 </div>
 
@@ -158,9 +178,7 @@
     });
 </script>
 
-
-<button type="submit" name="aksi" value="simpan" class="btn btn-success mt-3">Simpan</button>
-<a href="<?= base_url('TransaksiChecking'); ?>" class="btn btn-secondary mt-3">Kembali</a>
+<a href="<?= base_url('Supervisor'); ?>" class="btn btn-secondary ml-4 mt-3 ">Kembali</a>
 
 <script
     src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"

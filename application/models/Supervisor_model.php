@@ -3,13 +3,12 @@ class Supervisor_model extends CI_Model
 {
     public function getCheckingTime()
     {
-        $query = "
-        SELECT
+        $query = "SELECT
             id_transaksi_checking_detail AS id_detail,
             id_transaksi_checking,
-            id_master_opt_layout,
             line_name,
             style,
+            kode_orc,
             nama_proses,
             kode_proses,
             id_defect,
@@ -21,17 +20,17 @@ class Supervisor_model extends CI_Model
 
         return $this->db->query($query)->result_array();
     }
-    public function getLimitedEmployee($limit = 10)
+    public function getLimitedEmployee($limit = 1)
     {
         $this->db->select('*');
-        $this->db->from('mstemp'); // sesuaikan nama tabel
+        $this->db->from('mstemp');
         $this->db->limit($limit);
         return $this->db->get()->result_array();
     }
     public function getLimitedOperation($limit = 10)
     {
         $this->db->select('*');
-        $this->db->from('master_opt_layout'); // sesuaikan tabel
+        $this->db->from('master_opt_layout');
         $this->db->limit($limit);
         return $this->db->get()->result_array();
     }
@@ -44,6 +43,26 @@ class Supervisor_model extends CI_Model
     ');
         $this->db->from('master_opt_layout l');
         $this->db->join('jns_barang m', 'm.id_jnsbarang = l.id_machine', 'left');
+        $this->db->limit($limit);
+        return $this->db->get()->result();
+    }
+
+    public function getDefectsPerOperation($limit = 1)
+    {
+        $this->db->select('*');
+        $this->db->from('master_defect');
+        $this->db->limit($limit);
+        return $this->db->get()->result_array();
+    }
+
+    public function getAction($limit = 10)
+    {
+        $this->db->select('
+        d.deskripsi_defect,
+        m.jumlah as jumlah_defect
+    ');
+        $this->db->from('master_defect d');
+        $this->db->join('transaksi_checking_detail m', 'm.id_transaksi_checking_detail = m.jumlah', 'left');
         $this->db->limit($limit);
         return $this->db->get()->result();
     }

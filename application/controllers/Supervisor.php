@@ -21,11 +21,24 @@ class Supervisor extends CI_Controller
     }
     public function detail()
     {
-        $data['operators'] = $this->Supervisor_model->getLimitedEmployee(10);
+
+        $data['title'] = 'List Checking Time';
+        $data['line_name'] = '';
+        $data['operators'] = $this->Supervisor_model->getLimitedEmployee(1);
         $data['operation_name'] = $this->Supervisor_model->getLimitedOperation(10);
         $data['layouts'] = $this->Supervisor_model->getLayoutWithMesin(10);
+        $data['operation_defects'] = $this->Supervisor_model->getDefectsPerOperation(1);
+
         $this->load->view('templates/header', $data);
         $this->load->view('Supervisor/detail', $data);
+        $this->load->view('templates/footer');
+    }
+    public function action_plan()
+    {
+        $data['title'] = 'List Checking Time';
+        $data['ActionPlan'] = $this->Supervisor_model->getAction(10);
+        $this->load->view('templates/header', $data);
+        $this->load->view('Supervisor/action_plan', $data);
         $this->load->view('templates/footer');
     }
 }
