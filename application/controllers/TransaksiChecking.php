@@ -60,22 +60,20 @@ class TransaksiChecking extends CI_Controller
         $this->load->library('form_validation');
 
         // Validasi form
-        $this->form_validation->set_rules('id_workgroup', 'Line', 'required');
-        $this->form_validation->set_rules('id_style', 'Style', 'required');
+        $this->form_validation->set_rules('id_wg', 'Line', 'required');
+        $this->form_validation->set_rules('id_opb', 'Style', 'required');
         $this->form_validation->set_rules('empID', 'Employee ID', 'required');
-        $this->form_validation->set_rules('employee_name', 'Employee Name', 'required');
         $this->form_validation->set_rules('op_name', 'Operation Name', 'required');
         $this->form_validation->set_rules('op_code', 'Operation code', 'required');
-        $this->form_validation->set_rules('kode_defect', 'Kode Defect', 'required');
+        $this->form_validation->set_rules('id_master_opt_layout', 'ID Master Opt Layout', 'required');
         $this->form_validation->set_rules('deskripsi_defect', 'Deskripsi Defect', 'required');
-        $this->form_validation->set_rules('kategori_defect', 'Kategori', 'required');
     
         // Data untuk dropdown
         $data['operators'] = $this->TransaksiChecking_model->getAllMasterEmployee();
         // echo '<pre>'; print_r($data['operators']); die;
         $data['operation_name'] = $this->TransaksiChecking_model->getAllOperationCode();
         $data['defect_list'] = $this->TransaksiChecking_model->getAllDefect();
-        
+        // $data['layouts'] = $this->TransaksiChecking_model->getLayoutByLine($id_line);
         // load data line dari url
         $id = $this->input->get('Workgroup'); 
         $data['line'] = $id;
@@ -107,15 +105,13 @@ class TransaksiChecking extends CI_Controller
             $this->load->view('templates/footer');
         } else {
             $data =[
-                'id_workgroup'=>$this->input->post('id_workgroup'),
-                'id_style'=>$this->input->post('id_style'),
+                'id_wg'=>$this->input->post('id_wg'),
+                'id_opb'=>$this->input->post('id_opb'),
                 'empID'=>$this->input->post('id_employee'),
-                'employee_name'=>$this->input->post('employee_name'),
                 'operation_code'=>$this->input->post('operation_code'),
                 'operation_name'=>$this->input->post('operation_name'),
-                'kode_defect'=>$this->input->post('kode_defect'),
+                'id_master_opt_layout'=>$this->input->post('id_master_opt_layout'),
                 'deskripsi_defect'=>$this->input->post('deskripsi_defect'),
-                'kategori_defect'=>$this->input->post('kategori_defect'),
             ] ;
             $this->TransaksiChecking_model->tambahDataInputDefect($data);
             $this->session->set_flashdata('flash', 'Ditambahkan');
@@ -125,50 +121,46 @@ class TransaksiChecking extends CI_Controller
 
     public function simpan()
     {
-        // 1. Simpan ke header_transaksi_checking
-        $id_workgroup = $this->input->post('id_workgroup');
-        $id_style = $this->input->post('id_style');
-
-        // Data header
-        $data_transaksi = [
-            // 'tgl' => date('Y-m-d'),
-            'id_workgroup' => $id_workgroup,
-            'id_style' => $id_style
-        ];
-        $transaksi_id = $this->TransaksiChecking_model->simpanTransaksi($data_transaksi);
+        $this->db->trans_start(); // MULAI TRANSAKSI
     
-        // 2. Simpan per operator (looping)
+        $id_wg = $this->input->post('id_wg');
+        $id_opb = $this->input->post('id_opb');
+    
+        $data_transaksi = [
+            'id_wg' => $id_wg,
+            'id_opb' => $id_opb
+        ];
+        $this->db->insert('transaksi_checking', $data_transaksi); 
+        $transaksi_id = $this->db->insert_id();
+    
         $empIDs = $this->input->post('empID');
         $op_names = $this->input->post('op_name');
         $op_codes = $this->input->post('op_code');
         $defects = $this->input->post('deskripsi_defect');
+        $jumlahs = $this->input->post('jumlah');
+        $id_master_layouts = $this->input->post('id_master_opt_layout');
+        $id_jnsbarang = $this->input->post('id_jnsbarang');
     
         foreach ($empIDs as $i => $empID) {
-            $employee = $this->TransaksiChecking_model->getUserById($empID);
-            $employee_name = $employee ? $employee->name : 'Unknown';
-    
             $detail_data = [
                 'id_transaksi_checking' => $transaksi_id,
-                'empID' => $empID,
-                'employee_name' => $employee_name,
+                'id_master_opt_layout' => $id_master_layouts[$i],
+                'id_jnsbarang' => $id_jnsbarang[$i],
+                'op_code' => $op_codes[$i],
                 'op_name' => $op_names[$i],
-                'op_code' => $op_codes[$i]
+                'empID' => $empID
             ];
-    
             $detail_id = $this->TransaksiChecking_model->simpanDetail($detail_data);
     
-            // 3. Simpan defect per operator
             if (isset($defects[$i])) {
-                foreach ($defects[$i] as $defect_description) {
+                foreach ($defects[$i] as $j => $defect_description) {
                     $defect_data = $this->TransaksiChecking_model->getDefectByDescription($defect_description);
-    
                     if (!$defect_data) continue;
     
                     $defect = [
                         'id_transaksi_checking_detail' => $detail_id,
-                        'kode_defect' => $defect_data->kode_defect,
-                        'deskripsi_defect' => $defect_data->deskripsi_defect,
-                        'kategori_defect' => $defect_data->kategori_defect
+                        'id_defect' => $defect_data->id,
+                        'jumlah' => $jumlahs[$i][$j] ?? 1
                     ];
     
                     $this->TransaksiChecking_model->simpanDefect($defect);
@@ -176,20 +168,33 @@ class TransaksiChecking extends CI_Controller
             }
         }
     
+        $this->db->trans_complete(); // AKHIRI TRANSAKSI
+    
+        if ($this->db->trans_status() === FALSE) {
+            echo "Gagal menyimpan data. Semua rollback.";
+            // Bisa tambahkan logging di sini
+            exit;
+        }
+    
         $this->session->set_flashdata('flash', 'Ditambahkan');
         redirect('TransaksiChecking');
-    }    
+    }
+      
     
 
-    public function hapus ($id)
+    public function hapus($id)
     {
+        $this->TransaksiChecking_model->hapusDefectByTransaksiId($id);
+        $this->TransaksiChecking_model->hapusDetailByTransaksiId($id);
         $this->TransaksiChecking_model->hapusDataInputDefect($id);
-        $this->session->set_flashdata('flash', 'Dihapus');
+        
+        $this->session->set_flashdata('flash', 'Data berhasil dihapus');
         redirect('TransaksiChecking');
     }
-
     public function detail($id)
     {
+       
+        $data['detail_checking'] = $this->TransaksiChecking_model->getDetailWithJoins($id);
         $result = $this->TransaksiChecking_model->getTransaksiById($id);
         
         if (!$result) {

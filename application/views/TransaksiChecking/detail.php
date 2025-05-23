@@ -112,9 +112,9 @@
                                         <div class="defect-item mb-2 p-2 bg-light rounded">
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <div>
-                                                    <small class="text-muted"><?= htmlspecialchars($defect['deskripsi_defect']) ?></small>
+                                                    <small class="text-muted"><?= htmlspecialchars($defect['id_defect']) ?></small>
                                                 </div>
-                                                <a href="<?= base_url('TransaksiChecking/detail_defect/'.$defect['id_transaksi_checking'].'/'.$defect['id_transaksi_checking']) ?>" 
+                                                <a href="<?= base_url('TransaksiChecking/detail_defect/'.$defect['id_transaksi_defect'].'/'.$defect['id_transaksi_defect']) ?>" 
                                                    class="btn btn-sm btn-info">
                                                     <i class="fas fa-search"></i>
                                                 </a>

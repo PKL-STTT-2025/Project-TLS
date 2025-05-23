@@ -71,112 +71,151 @@
     <h3>Data Operator per Line - LINE <?= strtoupper($line_name) ?></h3>
     <form method="post" action="<?= base_url('TransaksiChecking/simpan'); ?>">
 
-        <div class="grid-container">
+        <div class="row">
             <?php foreach ($layouts as $layout_index => $layout): ?>
-                <div class="card text-center shadow-sm card-operator">
-                    <div class="card-body">
-                        <div class="avatar-icon">
-                            <i class="fas fa-user-circle"></i>
-                        </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card text-center shadow-sm">
+                        <div class="card-body">
 
-                        <h5 class="card-title"><?= htmlspecialchars($layout->op_name) ?></h5>
-                        <p class="card-text"><small>(<?= htmlspecialchars($layout->op_code) ?>)</small></p>
-                        <p class="card-text"><small><?= htmlspecialchars($layout->nama_mesin) ?></small></p>
+                            <div class="avatar-icon mb-2">
+                                <i class="fas fa-user-circle fa-3x"></i>
+                            </div>
 
-                        <!-- Hidden input yang perlu disimpan -->
-                        <input type="hidden" name="id_workgroup" value="<?= $line ?>">
-                        <input type="hidden" name="id_style" value="<?= $id_style ?>">
-                        <input type="hidden" name="op_name[]" value="<?= $layout->op_name ?>">
-                        <input type="hidden" name="op_code[]" value="<?= $layout->op_code ?>">
-                        <!-- <input type="hidden" name="kategori_defect[]" value="<?= $layout->kategori_defect ?>"> -->
+                            <h5 class="card-title"><?= htmlspecialchars($layout->op_name ?? '') ?></h5>
+                            <p class="card-text">
+                                <small>(<?= htmlspecialchars($layout->op_code ?? '') ?>)</small><br>
+                                <small><?= htmlspecialchars($layout->machine_name ?? '') ?></small>
+                            </p>
 
-                        <!-- Dropdown Nama Operator -->
-                        <div class="form-group">
-                            <select class="form-control" name="empID[]" required>
-                                <option value="">-- Pilih Nama Operator --</option>
-                                <?php foreach ($operators as $op): ?>
-                                    <option value="<?= $op['empID'] ?>"><?= $op['name'] ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
+                            <!-- Hidden input -->
+                            <input type="hidden" name="id_wg" value="<?= htmlspecialchars($line ?? '') ?>">
+                            <input type="hidden" name="id_opb" value="<?= htmlspecialchars($id_style ?? '') ?>">
+                            <input type="hidden" name="op_name[]" value="<?= htmlspecialchars($layout->op_name ?? '') ?>">
+                            <input type="hidden" name="op_code[]" value="<?= htmlspecialchars($layout->op_code ?? '') ?>">
+                            <input type="hidden" name="id_master_opt_layout[]" value="<?= htmlspecialchars($layout->id_master_opt_layout ?? '') ?>">
+                            <input type="hidden" name="id_jnsbarang[]" value="<?= htmlspecialchars($layout->id_jnsbarang ?? '') ?>">
 
-                        <!-- Defect Group (bisa ditambah via JS) -->
-                        <div class="defect-wrapper">
-                            <div class="defect-group mb-2">
-                                <div class="row">
-                                    <div class="col-9">
-                                    <!-- Change this in your view -->
-                                        <select class="form-control" name="deskripsi_defect[<?= $layout_index ?>][]" required>
-                                            <option value="">-- Pilih Nama Defect --</option>
-                                            <?php foreach ($defect_list as $def): ?>
-                                                <option 
-                                                    value="<?= $def['deskripsi_defect']; ?>" 
-                                                    data-kode-defect="<?= htmlspecialchars($def['kode_defect']); ?>" 
-                                                    data-kategori-defect="<?= htmlspecialchars($def['kategori_defect']); ?>">
-                                                    <?= $def['deskripsi_defect']; ?>
-                                                </option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
-                                    <div class="col-2">
-                                        <button type="button" class="btn text-danger remove-defect" style="font-size: 20px; font-weight: bold; line-height: 1;">×</button>
+                            <!-- Dropdown Nama Operator -->
+                            <div class="form-group mt-2">
+                                <select class="form-control" name="empID[]" required>
+                                    <option value="">-- Pilih Nama Operator --</option>
+                                    <?php foreach ($operators as $op): ?>
+                                        <option value="<?= $op['empID'] ?>"><?= $op['name'] ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+
+                            <!-- Group Defect -->
+                            <div class="defect-wrapper">
+                                <div class="defect-group mb-2">
+                                    <div class="row">
+                                        <div class="col-7">
+                                            <select class="form-control" name="deskripsi_defect[<?= $layout_index ?>][]" required>
+                                                <option value="">-- Pilih Nama Defect --</option>
+                                                <?php foreach ($defect_list as $def): ?>
+                                                    <option 
+                                                        value="<?= $def['deskripsi_defect']; ?>" 
+                                                        data-kode-defect="<?= htmlspecialchars($def['kode_defect']); ?>" 
+                                                        data-kategori-defect="<?= htmlspecialchars($def['kategori_defect']); ?>">
+                                                        <?= $def['deskripsi_defect']; ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                        <div class="col-3">
+                                            <select class="form-control" name="jumlah_defect[<?= $layout_index ?>][]">
+                                                <option value="">Jumlah</option>
+                                                <?php for ($i = 1; $i <= 10; $i++): ?>
+                                                    <option value="<?= $i ?>"><?= $i ?></option>
+                                                <?php endfor; ?>
+                                            </select>
+                                        </div>
+                                        <div class="col-2 d-flex align-items-center">
+                                            <button type="button" class="btn text-danger remove-defect" style="font-size: 20px; line-height: 1;">×</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
+                            <div class="text-center mt-2">
+                                <button type="button" class="btn btn-primary btn-sm add-defect">+ Tambah Defect</button>
+                            </div>
 
-                        <div class="text-center mt-2">
-                            <button type="button" class="btn btn-primary btn-sm add-defect">+ Tambah Defect</button>
-                        </div>
-
-                        <div class="traffic-light">
-                            <span class="light" style="background-color: red;"></span>
+                            <!-- Traffic Light -->
+                            <div class="traffic-light mt-3">
+                                <span class="light" style="background-color: red; width: 20px; height: 20px; display: inline-block; border-radius: 50%;"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
             <?php endforeach; ?>
         </div>
 
-        <button type="submit" name="aksi" value="simpan" class="btn btn-success mt-3">Simpan</button>
-        <a href="<?= base_url('TransaksiChecking'); ?>" class="btn btn-secondary mt-3">Kembali</a>
+        <div class="mt-4">
+            <button type="submit" name="aksi" value="simpan" class="btn btn-success">Simpan</button>
+            <a href="<?= base_url('TransaksiChecking'); ?>" class="btn btn-secondary">Kembali</a>
+        </div>
     </form>
 </div>
 
 
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const cards = document.querySelectorAll('.card-operator');
 
-    cards.forEach((card, index) => {
-        const addBtn = card.querySelector('.add-defect');
-        const wrapper = card.querySelector('.defect-wrapper');
+    document.querySelectorAll('.add-defect').forEach(button => {
+        button.addEventListener('click', function () {
+            const layoutIndex = this.getAttribute('data-layout-index');
+            const container = this.closest('.card-body').querySelector('.defect-wrapper');
 
-        addBtn.addEventListener('click', function () {
-            const clone = wrapper.querySelector('.defect-group').cloneNode(true);
-            const select = clone.querySelector('select');
-            
-            // Reset the select value
-            select.selectedIndex = 0;
-            
-            // Ensure the name attribute is correct
-            select.name = `deskripsi_defect[${index}][]`;
-            
-            wrapper.appendChild(clone);
+            const defectHTML = `
+                <div class="defect-group mb-2">
+                    <div class="row">
+                        <div class="col-7">
+                            <select class="form-control" name="deskripsi_defect[${layoutIndex}][]" required>
+                                <option value="">-- Pilih Nama Defect --</option>
+                                ${getDefectOptions()}
+                            </select>
+                        </div>
+                        <div class="col-3">
+                            <select class="form-control" name="jumlah_defect[${layoutIndex}][]">
+                                ${getJumlahOptions()}
+                            </select>
+                        </div>
+                        <div class="col-2 d-flex align-items-center">
+                            <button type="button" class="btn text-danger remove-defect" style="font-size: 20px;">×</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            container.insertAdjacentHTML('beforeend', defectHTML);
         });
     });
 
-    // Delegated event for remove buttons
     document.addEventListener('click', function (e) {
         if (e.target.classList.contains('remove-defect')) {
-            const group = e.target.closest('.defect-group');
-            if (group && group.parentElement.querySelectorAll('.defect-group').length > 1) {
-                group.remove();
-            }
+            e.target.closest('.defect-group').remove();
         }
     });
+
+    function getDefectOptions() {
+        const defectList = <?= json_encode($defect_list) ?>;
+        return defectList.map(def => 
+            `<option value="${def.deskripsi_defect}">${def.deskripsi_defect}</option>`
+        ).join('');
+    }
+
+    function getJumlahOptions() {
+        let options = '<option value="">Jumlah</option>';
+        for (let i = 1; i <= 10; i++) {
+            options += `<option value="${i}">${i}</option>`;
+        }
+        return options;
+    }
 });
 </script>
+
 
 <script
   src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"

@@ -112,8 +112,8 @@
                         <?php foreach ($TransaksiChecking as $transaksi) : ?>
                             <tr>
                                 <td><?= $i++; ?></td>
-                                <td><?= $transaksi['id_workgroup'] ?? '-' ?></td>
-                                <td><?= $transaksi['id_style'] ?? '-' ?></td>
+                                <td><?= $transaksi['id_wg'] ?? '-' ?></td>
+                                <td><?= $transaksi['id_opb'] ?? '-' ?></td>
                                 <td><?= $transaksi['color'] ?? '-' ?></td>
                                 <td><?= $transaksi['orc'] ?? '-' ?></td>
                                 <td>

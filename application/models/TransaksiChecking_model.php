@@ -72,16 +72,14 @@ class TransaksiChecking_model extends CI_Model
         return $result->result_array();
     }
 
-    // public function getlayoutbyline($line)
-    // {
-    //     $this->db->where('line_name', $line);
-    //     $query = $this->db->get('mstworkgroup');
-    //     if ($query->num_rows() > 0) {
-    //         return $query->result_array();
-    //     } else {
-    //         return array(); 
-    //     }
-    // }
+//     public function getLayoutByLine($id_line)
+// {
+//     $this->db->select('id_master_opt_layout, op_name, op_code, id_machine'); 
+//     $this->db->from('master_opt_layout');
+//     $this->db->where('id_wg', $id_line);
+//     return $this->db->get()->result();
+// }
+
 
     public function getFilteredTransaksi($line, $style)
     {
@@ -113,13 +111,17 @@ class TransaksiChecking_model extends CI_Model
         $empID = $this->input->post('empID', true);
         $operationcode = $this->input->post('op_code', true);
         $kodeDefect = $this->input->post('kode_defect', true);
-        
-        $this->db->select('name')->from('mstemp')->limit(5);
-        $operators = $this->db->get()->result_array();
-        
-        $this->db->select('op_name')->from('master_opt_layout')->limit(5);
-        $proses = $this->db->get()->result_array();
-        
+
+        $this->db->select('name');
+        $this->db->from('mstemp');
+        $this->db->where('empID', $empID);
+        $operator = $this->db->get()->row_array();
+
+        $this->db->select('op_name');
+        $this->db->from('master_opt_layout');
+        $this->db->where('op_code', $operationcode);
+        $proses = $this->db->get()->row_array();
+
         $data = [
             'empID' => $empID,
             'employee_name' => $operator['name'] ?? 'Unknown',
@@ -127,70 +129,68 @@ class TransaksiChecking_model extends CI_Model
             'operation_name' => $proses['op_name'] ?? 'Unknown',
             'kode_defect' => $kodeDefect,
             'deskripsi_defect' => $this->input->post('deskripsi_defect', true),
-            'kategori' => $this->input->post('kategori', true),
-            // 'tanggal_input' => date('Y-m-d H:i:s')
+            'kategori_defect' => $this->input->post('kategori_defect', true), 
         ];
-        
+
         $this->db->insert('transaksi_checking', $data);
         return $this->db->insert_id();
     }
 
+
     public function insert($data)
     {
-        $id_workgroup = $this->input->post('id_workgroup');
-        $id_style = $this->input->post('id_style');
+        $id_workgroup = $this->input->post('id_wg');
+        $id_style = $this->input->post('id_opb');
 
         $this->db->insert('transaksi_checking', $data);
     }
     
-    public function hapusDataInputDefect($id)
-    {
-        //$this->db->where('id', $id);
-        $this->db->delete('transaksi_checking', ['id_transaksi_checking'=>$id]);
-    }
 
     public function getTransaksiById($transaksi_id)
     {
-        $this->db->select('t.*, w.Workgroup, o.style, e.name as employee_name');
+        $this->db->select('t.*, w.Workgroup, o.style, e.name AS employee_name');
         $this->db->from('transaksi_checking t');
-        $this->db->join('mstworkgroup w', 'w.idWG = t.id_workgroup', 'left');
-        $this->db->join('operation_breakdown o', 'o.id = t.id_style', 'left');
-        $this->db->join('mstemp e', 'e.empID = t.id_employee', 'left');
+        $this->db->join('mstworkgroup w', 'w.idWG = t.id_wg');
+        $this->db->join('operation_breakdown o', 'o.id = t.id_opb');
+        $this->db->join('transaksi_checking_detail d', 'd.id_transaksi_checking = t.id_transaksi_checking', 'left');
+        $this->db->join('mstemp e', 'e.empID = d.empID', 'left');
         $this->db->where('t.id_transaksi_checking', $transaksi_id);
-        $transaksi = $this->db->get()->row_array();
-
+        $query = $this->db->get();
+    
+        $transaksi = $query->row_array(); 
+    
         if (!$transaksi) {
             return false;
         }
-        $this->db->select('DISTINCT(t.op_name), t.op_code, m.name as machine_name');
-        $this->db->from('transaksi_checking t');
-        $this->db->join('master_opt_layout l', 'l.op_code = t.op_code', 'left');
+    
+        $this->db->select('DISTINCT(d.op_name), d.op_code, d.id_master_opt_layout, m.name as machine_name');
+        $this->db->from('transaksi_checking_detail d');
+        $this->db->join('master_opt_layout l', 'l.id = d.id_master_opt_layout', 'left');
         $this->db->join('jns_barang m', 'm.id_jnsbarang = l.id_machine', 'left');
-        $this->db->where('t.id_transaksi_checking', $transaksi_id);
+        $this->db->where('d.id_transaksi_checking', $transaksi_id);
         $operations = $this->db->get()->result_array();
-
-
+    
         foreach ($operations as &$op) {
-            $this->db->select('t.id_transaksi_checking, t.kode_defect, d.deskripsi_defect, d.kategori_defect');
-            $this->db->from('transaksi_checking t');
-            $this->db->join('master_defect d', 'd.kode_defect = t.kode_defect', 'left');
-            $this->db->where('t.id_transaksi_checking', $transaksi_id);
-            $this->db->where('t.op_name', $op['op_name']);
+            $this->db->select('td.id_transaksi_checking_detail, td.id_defect');
+            $this->db->from('transaksi_defect td');
+            $this->db->join('master_defect def', 'def.id = td.id_defect', 'left');
+            $this->db->where('td.id_transaksi_checking_detail', $transaksi_id);
+            // $this->db->where('td.op_name', $op['op_name']);
             $op['defects'] = $this->db->get()->result_array();
         }
-
+    
         return [
             'transaksi' => $transaksi,
             'operations' => $operations
         ];
     }
-
+    
 
     public function ubahDataInputDefect($id)
     {
     $data = [
-        "id_workgroup" => $this->input->post('id_workgroup', true),
-        "id_style" => $this->input->post('id_style', true),
+        "id_wg" => $this->input->post('id_wg', true),
+        "id_opb" => $this->input->post('id_opb', true),
         "empID" => $this->input->post('empID', true),
         "employee_name" => $this->input->post('employee_name', true),
         "op_name" => $this->input->post('op_name', true),
@@ -253,7 +253,7 @@ class TransaksiChecking_model extends CI_Model
 
     public function getAllDefect()
     {
-        $this->db->select('kode_defect, deskripsi_defect, kategori_defect');
+        $this->db->select('id,kode_defect, deskripsi_defect, kategori_defect');
         $this->db->from('master_defect');
         $query = $this->db->get();
         return $query->result_array();
@@ -309,18 +309,28 @@ class TransaksiChecking_model extends CI_Model
     return $this->db->get()->result_array();
 }
 
-public function getLayoutWithMesin($limit = 2)
+// public function getLayoutWithMesin($limit = 2)
+// {
+//     $this->db->select('
+//         l.op_code,
+//         l.op_name,
+//         m.name as nama_mesin
+//     ');
+//     $this->db->from('master_opt_layout l');
+//     $this->db->join('jns_barang m', 'm.id_jnsbarang = l.id_machine', 'left');
+//     $this->db->limit($limit);
+//     return $this->db->get()->result();
+// }
+
+public function getLayoutWithMesin($limit=2)
 {
-    $this->db->select('
-        l.op_code,
-        l.op_name,
-        m.name as nama_mesin
-    ');
+    $this->db->select('l.id as id_master_opt_layout, l.op_name, l.op_code, l.id_machine, m.name as machine_name');
     $this->db->from('master_opt_layout l');
     $this->db->join('jns_barang m', 'm.id_jnsbarang = l.id_machine', 'left');
     $this->db->limit($limit);
     return $this->db->get()->result();
 }
+
 
 public function getCodeandDeskripsiDefectByID($id)
 {
@@ -353,4 +363,43 @@ public function getDefectByDescription($description)
     $this->db->where('deskripsi_defect', $description);
     return $this->db->get('master_defect')->row();
 }
+
+public function hapusDataInputDefect($id)
+{
+    $this->hapusDefectByTransaksiId($id);
+    $this->hapusDetailByTransaksiId($id);
+    $this->db->where('id_transaksi_checking', $id);
+    return $this->db->delete('transaksi_checking');
+}
+
+public function hapusDetailByTransaksiId($transaksi_id)
+{
+    // Hapus semua detail yang terkait dengan transaksi ini
+    $this->db->where('id_transaksi_checking', $transaksi_id);
+    return $this->db->delete('transaksi_checking_detail');
+}
+
+public function hapusDefectByTransaksiId($transaksi_id)
+{
+    // Hapus semua defect yang terkait dengan transaksi ini melalui detail
+    $this->db->where('id_transaksi_checking_detail', $transaksi_id);
+    $this->db->delete('transaksi_defect');
+}
+public function getDetailWithJoins($id_transaksi_checking)
+{
+    $this->db->select('
+        d.*, 
+        e.name AS employee_name, 
+        o.op_code, o.op_name, 
+        def.id AS id_defect,
+    ');
+    $this->db->from('transaksi_checking_detail d');
+    $this->db->join('mstemp e', 'd.empID = e.empID');
+    $this->db->join('master_opt_layout o', 'd.id_master_opt_layout = o.id');
+    $this->db->join('transaksi_defect td', 'td.id_transaksi_checking_detail = d.id_transaksi_checking_detail', 'left');
+    $this->db->join('master_defect def', 'td.id_defect = def.id', 'left');
+    $this->db->where('d.id_transaksi_checking', $id_transaksi_checking);
+    return $this->db->get()->result();
+}
+
 }
