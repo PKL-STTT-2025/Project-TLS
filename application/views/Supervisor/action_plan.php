@@ -2,7 +2,7 @@
     <div class="row mt-3">
         <div class="col-md-12">
             <div class="d-flex justify-content-between align-items-center">
-                <h2>List Checking Time</h2>
+                <h2>List Action Plan</h2>
             </div>
 
             <form action="<?= base_url('Supervisor/action_plan') ?>" method="get" class="d-flex mt-3">
@@ -35,7 +35,7 @@
                                             <td><?= $AP->jumlah ?? '-' ?></td>
                                             <td>
                                                 <div class="btn-group">
-                                                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                         Action Plan
                                                     </button>
                                                     <div class="dropdown-menu">
@@ -50,12 +50,13 @@
                                                         button.textContent = el.textContent;
                                                     }
                                                 </script>
+                                                <input type="hidden" name="action_plan" value="">
                                             </td>
                                             <td>
                                                 <textarea name="catatan[]" class="form-control" rows="2" placeholder="Tulis catatan..."></textarea>
                                             </td>
                                             <td>
-                                                <button type="submit" class="btn btn-primary">Go</button>
+                                                <button type="button" class="btn btn-secondary" onclick="submitBarisIni(this)">Go</button>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -73,3 +74,35 @@
     </div>
 </div>
 <a href="<?= base_url('Supervisor'); ?>" class="btn btn-secondary ml-4 mt-3">Kembali</a>
+<script>
+    function setActionPlan(el) {
+        const dropdown = el.closest('.btn-group');
+        const button = dropdown.querySelector('.btn');
+        const hiddenInput = dropdown.parentElement.querySelector('input[name="action_plan"]');
+
+        button.textContent = el.textContent;
+        hiddenInput.value = el.textContent;
+    }
+
+    function submitBarisIni(button) {
+        const row = button.closest('tr');
+
+        const namaDefect = row.querySelector('td:nth-child(2)').innerText.trim();
+        const jumlahDefect = row.querySelector('td:nth-child(3)').innerText.trim();
+        const actionPlan = row.querySelector('input[name="action_plan"]').value.trim();
+        const catatan = row.querySelector('textarea[name="catatan[]"]').value.trim();
+
+        console.log("Defect:", namaDefect);
+        console.log("Jumlah:", jumlahDefect);
+        console.log("Action Plan:", actionPlan);
+        console.log("Catatan:", catatan);
+
+        // Ubah tombol jadi centang tanpa ubah warna
+        button.innerHTML = "✔";
+        button.disabled = true;
+        button.style.backgroundColor = "transparent";
+        button.style.color = "black";
+        button.style.border = "none";
+        button.style.fontSize = "20px";
+    }
+</script>

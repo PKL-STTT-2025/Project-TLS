@@ -97,7 +97,9 @@
                             <!-- Tampilkan Nama Operator Langsung -->
                             <div class="form-group">
                                 <?php foreach ($operators as $op): ?>
-                                    <p><?= htmlspecialchars($op['name']) ?></p>
+                                    <?php if (trim($op->op_code) === trim($item->op_code)): ?>
+                                        <p><?= htmlspecialchars($op->operator_name) ?></p>
+                                    <?php endif; ?>
                                 <?php endforeach; ?>
                             </div>
                             <!-- Tombol untuk membuka modal -->
@@ -118,6 +120,7 @@
                                         <div class="modal-body">
                                             <?php foreach ($operation_defects as $od): ?>
                                                 <p><?= htmlspecialchars($od['deskripsi_defect']) ?></p>
+                                                <p><?= htmlspecialchars($data['jumlah'] ?? '-') ?></p>
                                             <?php endforeach; ?>
                                         </div>
                                         <div class="modal-footer">

@@ -19,15 +19,15 @@ class Supervisor extends CI_Controller
         $this->load->view('Supervisor/index', $data);
         $this->load->view('templates/footer');
     }
-    public function detail()
+    public function detail($id_transaksi_checking)
     {
 
         $data['title'] = 'List Checking Time';
         $data['line_name'] = '';
-        $data['operators'] = $this->Supervisor_model->getLimitedEmployee(1);
+        $data['operators'] = $this->Supervisor_model->getLimitedEmployee($id_transaksi_checking);
         $data['operation_name'] = $this->Supervisor_model->getLimitedOperation(10);
         $data['layouts'] = $this->Supervisor_model->getLayoutWithMesin(10);
-        $data['operation_defects'] = $this->Supervisor_model->getDefectsPerOperation(1);
+        $data['operation_defects'] = $this->Supervisor_model->getDefectsPerOperation(3);
 
         $this->load->view('templates/header', $data);
         $this->load->view('Supervisor/detail', $data);
