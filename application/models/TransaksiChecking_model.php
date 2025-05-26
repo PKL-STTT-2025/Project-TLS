@@ -352,17 +352,18 @@ public function simpanDetail($data)
     return $this->db->insert_id();
 }
 
-public function simpanDefect($data)
+public function simpanDefect($defect)
 {
-    $this->db->insert('transaksi_defect', $data);
+    $this->db->insert('transaksi_defect', $defect);
     return $this->db->insert_id();
 }
 
 public function getDefectByDescription($description)
 {
-    $this->db->where('deskripsi_defect', $description);
+    $this->db->where('TRIM(deskripsi_defect)', trim($description));
     return $this->db->get('master_defect')->row();
 }
+
 
 public function hapusDataInputDefect($id)
 {

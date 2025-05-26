@@ -87,15 +87,18 @@
                                 <small><?= htmlspecialchars($layout->machine_name ?? '') ?></small>
                             </p>
 
-                            <!-- Hidden input -->
                             <input type="hidden" name="id_wg" value="<?= htmlspecialchars($line ?? '') ?>">
                             <input type="hidden" name="id_opb" value="<?= htmlspecialchars($id_style ?? '') ?>">
+                            <input type="hidden" name="color" value="<?= htmlspecialchars($layout->color ?? '') ?>">
+                            <input type="hidden" name="orc" value="<?= htmlspecialchars($layout->orc ?? '') ?>">
                             <input type="hidden" name="op_name[]" value="<?= htmlspecialchars($layout->op_name ?? '') ?>">
                             <input type="hidden" name="op_code[]" value="<?= htmlspecialchars($layout->op_code ?? '') ?>">
                             <input type="hidden" name="id_master_opt_layout[]" value="<?= htmlspecialchars($layout->id_master_opt_layout ?? '') ?>">
-                            <input type="hidden" name="id_jnsbarang[]" value="<?= htmlspecialchars($layout->id_jnsbarang ?? '') ?>">
 
-                            <!-- Dropdown Nama Operator -->
+                            <?php foreach ($layouts as $i => $layout): ?>
+                                <input type="hidden" name="id_jnsbarang[]" value="<?id_jnsbarang?>">
+                            <?php endforeach; ?>
+
                             <div class="form-group mt-2">
                                 <select class="form-control" name="empID[]" required>
                                     <option value="">-- Pilih Nama Operator --</option>
@@ -105,7 +108,6 @@
                                 </select>
                             </div>
 
-                            <!-- Group Defect -->
                             <div class="defect-wrapper">
                                 <div class="defect-group mb-2">
                                     <div class="row">
@@ -123,7 +125,7 @@
                                             </select>
                                         </div>
                                         <div class="col-3">
-                                            <select class="form-control" name="jumlah_defect[<?= $layout_index ?>][]">
+                                        <select class="form-control" name="jumlah[<?= $layout_index ?>][]">
                                                 <option value="">Jumlah</option>
                                                 <?php for ($i = 1; $i <= 10; $i++): ?>
                                                     <option value="<?= $i ?>"><?= $i ?></option>
@@ -167,7 +169,7 @@ document.addEventListener('DOMContentLoaded', function () {
         button.addEventListener('click', function () {
             const layoutIndex = this.getAttribute('data-layout-index');
             const container = this.closest('.card-body').querySelector('.defect-wrapper');
-
+                
             const defectHTML = `
                 <div class="defect-group mb-2">
                     <div class="row">
@@ -178,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             </select>
                         </div>
                         <div class="col-3">
-                            <select class="form-control" name="jumlah_defect[${layoutIndex}][]">
+                            <select class="form-control" name="jumlah[${layoutIndex}][]">
                                 ${getJumlahOptions()}
                             </select>
                         </div>
@@ -186,8 +188,8 @@ document.addEventListener('DOMContentLoaded', function () {
                             <button type="button" class="btn text-danger remove-defect" style="font-size: 20px;">×</button>
                         </div>
                     </div>
-                </div>
-            `;
+                </div> 
+                `;
 
             container.insertAdjacentHTML('beforeend', defectHTML);
         });
@@ -215,7 +217,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 </script>
-
 
 <script
   src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"

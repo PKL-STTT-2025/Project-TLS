@@ -52,7 +52,7 @@
                 <!-- ORC -->
                 <div class="col-md-3">
                     <label>ORC:</label>
-                    <input type="text" class="form-control" id="ORC" name="orc">
+                    <input type="text" class="form-control" id="orc" name="orc">
                 </div>
             </div>
         </form>

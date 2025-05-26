@@ -114,7 +114,7 @@
                                                 <div>
                                                     <small class="text-muted"><?= htmlspecialchars($defect['id_defect']) ?></small>
                                                 </div>
-                                                <a href="<?= base_url('TransaksiChecking/detail_defect/'.$defect['id_transaksi_defect'].'/'.$defect['id_transaksi_defect']) ?>" 
+                                                <a href="<?= base_url('TransaksiChecking/detail_defect/'.$defect['id_defect'].'/'.$defect['id_defect']) ?>" 
                                                    class="btn btn-sm btn-info">
                                                     <i class="fas fa-search"></i>
                                                 </a>

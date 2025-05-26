@@ -62,7 +62,8 @@ class TransaksiChecking extends CI_Controller
         // Validasi form
         $this->form_validation->set_rules('id_wg', 'Line', 'required');
         $this->form_validation->set_rules('id_opb', 'Style', 'required');
-        $this->form_validation->set_rules('empID', 'Employee ID', 'required');
+        $this->form_validation->set_rules('color', 'Color', 'required');
+        $this->form_validation->set_rules('orc', 'ORC', 'required');
         $this->form_validation->set_rules('op_name', 'Operation Name', 'required');
         $this->form_validation->set_rules('op_code', 'Operation code', 'required');
         $this->form_validation->set_rules('id_master_opt_layout', 'ID Master Opt Layout', 'required');
@@ -107,6 +108,8 @@ class TransaksiChecking extends CI_Controller
             $data =[
                 'id_wg'=>$this->input->post('id_wg'),
                 'id_opb'=>$this->input->post('id_opb'),
+                'color'=>$this->input->post('color'),
+                'orc'=>$this->input->post('orc'),
                 'empID'=>$this->input->post('id_employee'),
                 'operation_code'=>$this->input->post('operation_code'),
                 'operation_name'=>$this->input->post('operation_name'),
@@ -121,17 +124,27 @@ class TransaksiChecking extends CI_Controller
 
     public function simpan()
     {
-        $this->db->trans_start(); // MULAI TRANSAKSI
+        $this->db->trans_start();
     
         $id_wg = $this->input->post('id_wg');
         $id_opb = $this->input->post('id_opb');
+        $color = $this->input->post('color');
+        $orc = $this->input->post('orc');
     
         $data_transaksi = [
             'id_wg' => $id_wg,
-            'id_opb' => $id_opb
+            'id_opb' => $id_opb,
+            'color' => $color,
+            'orc' => $orc
         ];
         $this->db->insert('transaksi_checking', $data_transaksi); 
         $transaksi_id = $this->db->insert_id();
+
+        // echo "<pre>";
+        // print_r($this->input->post());
+        // echo "</pre>";
+        // exit;
+
     
         $empIDs = $this->input->post('empID');
         $op_names = $this->input->post('op_name');
@@ -160,27 +173,23 @@ class TransaksiChecking extends CI_Controller
                     $defect = [
                         'id_transaksi_checking_detail' => $detail_id,
                         'id_defect' => $defect_data->id,
-                        'jumlah' => $jumlahs[$i][$j] ?? 1
+                        'jumlah' => $jumlahs[$i][$j] ?? 1, 
                     ];
-    
                     $this->TransaksiChecking_model->simpanDefect($defect);
                 }
             }
         }
     
-        $this->db->trans_complete(); // AKHIRI TRANSAKSI
+        $this->db->trans_complete(); 
     
         if ($this->db->trans_status() === FALSE) {
             echo "Gagal menyimpan data. Semua rollback.";
-            // Bisa tambahkan logging di sini
             exit;
         }
     
         $this->session->set_flashdata('flash', 'Ditambahkan');
         redirect('TransaksiChecking');
     }
-      
-    
 
     public function hapus($id)
     {
