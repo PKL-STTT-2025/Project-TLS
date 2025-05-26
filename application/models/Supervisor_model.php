@@ -3,17 +3,17 @@ class Supervisor_model extends CI_Model
 {
     public function getCheckingTime()
     {
-        $this->db->select('
-        tcd.*, 
-        wg.Workgroup AS line_name, 
-        ob.style AS style
-    ');
-        $this->db->from('transaksi_checking_detail tcd');
-        $this->db->join('transaksi_checking tc', 'tc.id_transaksi_checking = tcd.id_transaksi_checking');
-        $this->db->join('mstworkgroup wg', 'wg.idWG = tc.id_wg', 'left');
-        $this->db->join('operation_breakdown ob', 'ob.id = tc.id_opb', 'left');
-        $this->db->order_by('tcd.id_transaksi_checking_detail', 'DESC');
-        return $this->db->get()->result_array();
+        $query = "SELECT 
+            tc.id_transaksi_checking,
+            wg.Workgroup AS line_name,
+            ob.style AS style
+          FROM transaksi_checking tc
+          LEFT JOIN mstworkgroup wg ON wg.idWG = tc.id_wg
+          LEFT JOIN operation_breakdown ob ON ob.id = tc.id_opb
+          GROUP BY tc.id_transaksi_checking
+          ORDER BY tc.id_transaksi_checking DESC";
+
+        return $this->db->query($query)->result_array();
     }
     public function getLimitedEmployee($id_transaksi_checking)
     {
@@ -35,25 +35,40 @@ class Supervisor_model extends CI_Model
         $this->db->limit($limit);
         return $this->db->get()->result_array();
     }
-    public function getLayoutWithMesin($limit = 10)
+    public function getLayoutWithMesin($id_transaksi_checking)
     {
         $this->db->select('
-        l.op_code,
-        l.op_name,
-        m.name as nama_mesin
-    ');
-        $this->db->from('master_opt_layout l');
-        $this->db->join('jns_barang m', 'm.id_jnsbarang = l.id_machine', 'left');
-        $this->db->limit($limit);
+        d.op_code,
+        d.op_name,
+        jb.name AS nama_mesin
+        ');
+        $this->db->from('transaksi_checking_detail d');
+        $this->db->join('jns_barang jb', 'jb.id_jnsbarang = d.id_jnsbarang', 'left');
+        $this->db->where('d.id_transaksi_checking', $id_transaksi_checking);
+        $this->db->group_by('d.op_code');
+        $this->db->order_by('d.op_code', 'ASC');
+
         return $this->db->get()->result();
     }
 
-    public function getDefectsPerOperation($limit = 3)
+    public function getDefectsPerOperation($id)
     {
-        $this->db->select('*');
-        $this->db->from('master_defect');
-        $this->db->limit($limit);
-        return $this->db->get()->result_array();
+        $query = "SELECT 
+            td.id_transaksi_defect,
+            td.id_transaksi_checking_detail,
+            td.id_defect,
+            md.deskripsi_defect,
+            td.jumlah,
+            td.note
+        FROM 
+            transaksi_defect td
+        JOIN 
+            master_defect md ON td.id_defect = md.id
+        WHERE 
+            td.id_transaksi_checking_detail = $id
+    ";
+
+        return $this->db->query($query)->result();
     }
 
     // public function getDetail()
@@ -93,16 +108,19 @@ class Supervisor_model extends CI_Model
     // return $this->db->query($query)->result_array();
     // }
 
-    public function getAction($limit = 10)
+    public function getAction()
     {
-        $this->db->select('
-        d.deskripsi_defect,
-        SUM(m.id_defect) as jumlah_defect
-    ');
-        $this->db->from('master_defect d');
-        $this->db->join('transaksi_checking_detail m', 'm.id_defect = d.id', 'left');
-        $this->db->group_by('d.id');
-        $this->db->limit($limit);
-        return $this->db->get()->result();
+        $query = "SELECT 
+                td.id_transaksi_defect,
+                td.id_transaksi_checking_detail,
+                td.id_defect,
+                md.deskripsi_defect,
+                td.jumlah
+              FROM 
+                transaksi_defect td
+              JOIN 
+                master_defect md ON td.id_defect = md.id";
+
+        return $this->db->query($query)->result();
     }
 }

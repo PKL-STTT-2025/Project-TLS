@@ -26,8 +26,8 @@ class Supervisor extends CI_Controller
         $data['line_name'] = '';
         $data['operators'] = $this->Supervisor_model->getLimitedEmployee($id_transaksi_checking);
         $data['operation_name'] = $this->Supervisor_model->getLimitedOperation(10);
-        $data['layouts'] = $this->Supervisor_model->getLayoutWithMesin(10);
-        $data['operation_defects'] = $this->Supervisor_model->getDefectsPerOperation(3);
+        $data['layouts'] = $this->Supervisor_model->getLayoutWithMesin($id_transaksi_checking);
+        $data['operation_defects'] = $this->Supervisor_model->getDefectsPerOperation($id);
 
         $this->load->view('templates/header', $data);
         $this->load->view('Supervisor/detail', $data);
@@ -36,7 +36,7 @@ class Supervisor extends CI_Controller
     public function action_plan()
     {
         $data['title'] = 'List Checking Time';
-        $data['ActionPlan'] = $this->Supervisor_model->getAction(10);
+        $data['ActionPlan'] = $this->Supervisor_model->getAction();
         $this->load->view('templates/header', $data);
         $this->load->view('Supervisor/action_plan', $data);
         $this->load->view('templates/footer');
