@@ -16,10 +16,6 @@ class Report_Defect extends CI_Controller
         $data['title'] = 'Report Harian Defect';
         $data['report_hari'] = $this->Report_Defect_model->getAllReportDefect();
 
-        $this->load->model('Report_Defect_model');
-        $data['defects'] = $this->Report_Defect_model->get_dummy_defect_data();
-
-
         // digunakan untuk menampilkan data style dan line
         $data['line_list'] = $this->Report_Defect_model->getAlllines();
         $data['style_list'] = $this->Report_Defect_model->getAllStyles();
@@ -34,21 +30,24 @@ class Report_Defect extends CI_Controller
         } elseif ($this->input->post('keyword')) {
             $data['report_hari'] = $this->Report_Defect_model->cariReportDefect();
         } else {
-            // Awalnya kosong
-            $data['report_hari'] = [];
         }
+
         $this->load->view('templates/header', $data);
         $this->load->view('Report_Defect/report_hari', $data);
         $this->load->view('templates/footer');
+    }
+    public function getDefectChart()
+    {
+        $line_id = $this->input->get('line');
+        $style_id = $this->input->get('style');
+        $defects = $this->Report_Defect_model->getDefectByLineStyle($line_id, $style_id);
+        echo json_encode($defects);
     }
 
     public function reportMinggu()
     {
         $data['title'] = 'Report Mingguan Defect';
         $data['report_minggu'] = $this->Report_Defect_model->getAllReportDefect();
-
-        $this->load->model('Report_Defect_model');
-        $data['defects'] = $this->Report_Defect_model->get_dummy_defect_data();
 
         // digunakan untuk menampilkan data style dan line
         $data['line_list'] = $this->Report_Defect_model->getAlllines();
@@ -64,11 +63,10 @@ class Report_Defect extends CI_Controller
         } elseif ($this->input->post('keyword')) {
             $data['report_minggu'] = $this->Report_Defect_model->cariReportDefect();
         } else {
-            // Awalnya kosong
-            $data['report_minggu'] = [];
         }
+
         $this->load->view('templates/header', $data);
-        $this->load->view('Report_Defect/report_minggu', $data);
+        $this->load->view('Report_Defect/report_hari', $data);
         $this->load->view('templates/footer');
     }
 
@@ -76,10 +74,6 @@ class Report_Defect extends CI_Controller
     {
         $data['title'] = 'Report Bulanan Defect';
         $data['report_bulan'] = $this->Report_Defect_model->getAllReportDefect();
-
-
-        $this->load->model('Report_Defect_model');
-        $data['defects'] = $this->Report_Defect_model->get_dummy_defect_data();
 
         // digunakan untuk menampilkan data style dan line
         $data['line_list'] = $this->Report_Defect_model->getAlllines();
@@ -95,11 +89,10 @@ class Report_Defect extends CI_Controller
         } elseif ($this->input->post('keyword')) {
             $data['report_bulan'] = $this->Report_Defect_model->cariReportDefect();
         } else {
-            // Awalnya kosong
-            $data['report_bulan'] = [];
         }
+
         $this->load->view('templates/header', $data);
-        $this->load->view('Report_Defect/report_bulan', $data);
+        $this->load->view('Report_Defect/report_hari', $data);
         $this->load->view('templates/footer');
     }
 

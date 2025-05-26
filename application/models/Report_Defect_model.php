@@ -12,27 +12,6 @@ class Report_Defect_model extends CI_Model
         }
     }
 
-    public function get_dummy_defect_data()
-    {
-        // Dummy data defect
-        $data = [
-            ['jenis_defect' => 'Puckering', 'jumlah' => 40],
-            ['jenis_defect' => 'Dirty Soil', 'jumlah' => 30],
-            ['jenis_defect' => 'Broken Stitch', 'jumlah' => 15],
-            ['jenis_defect' => 'Skip Stitch', 'jumlah' => 10],
-            ['jenis_defect' => 'Open Seam', 'jumlah' => 40],
-            ['jenis_defect' => 'Shading', 'jumlah' => 5],
-            ['jenis_defect' => 'Wrong Label', 'jumlah' => 8],
-        ];
-
-        // Urutkan dari jumlah terbesar
-        usort($data, function ($a, $b) {
-            return $b['jumlah'] - $a['jumlah'];
-        });
-
-        return $data;
-    }
-
     public function cariReportDefect()
     {
         $keyword = $this->input->post('keyword', true);
@@ -80,13 +59,32 @@ class Report_Defect_model extends CI_Model
         return $this->db->get('transaksi_checking')->result();
     }
 
+    public function getDefectByLineStyle($line_id, $style_id)
+    {
+        $query = "SELECT 
+                md.deskripsi_defect AS nama_defect, 
+                SUM(td.jumlah) AS total_jumlah
+              FROM 
+                transaksi_defect td
+              JOIN 
+                master_defect md ON td.id_defect = md.id
+              WHERE 
+                td.line = ? AND td.style = ?
+              GROUP BY 
+                md.deskripsi_defect
+              ORDER BY 
+                total_jumlah DESC";
+
+        return $this->db->query($query, [$line_id, $style_id])->result();
+    }
+
     public function get_harian($line = null)
     {
         $today = date('Y-m-d');
         return $this->get_count_by_status($today, $today, $line);
     }
 
-    public function get_mingguan($line = null)
+    public function get_mingguan()
     {
         $start = date('Y-m-d', strtotime('monday this week'));
 
@@ -103,11 +101,6 @@ class Report_Defect_model extends CI_Model
 
     public function getStyleByLine($Workgroup)
     {
-        // $this->db->select('DISTINCT(style)');
-        // $this->db->from('operation_breakdown');
-        // $this->db->where('style IS NOT NULL');
-        // $this->db->where('style', $style);
-        // return $this->db->get()->row_array();
 
         $query = "SELECT
                 t1.id AS id_operation_breakdown,
