@@ -46,13 +46,13 @@
                 <!-- Color -->
                 <div class="col-md-3">
                     <label>Color:</label>
-                    <input type="text" class="form-control" id="color" name="color">
+                    <input type="text" class="form-control" id="color" name="color" value="<?= htmlspecialchars($this->input->get('color') ?? '') ?>">
                 </div>
 
                 <!-- ORC -->
                 <div class="col-md-3">
                     <label>ORC:</label>
-                    <input type="text" class="form-control" id="orc" name="orc">
+                    <input type="text" class="form-control" id="orc" name="orc" value="<?= htmlspecialchars($this->input->get('orc') ?? '') ?>">
                 </div>
             </div>
         </form>
@@ -76,10 +76,23 @@
             <div class="d-flex justify-content-between align-items-center">
                 <h2>Transaksi Checking</h2>
                 <?php if($this->input->get('Workgroup') && $this->input->get('style')): ?>
-                    <a href="<?= base_url('TransaksiChecking/tambah?Workgroup='.$this->input->get('Workgroup').'&style='.$this->input->get('style')) ?>" 
-                       class="btn btn-success" id="btnAdd">
-                       <i class="fas fa-plus"></i> Add Data
-                    </a>
+                    <?php 
+                        $workgroup = $this->input->get('Workgroup');
+                        $style = $this->input->get('style');
+                        $color = $this->input->get('color');
+                        $orc = $this->input->get('orc');
+                        ?>
+                        <?php if($workgroup && $style): ?>
+                            <a href="<?= base_url('TransaksiChecking/tambah?Workgroup='.$this->input->get('Workgroup').'&style='.$this->input->get('style').'&color='.$this->input->get('color').'&orc='.$this->input->get('orc')) ?>" 
+                            class="btn btn-success" id="btnAdd">
+                            <i class="fas fa-plus"></i> Add Data
+                            </a>
+                        <?php else: ?>
+                            <button class="btn btn-secondary" disabled id="btnAdd">
+                                <i class="fas fa-plus"></i> Add Data
+                            </button>
+                        <?php endif; ?>
+
                 <?php else: ?>
                     <button class="btn btn-secondary" disabled id="btnAdd">
                         <i class="fas fa-plus"></i> Add Data

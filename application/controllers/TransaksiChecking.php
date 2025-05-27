@@ -202,42 +202,66 @@ class TransaksiChecking extends CI_Controller
     }
     public function detail($id)
     {
-       
         $data['detail_checking'] = $this->TransaksiChecking_model->getDetailWithJoins($id);
         $result = $this->TransaksiChecking_model->getTransaksiById($id);
-        
+
         if (!$result) {
             show_404(); 
         }
+        $operation_defects = $this->TransaksiChecking_model->getDefectsByTransaksi($id);
+        $operations = $result['operations'];
+ 
+        foreach ($operations as &$op) {
+            $op['defects'] = array_filter($operation_defects, function ($defect) use ($op) {
+                return trim($defect['op_code']) === trim($op['op_code']);
+            });
+        }
+        unset($op); 
 
         $data = [
             'title' => 'Detail Transaksi',
             'transaksi' => $result['transaksi'], 
-            'operations' => $result['operations'],
+            'operations' => $operations,
+            'operation_defects' => $operation_defects
         ];
-        
+
         $this->load->view('templates/header', $data);
         $this->load->view('TransaksiChecking/detail', $data);
         $this->load->view('templates/footer');
     }
 
+
     public function ubah($id)
     {
         $data['judul'] = 'Form Ubah Data Input Defect';
         $data['transaksi_checking'] = $this->TransaksiChecking_model->getTransaksiById($id); 
-    
+
+        // echo "<pre>";
+        // print_r($data['transaksi_checking']);
+        // exit;
+
+        if (!$data['transaksi_checking']) {
+            show_404(); 
+        }
         if (empty($data['transaksi_checking'])) {
             show_404();
         }
     
+        $id_wg = $data['transaksi_checking']['transaksi']['id_wg'];
+        $id_opb = $data['transaksi_checking']['transaksi']['id_opb'];
+
+        $data['line_name'] = ['Workgroup' => $data['transaksi_checking']['Workgroup'] ?? ''];
+        $data['layouts'] = $this->TransaksiChecking_model->getLayoutsByWorkgroupAndStyle($id_wg, $id_opb);
+
         $data['operators'] = $this->TransaksiChecking_model->getAllMasterEmployee();
         $data['operation_name'] = $this->TransaksiChecking_model->getAllOperationCode();
         $data['defect_list'] = $this->TransaksiChecking_model->getAllDefect();
-    
+
         $this->load->view('templates/header', $data);
         $this->load->view('TransaksiChecking/ubah', $data);
         $this->load->view('templates/footer');
     }
+
     
     public function update($id)
     {

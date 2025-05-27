@@ -5,59 +5,48 @@
         gap: 20px;
         justify-items: center;
     }
-
     .card-operator {
         width: 100%;
         max-width: 240px;
     }
-
     .card {
-    height: auto !important;
-    display: flex;
-    flex-direction: column;
+        height: auto !important;
+        display: flex;
+        flex-direction: column;
     }
-
     .card-body {
-    flex: 1 1 auto;
-    overflow: visible;
+        flex: 1 1 auto;
+        overflow: visible;
     }
-
-
     .avatar-icon {
         font-size: 60px;
         color: #6c757d;
         margin-bottom: 15px;
     }
-
     .card-title {
         font-size: 16px;
         font-weight: bold;
         text-transform: uppercase;
         margin-bottom: 6px;
     }
-
     .card-text {
         font-size: 13px;
         color: #6c757d;
         margin-bottom: 4px;
     }
-
     .form-group {
         width: 100%;
         margin-top: 10px;
     }
-
     select.form-control {
         font-size: 13px;
     }
-
     .traffic-light {
         display: flex;
         justify-content: center;
         align-items: center;
         margin-top: 15px;
     }
-
     .light {
         width: 24px;
         height: 24px;
@@ -70,7 +59,7 @@
 <div class="container mt-4">
     <?php if (isset($transaksi)): ?>
         <h3>Detail Transaksi - LINE <?= strtoupper($transaksi['Workgroup']) ?></h3>
-        
+
         <!-- Header Info -->
         <div class="card mb-4">
             <div class="card-body">
@@ -84,9 +73,6 @@
                     <div class="col-md-4">
                         <p><strong>ORC:</strong> <?= htmlspecialchars($transaksi['orc']) ?></p>
                     </div>
-                    <!-- <div class="col-md-4">
-                        <p><strong>Tanggal:</strong> <?= date('d/m/Y H:i', strtotime($transaksi['date_created'])) ?></p>
-                    </div> -->
                 </div>
             </div>
         </div>
@@ -97,25 +83,33 @@
                     <div class="card text-center shadow-sm card-operator">
                         <div class="card-body">
                             <div class="avatar-icon">
-                            <i class="fas fa-user-circle"></i>
+                                <i class="fas fa-user-circle"></i>
                             </div>
-
-                            <h5 class="card-title"><?= htmlspecialchars($op['op_name']) ?></h5>
+                            <h5 class="card-title">
+                                <?= htmlspecialchars($op['op_name']) ?>
+                                <?php if (!empty($op['employee_name'])): ?>
+                                    <br><small class="text-muted">(<?= htmlspecialchars($op['employee_name']) ?>)</small>
+                                <?php endif; ?>
+                            </h5>
                             <p class="card-text"><small>(<?= htmlspecialchars($op['op_code']) ?>)</small></p>
                             <?php if (!empty($op['machine_name'])): ?>
                                 <p class="card-text"><small><?= htmlspecialchars($op['machine_name']) ?></small></p>
                             <?php endif; ?>
 
                             <div class="defect-wrapper mt-3">
-                                <?php if (!empty($op['defects'])): ?>
+                                 <?php if (!empty($op['defects'])): ?>
                                     <?php foreach ($op['defects'] as $defect): ?>
                                         <div class="defect-item mb-2 p-2 bg-light rounded">
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <div>
-                                                    <small class="text-muted"><?= htmlspecialchars($defect['id_defect']) ?></small>
+                                                    <small class="text-muted">
+                                                        <?= htmlspecialchars($defect['id_defect']) ?>
+                                                        <?php if (isset($defect['deskripsi_defect'])): ?>
+                                                            - <?= htmlspecialchars($defect['deskripsi_defect']) ?>
+                                                        <?php endif; ?>
+                                                    </small>
                                                 </div>
-                                                <a href="<?= base_url('TransaksiChecking/detail_defect/'.$defect['id_defect'].'/'.$defect['id_defect']) ?>" 
-                                                   class="btn btn-sm btn-info">
+                                                <a href="<?= base_url('TransaksiChecking/detail_defect/' . $defect['id_defect'] . '/' . $defect['id_defect']) ?>" class="btn btn-sm btn-info">
                                                     <i class="fas fa-search"></i>
                                                 </a>
                                             </div>
@@ -132,14 +126,14 @@
                 <div class="alert alert-info">Tidak ada data operation</div>
             <?php endif; ?>
         </div>
+
+
+        <div class="text-center mt-4">
+            <a href="<?= base_url('TransaksiChecking') ?>" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Kembali ke Daftar
+            </a>
+        </div>
     <?php else: ?>
         <div class="alert alert-danger">Data transaksi tidak ditemukan</div>
     <?php endif; ?>
-
-    <!-- Back Button -->
-    <div class="text-center mt-4">
-        <a href="<?= base_url('TransaksiChecking') ?>" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Kembali ke Daftar
-        </a>
-    </div>
 </div>

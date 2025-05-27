@@ -89,8 +89,8 @@
 
                             <input type="hidden" name="id_wg" value="<?= htmlspecialchars($line ?? '') ?>">
                             <input type="hidden" name="id_opb" value="<?= htmlspecialchars($id_style ?? '') ?>">
-                            <input type="hidden" name="color" value="<?= htmlspecialchars($layout->color ?? '') ?>">
-                            <input type="hidden" name="orc" value="<?= htmlspecialchars($layout->orc ?? '') ?>">
+                            <input type="hidden" name="color" id="color" class="form-control" value="<?= htmlspecialchars($this->input->get('color') ?? '') ?>">
+                            <input type="hidden" name="orc" id="orc" class="form-control"value="<?= htmlspecialchars($this->input->get('orc') ?? '') ?>">
                             <input type="hidden" name="op_name[]" value="<?= htmlspecialchars($layout->op_name ?? '') ?>">
                             <input type="hidden" name="op_code[]" value="<?= htmlspecialchars($layout->op_code ?? '') ?>">
                             <input type="hidden" name="id_master_opt_layout[]" value="<?= htmlspecialchars($layout->id_master_opt_layout ?? '') ?>">
@@ -165,11 +165,14 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
-    document.querySelectorAll('.add-defect').forEach(button => {
+    // Fungsi: Tambahkan baris defect baru
+    document.querySelectorAll('.add-defect').forEach((button, layoutIndex) => {
+        button.setAttribute('data-layout-index', layoutIndex); // inject layout index ke tombol
+
         button.addEventListener('click', function () {
             const layoutIndex = this.getAttribute('data-layout-index');
             const container = this.closest('.card-body').querySelector('.defect-wrapper');
-                
+
             const defectHTML = `
                 <div class="defect-group mb-2">
                     <div class="row">
@@ -189,25 +192,39 @@ document.addEventListener('DOMContentLoaded', function () {
                         </div>
                     </div>
                 </div> 
-                `;
+            `;
 
             container.insertAdjacentHTML('beforeend', defectHTML);
         });
     });
 
+    // Fungsi: Hapus baris defect
     document.addEventListener('click', function (e) {
         if (e.target.classList.contains('remove-defect')) {
+            const cardBody = e.target.closest('.card-body');
             e.target.closest('.defect-group').remove();
+            updateTrafficLight(cardBody);
         }
     });
 
+    // Fungsi: Update lampu ketika ada perubahan select
+    document.querySelectorAll('.card-body').forEach(cardBody => {
+        cardBody.addEventListener('change', function (e) {
+            if (e.target.matches('select')) {
+                updateTrafficLight(cardBody);
+            }
+        });
+    });
+
+    // Fungsi: Ambil option defect dengan data-kategori-defect
     function getDefectOptions() {
         const defectList = <?= json_encode($defect_list) ?>;
         return defectList.map(def => 
-            `<option value="${def.deskripsi_defect}">${def.deskripsi_defect}</option>`
+            `<option value="${def.deskripsi_defect}" data-kategori-defect="${def.kategori_defect}">${def.deskripsi_defect}</option>`
         ).join('');
     }
 
+    // Fungsi: Option jumlah 1–10
     function getJumlahOptions() {
         let options = '<option value="">Jumlah</option>';
         for (let i = 1; i <= 10; i++) {
@@ -215,10 +232,42 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         return options;
     }
+
+    // Fungsi: Hitung dan ubah warna lampu
+    function updateTrafficLight(cardBody) {
+        let totalDefect = 0;
+        let majorCount = 0;
+        let minorCount = 0;
+
+        const defectGroups = cardBody.querySelectorAll('.defect-group');
+
+        defectGroups.forEach(group => {
+            const defectSelect = group.querySelector('select[name^="deskripsi_defect"]');
+            const jumlahSelect = group.querySelector('select[name^="jumlah"]');
+
+            const kategori = defectSelect?.selectedOptions[0]?.getAttribute('data-kategori-defect');
+            const jumlah = parseInt(jumlahSelect?.value) || 0;
+
+            if (kategori === "Major") {
+                majorCount += jumlah;
+            } else if (kategori === "Minor") {
+                minorCount += jumlah;
+            }
+
+            totalDefect += jumlah;
+        });
+
+        const light = cardBody.querySelector('.traffic-light .light');
+        if ((majorCount >= 1 && minorCount >= 3) || totalDefect >= 5) {
+            light.style.backgroundColor = 'red';
+        } else if (minorCount >= 2 && totalDefect <= 4) {
+            light.style.backgroundColor = 'yellow';
+        } else if (totalDefect <= 1) {
+            light.style.backgroundColor = 'green';
+        } else {
+            light.style.backgroundColor = 'gray';
+        }
+    }
+
 });
 </script>
-
-<script
-  src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"
-  crossorigin="anonymous"
-></script>
