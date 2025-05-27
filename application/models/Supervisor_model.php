@@ -37,21 +37,24 @@ class Supervisor_model extends CI_Model
     }
     public function getLayoutWithMesin($id_transaksi_checking)
     {
-        $this->db->select('
-        d.op_code,
-        d.op_name,
-        jb.name AS nama_mesin
-        ');
-        $this->db->from('transaksi_checking_detail d');
-        $this->db->join('jns_barang jb', 'jb.id_jnsbarang = d.id_jnsbarang', 'left');
-        $this->db->where('d.id_transaksi_checking', $id_transaksi_checking);
-        $this->db->group_by('d.op_code');
-        $this->db->order_by('d.op_code', 'ASC');
 
-        return $this->db->get()->result();
+        $query = "SELECT 
+            d.op_code,
+            d.op_name,
+            jb.name AS nama_mesin,
+            IFNULL(SUM(td.jumlah), 0) AS total_defect
+        FROM transaksi_checking_detail d
+        LEFT JOIN jns_barang jb ON jb.id_jnsbarang = d.id_jnsbarang
+        LEFT JOIN transaksi_defect td ON td.id_transaksi_checking_detail = d.id_transaksi_checking_detail
+        WHERE d.id_transaksi_checking = ?
+        GROUP BY d.op_code
+        ORDER BY total_defect DESC
+    ";
+
+        return $this->db->query($query, [$id_transaksi_checking])->result();
     }
 
-    public function getDefectsPerOperation($id)
+    public function getDefectsPerOperation($id_transaksi_checking)
     {
         $query = "SELECT 
             td.id_transaksi_defect,
@@ -64,11 +67,12 @@ class Supervisor_model extends CI_Model
             transaksi_defect td
         JOIN 
             master_defect md ON td.id_defect = md.id
+        JOIN
+            transaksi_checking_detail tcd ON td.id_transaksi_checking_detail = tcd.id_transaksi_checking_detail
         WHERE 
-            td.id_transaksi_checking_detail = $id
+            tcd.id_transaksi_checking = $id_transaksi_checking
     ";
-
-        return $this->db->query($query)->result();
+        return $this->db->query($query)->result_array();
     }
 
     // public function getDetail()

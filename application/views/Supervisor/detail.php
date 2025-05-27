@@ -93,6 +93,7 @@
                             <h5 class="card-title"><?= htmlspecialchars($item->op_name) ?></h5>
                             <p class="card-text"><small>(<?= htmlspecialchars($item->op_code) ?>)</small></p>
                             <p class="card-text"><small><?= htmlspecialchars($item->nama_mesin) ?></small></p>
+                            <p class="card-text"><small>Total Defect: <?= ($item->total_defect) ?></small></p>
 
                             <!-- Tampilkan Nama Operator Langsung -->
                             <div class="form-group">
@@ -102,6 +103,7 @@
                                     <?php endif; ?>
                                 <?php endforeach; ?>
                             </div>
+
                             <!-- Tombol untuk membuka modal -->
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#defectsModal">
                                 Lihat Defect
@@ -132,9 +134,7 @@
 
                             <div class="traffic-light mt-2">
                                 <?php
-                                $defect = isset($op->defect_count)
-                                    ? $op->defect_count
-                                    : rand(0, 10); // nilai acak antara 0-10S
+                                $defect = isset($op->defect_count) ? $op->defect_count : 0;
                                 $color = 'green';
                                 if ($defect > 5) {
                                     $color = 'red';
@@ -144,6 +144,7 @@
                                 echo '<span class="light ' . $color . '"></span>';
                                 ?>
                             </div>
+
                         </div>
                     </div>
                 <?php endforeach; ?>
