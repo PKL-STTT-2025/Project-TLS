@@ -93,7 +93,7 @@
                             <h5 class="card-title"><?= htmlspecialchars($item->op_name) ?></h5>
                             <p class="card-text"><small>(<?= htmlspecialchars($item->op_code) ?>)</small></p>
                             <p class="card-text"><small><?= htmlspecialchars($item->nama_mesin) ?></small></p>
-                            <p class="card-text"><small>Total Defect: <?= ($item->total_defect) ?></small></p>
+                            <p class="card-text"><small>Total Defect: <?= ($item->defect_count) ?></small></p>
 
                             <!-- Tampilkan Nama Operator Langsung -->
                             <div class="form-group">
@@ -119,12 +119,36 @@
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
+
                                         <div class="modal-body">
-                                            <?php foreach ($operation_defects as $od): ?>
-                                                <p><?= htmlspecialchars($od['deskripsi_defect']) ?></p>
-                                                <p><?= htmlspecialchars($data['jumlah'] ?? '-') ?></p>
-                                            <?php endforeach; ?>
+                                            <?php if (!empty($operation_defects)): ?>
+                                                <?php
+                                                // Grouping defect berdasarkan op_name (nama proses)
+                                                $grouped = [];
+                                                foreach ($operation_defects as $defect) {
+                                                    $grouped[$defect['op_name']][] = $defect;
+                                                }
+                                                ?>
+
+                                                <?php foreach ($grouped as $op_name => $defects): ?>
+                                                    <div class="mb-3">
+                                                        <h6><strong><?= htmlspecialchars($op_name) ?></strong></h6>
+                                                        <ul class="pl-3">
+                                                            <?php foreach ($defects as $d): ?>
+                                                                <li>
+                                                                    <?= htmlspecialchars($d['deskripsi_defect']) ?> -
+                                                                    Jumlah: <?= $d['jumlah'] ?><?= $d['note'] ? ', Note: ' . htmlspecialchars($d['note']) : '' ?>
+                                                                </li>
+                                                            <?php endforeach; ?>
+                                                        </ul>
+                                                    </div>
+                                                    <hr>
+                                                <?php endforeach; ?>
+                                            <?php else: ?>
+                                                <p class="text-muted">Tidak ada defect yang tercatat.</p>
+                                            <?php endif; ?>
                                         </div>
+
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
                                         </div>
@@ -132,18 +156,21 @@
                                 </div>
                             </div>
 
+
                             <div class="traffic-light mt-2">
                                 <?php
-                                $defect = isset($op->defect_count) ? $op->defect_count : 0;
-                                $color = 'green';
-                                if ($defect > 5) {
-                                    $color = 'red';
-                                } elseif ($defect > 2) {
+                                $defect = $item->defect_count ?? 0;
+                                if ($defect == 0) {
+                                    $color = 'green';
+                                } elseif ($defect == 1) {
                                     $color = 'yellow';
+                                } else {
+                                    $color = 'red';
                                 }
                                 echo '<span class="light ' . $color . '"></span>';
                                 ?>
                             </div>
+
 
                         </div>
                     </div>
@@ -152,6 +179,7 @@
                 <p class="text-center text-muted">Tidak ada data layout yang tersedia.</p>
             <?php endif; ?>
         </div>
+    </form>
 </div>
 
 <script>
