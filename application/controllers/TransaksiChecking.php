@@ -158,7 +158,7 @@ class TransaksiChecking extends CI_Controller
             $detail_data = [
                 'id_transaksi_checking' => $transaksi_id,
                 'id_master_opt_layout' => $id_master_layouts[$i],
-                'id_jnsbarang' => $id_jnsbarang[$i],
+                // 'id_jnsbarang' => $id_jnsbarang[$i],
                 'op_code' => $op_codes[$i],
                 'op_name' => $op_names[$i],
                 'empID' => $empID
@@ -232,73 +232,105 @@ class TransaksiChecking extends CI_Controller
 
 
     public function ubah($id)
-    {
-        $data['judul'] = 'Form Ubah Data Input Defect';
-        $data['transaksi_checking'] = $this->TransaksiChecking_model->getTransaksiById($id); 
+{
+    $data['judul'] = 'Form Ubah Transaksi Checking';
+    $data['transaksi_checking'] = $this->TransaksiChecking_model->getTransaksiById($id); 
 
-        // echo "<pre>";
-        // print_r($data['transaksi_checking']);
-        // exit;
-
-        if (!$data['transaksi_checking']) {
-            show_404(); 
-        }
-        if (empty($data['transaksi_checking'])) {
-            show_404();
-        }
-    
-        $id_wg = $data['transaksi_checking']['transaksi']['id_wg'];
-        $id_opb = $data['transaksi_checking']['transaksi']['id_opb'];
-
-        $data['line_name'] = ['Workgroup' => $data['transaksi_checking']['Workgroup'] ?? ''];
-        $data['layouts'] = $this->TransaksiChecking_model->getLayoutsByWorkgroupAndStyle($id_wg, $id_opb);
-
-        $data['operators'] = $this->TransaksiChecking_model->getAllMasterEmployee();
-        $data['operation_name'] = $this->TransaksiChecking_model->getAllOperationCode();
-        $data['defect_list'] = $this->TransaksiChecking_model->getAllDefect();
-
-        $this->load->view('templates/header', $data);
-        $this->load->view('TransaksiChecking/ubah', $data);
-        $this->load->view('templates/footer');
+    if (empty($data['transaksi_checking'])) {
+        show_404();
     }
 
-    
+    $id_wg = $data['transaksi_checking']['transaksi']['id_wg'];
+    $id_opb = $data['transaksi_checking']['transaksi']['id_opb'];
+
+    $data['line_name'] = $this->TransaksiChecking_model->getLineNameByTransaksi($id);
+    $data['layouts'] = $this->TransaksiChecking_model->getLayoutsByWorkgroupAndStyle($id_wg, $id_opb);
+    $data['id_transaksi_checking_detail'] = $id;
+    $data['id_transaksi'] = $id;
+    $data['data_detail'] = $this->TransaksiChecking_model->getDetailByTransaksi($id);
+
+    $data['operators'] = $this->TransaksiChecking_model->getAllMasterEmployee();
+    $data['operation_name'] = $this->TransaksiChecking_model->getAllOperationCode();
+    $data['defect_list'] = $this->TransaksiChecking_model->getAllDefect();
+
+    $transaksi = $data['transaksi_checking']['transaksi'];
+    $operations = isset($data['transaksi_checking']['operations']) && is_array($data['transaksi_checking']['operations']) 
+        ? $data['transaksi_checking']['operations'] : [];
+
+    foreach ($operations as &$op) {
+        if (isset($op['id_transaksi_checking_detail'])) {
+            $op['defects'] = $this->TransaksiChecking_model->getDefectsByOpDetailId($op['id_transaksi_checking_detail']);
+        } else {
+            $op['defects'] = [];
+        }
+    }
+
+    $data['transaksi'] = $transaksi;
+    $data['operations'] = $operations;
+
+    $this->load->view('templates/header', $data);
+    $this->load->view('TransaksiChecking/ubah', $data);
+    $this->load->view('templates/footer');
+}
+
     public function update($id)
     {
+        $transaksi_detail = $this->input->post('operators'); 
 
-        $this->form_validation->set_rules('id_workgroup', 'Workgroup', 'required');
-        $this->form_validation->set_rules('id_style', 'Style', 'required');
-        $this->form_validation->set_rules('empID', 'Employee', 'required');
-        $this->form_validation->set_rules('employee_name', 'Employee Name', 'required');
-        $this->form_validation->set_rules('op_name','Operation Name', 'required');
-        $this->form_validation->set_rules('op_code', 'Operation Code', 'required');
-        $this->form_validation->set_rules('deskripsi_defect', 'Deskripsi Defect', 'required');
-        $this->form_validation->set_rules('kode_defect', 'Kode Defect', 'required');
-        $this->form_validation->set_rules('kategori_defect', 'Kategori', 'required');
-    
-        // if ($this->form_validation->run() == FALSE) {
-        //     // Kalau validasi gagal, balik ke form ubah
-        //     $this->ubah($id); 
-        // } else {
-            $emp_data = $this->TransaksiChecking_model->getUserById($this->input->post('empID'));  
-            $emp_name = isset($emp_data->name) ? $emp_data->name : '';
-            $data = [
-                'id_workgroup' => $this->input->post('id_workgroup'),
-                'id_style' => $this->input->post('id_style'),
-                'id_employee' => $this->input->post('empID'),
-                'employee_name'     => $emp_name,
-                'op_name' => $this->input->post('op_name'),
-                'op_code' => $this->input->post('op_code'),
-                'kode_defect' => $this->input->post('kode_defect'),
-                'deskripsi_defect' => $this->input->post('deskripsi_defect'),
-                'kategori_defect' => $this->input->post('kategori_defect'),
-            ];
-    
-            $this->TransaksiChecking_model->update($id, $data);
-            $this->session->set_flashdata('success', 'Data berhasil diubah.');
-            redirect('TransaksiChecking');
+        if (!$transaksi_detail || !is_array($transaksi_detail)) {
+            $this->session->set_flashdata('error', 'Data tidak valid.');
+            redirect('TransaksiChecking/ubah/' . $id);
         }
-    } 
+
+        foreach ($transaksi_detail as $detail) {
+            $id_detail = $detail['id_transaksi_checking_detail'] ?? null;
+
+            $data_detail = [
+                'empID' => $detail['empID'],
+                'employee_name' => $detail['employee_name'],
+                'op_name' => $detail['op_name'],
+                'op_code' => $detail['op_code'],
+                'date_updated' => date('Y-m-d H:i:s'),
+            ];
+
+            if ($id_detail) {
+                $this->TransaksiChecking_model->update_detail($id_detail, $data_detail);
+            } else {
+                $data_detail['id_transaksi_checking_detail'] = $id;
+                $data_detail['date_created'] = date('Y-m-d H:i:s');
+                $id_detail = $this->TransaksiChecking_model->insert_detail($data_detail);
+            }
+            if (!empty($detail['defects'])) {
+                foreach ($detail['defects'] as $defect) {
+                    $id_defect = $defect['id_defect'] ?? null;
+
+                    $data_defect = [
+                        // 'kode_defect' => $defect['kode_defect'],
+                        // 'deskripsi_defect' => $defect['deskripsi_defect'],
+                        // 'kategori_defect' => $defect['kategori_defect'],
+                        'id_transaksi_checking_detail' => $id_detail,
+                        'id_defect' => $defect['id_defect'],
+                        'note' => $detail['note'] ?? null,
+                        'jumlah' => $defect['jumlah'],
+                        'date_updated' => date('Y-m-d H:i:s'),
+                    ];
+
+                    if ($id_defect) {
+                        $this->TransaksiChecking_model->update_defect($id_defect, $data_defect);
+                    } else {
+                        $data_defect['id_transaksi_defect'] = $id;
+                        $data_defect['id_transaksi_checkingdetail'] = $id_detail;
+                        $data_defect['date_created'] = date('Y-m-d H:i:s');
+                        $this->TransaksiChecking_model->insert_defect($data_defect);
+                    }
+                }
+            }
+        }
+
+        $this->session->set_flashdata('success', 'Data berhasil diperbarui.');
+        redirect('TransaksiChecking');
+    }
+} 
     
     // public function search()
     // {

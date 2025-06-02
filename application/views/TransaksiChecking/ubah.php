@@ -66,12 +66,14 @@
         border: 2px solid #aaa;
     }
     </style>
-    <div class="container mt-4">
-    <h3>Ubah Data Operator per Line - LINE <?= strtoupper($line_name['Workgroup']) ?></h3>
-    <form method="post" action="<?= base_url('TransaksiChecking/simpan'); ?>">
+
+<div class="container mt-4">
+    <h3>Edit Data Transaksi - LINE <?= isset($line_name) ? 'LINE ' . strtoupper($line_name) : 'TIDAK DIKETAHUI' ?></h3>
+
+    <form method="post" action="<?= base_url('TransaksiChecking/update/' . $id_transaksi); ?>">
 
         <div class="row">
-            <?php foreach ($layouts as $layout_index => $layout): ?>
+            <?php foreach ($data_detail as $index => $detail): ?>
                 <div class="col-md-4 mb-4">
                     <div class="card text-center shadow-sm">
                         <div class="card-body">
@@ -80,68 +82,72 @@
                                 <i class="fas fa-user-circle fa-3x"></i>
                             </div>
 
-                            <h5 class="card-title"><?= htmlspecialchars($layout->op_name ?? '') ?></h5>
+                            <h5 class="card-title"><?= htmlspecialchars($detail['op_name']) ?></h5>
                             <p class="card-text">
-                                <small>(<?= htmlspecialchars($layout->op_code ?? '') ?>)</small><br>
-                                <small><?= htmlspecialchars($layout->machine_name ?? '') ?></small>
+                                <small>(<?= htmlspecialchars($detail['op_code']) ?>)</small><br>
+                                <small><?= htmlspecialchars($detail['machine_name']) ?></small>
                             </p>
 
-                            <input type="hidden" name="id_wg" value="<?= htmlspecialchars($line ?? '') ?>">
-                            <input type="hidden" name="id_opb" value="<?= htmlspecialchars($id_style ?? '') ?>">
-                            <input type="hidden" name="color" value="<?= htmlspecialchars($layout->color ?? '') ?>">
-                            <input type="hidden" name="orc" value="<?= htmlspecialchars($layout->orc ?? '') ?>">
-                            <input type="hidden" name="op_name[]" value="<?= htmlspecialchars($layout->op_name ?? '') ?>">
-                            <input type="hidden" name="op_code[]" value="<?= htmlspecialchars($layout->op_code ?? '') ?>">
-                            <input type="hidden" name="id_master_opt_layout[]" value="<?= htmlspecialchars($layout->id_master_opt_layout ?? '') ?>">
-                            <input type="hidden" name="id_jnsbarang[]" value="<?= htmlspecialchars($layout->id_jnsbarang ?? '') ?>">
+                            <input type="hidden" name="id_transaksi_checking_detail[]" value="<?= $detail['id_transaksi_checking_detail'] ?>">
+                            <input type="hidden" name="id_master_opt_layout[]" value="<?= $detail['id_master_opt_layout'] ?>">
+                            <input type="hidden" name="op_code[]" value="<?= $detail['op_code'] ?>">
+                            <input type="hidden" name="op_name[]" value="<?= $detail['op_name'] ?>">
 
                             <div class="form-group mt-2">
                                 <select class="form-control" name="empID[]" required>
                                     <option value="">-- Pilih Nama Operator --</option>
                                     <?php foreach ($operators as $op): ?>
-                                        <option value="<?= $op['empID'] ?>"><?= $op['name'] ?></option>
+                                        <option value="<?= $op['empID'] ?>" <?= ($op['empID'] == $detail['empID']) ? 'selected' : '' ?>>
+                                            <?= $op['name'] ?>
+                                        </option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
 
+                            <!-- DEFECT -->
                             <div class="defect-wrapper">
-                                <div class="defect-group mb-2">
-                                    <div class="row">
-                                        <div class="col-7">
-                                            <select class="form-control" name="deskripsi_defect[<?= $layout_index ?>][]" required>
-                                                <option value="">-- Pilih Nama Defect --</option>
-                                                <?php foreach ($defect_list as $def): ?>
-                                                    <option 
-                                                        value="<?= $def['deskripsi_defect']; ?>" 
-                                                        data-kode-defect="<?= htmlspecialchars($def['kode_defect']); ?>" 
-                                                        data-kategori-defect="<?= htmlspecialchars($def['kategori_defect']); ?>">
-                                                        <?= $def['deskripsi_defect']; ?>
-                                                    </option>
-                                                <?php endforeach; ?>
-                                            </select>
+                                <?php if (!empty($data_defect[$detail['id_transaksi_checking_detail']])): ?>
+                                    <?php foreach ($data_defect[$detail['id_transaksi_checking_detail']] as $def): ?>
+                                        <div class="defect-group mb-2">
+                                            <div class="row">
+                                                <div class="col-7">
+                                                    <select class="form-control" name="deskripsi_defect[<?= $index ?>][]">
+                                                        <option value="">-- Pilih Defect --</option>
+                                                        <?php foreach ($defect_list as $d): ?>
+                                                            <option value="<?= $d['deskripsi_defect'] ?>"
+                                                                data-kategori-defect="<?= $d['kategori_defect'] ?>"
+                                                                <?= ($d['deskripsi_defect'] == $def['deskripsi_defect']) ? 'selected' : '' ?>>
+                                                                <?= $d['deskripsi_defect'] ?>
+                                                            </option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                </div>
+                                                <div class="col-3">
+                                                    <select class="form-control" name="jumlah[<?= $index ?>][]">
+                                                        <option value="">Jumlah</option>
+                                                        <?php for ($i = 1; $i <= 10; $i++): ?>
+                                                            <option value="<?= $i ?>" <?= ($i == $def['jumlah']) ? 'selected' : '' ?>><?= $i ?></option>
+                                                        <?php endfor; ?>
+                                                    </select>
+                                                </div>
+                                                <div class="col-2 d-flex align-items-center">
+                                                    <button type="button" class="btn text-danger remove-defect" style="font-size: 20px;">×</button>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="col-3">
-                                            <select class="form-control" name="jumlah[<?= $layout_index ?>][]">
-                                                <option value="">Jumlah</option>
-                                                <?php for ($i = 1; $i <= 10; $i++): ?>
-                                                    <option value="<?= $i ?>"><?= $i ?></option>
-                                                <?php endfor; ?>
-                                            </select>
-                                        </div>
-                                        <div class="col-2 d-flex align-items-center">
-                                            <button type="button" class="btn text-danger remove-defect" style="font-size: 20px;">×</button>
-                                        </div>
-                                    </div>
-                                </div>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </div>
 
                             <div class="text-center mt-2">
-                                <button type="button" class="btn btn-primary btn-sm add-defect" data-layout-index="<?= $layout_index ?>">+ Tambah Defect</button>
+                                <button type="button" class="btn btn-primary btn-sm add-defect" data-layout-index="<?= $index ?>">+ Ubah Defect</button>
                             </div>
 
+                            <!-- Lampu indikator -->
                             <div class="traffic-light mt-3">
-                                <span class="light" style="background-color: red; width: 20px; height: 20px; display: inline-block; border-radius: 50%;"></span>
+                                <span class="light" style="background-color: red; width: 20px; height: 20px; border-radius: 50%; display: inline-block;"></span>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -149,19 +155,23 @@
         </div>
 
         <div class="mt-4">
-            <button type="submit" name="aksi" value="simpan" class="btn btn-success">Simpan</button>
+            <button type="submit" class="btn btn-success">Simpan Perubahan</button>
             <a href="<?= base_url('TransaksiChecking'); ?>" class="btn btn-secondary">Kembali</a>
         </div>
+
     </form>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.add-defect').forEach(button => {
+
+    document.querySelectorAll('.add-defect').forEach((button, layoutIndex) => {
+        button.setAttribute('data-layout-index', layoutIndex); 
+
         button.addEventListener('click', function () {
             const layoutIndex = this.getAttribute('data-layout-index');
             const container = this.closest('.card-body').querySelector('.defect-wrapper');
-            
+
             const defectHTML = `
                 <div class="defect-group mb-2">
                     <div class="row">
@@ -180,22 +190,33 @@ document.addEventListener('DOMContentLoaded', function () {
                             <button type="button" class="btn text-danger remove-defect" style="font-size: 20px;">×</button>
                         </div>
                     </div>
-                </div>`;
-            
+                </div> 
+            `;
+
             container.insertAdjacentHTML('beforeend', defectHTML);
         });
     });
 
     document.addEventListener('click', function (e) {
         if (e.target.classList.contains('remove-defect')) {
+            const cardBody = e.target.closest('.card-body');
             e.target.closest('.defect-group').remove();
+            updateTrafficLight(cardBody);
         }
+    });
+
+    document.querySelectorAll('.card-body').forEach(cardBody => {
+        cardBody.addEventListener('change', function (e) {
+            if (e.target.matches('select')) {
+                updateTrafficLight(cardBody);
+            }
+        });
     });
 
     function getDefectOptions() {
         const defectList = <?= json_encode($defect_list) ?>;
         return defectList.map(def => 
-            `<option value="${def.deskripsi_defect}">${def.deskripsi_defect}</option>`
+            `<option value="${def.deskripsi_defect}" data-kategori-defect="${def.kategori_defect}">${def.deskripsi_defect}</option>`
         ).join('');
     }
 
@@ -206,7 +227,41 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         return options;
     }
+
+    function updateTrafficLight(cardBody) {
+        let totalDefect = 0;
+        let majorCount = 0;
+        let minorCount = 0;
+
+        const defectGroups = cardBody.querySelectorAll('.defect-group');
+
+        defectGroups.forEach(group => {
+            const defectSelect = group.querySelector('select[name^="deskripsi_defect"]');
+            const jumlahSelect = group.querySelector('select[name^="jumlah"]');
+
+            const kategori = defectSelect?.selectedOptions[0]?.getAttribute('data-kategori-defect');
+            const jumlah = parseInt(jumlahSelect?.value) || 0;
+
+            if (kategori === "Major") {
+                majorCount += jumlah;
+            } else if (kategori === "Minor") {
+                minorCount += jumlah;
+            }
+
+            totalDefect += jumlah;
+        });
+
+        const light = cardBody.querySelector('.traffic-light .light');
+        if ((majorCount >= 1 && minorCount >= 3) || totalDefect >= 5) {
+            light.style.backgroundColor = 'red';
+        } else if (minorCount >= 2 && totalDefect <= 4) {
+            light.style.backgroundColor = 'yellow';
+        } else if (totalDefect <= 1) {
+            light.style.backgroundColor = 'green';
+        } else {
+            light.style.backgroundColor = 'gray';
+        }
+    }
+
 });
 </script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous"></script>

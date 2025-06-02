@@ -95,9 +95,9 @@
                             <input type="hidden" name="op_code[]" value="<?= htmlspecialchars($layout->op_code ?? '') ?>">
                             <input type="hidden" name="id_master_opt_layout[]" value="<?= htmlspecialchars($layout->id_master_opt_layout ?? '') ?>">
 
-                            <?php foreach ($layouts as $i => $layout): ?>
+                            <!-- <?php foreach ($layouts as $i => $layout): ?>
                                 <input type="hidden" name="id_jnsbarang[]" value="<?id_jnsbarang?>">
-                            <?php endforeach; ?>
+                            <?php endforeach; ?> -->
 
                             <div class="form-group mt-2">
                                 <select class="form-control" name="empID[]" required>
@@ -198,7 +198,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Fungsi: Hapus baris defect
     document.addEventListener('click', function (e) {
         if (e.target.classList.contains('remove-defect')) {
             const cardBody = e.target.closest('.card-body');
@@ -207,7 +206,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Fungsi: Update lampu ketika ada perubahan select
     document.querySelectorAll('.card-body').forEach(cardBody => {
         cardBody.addEventListener('change', function (e) {
             if (e.target.matches('select')) {
@@ -216,7 +214,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Fungsi: Ambil option defect dengan data-kategori-defect
     function getDefectOptions() {
         const defectList = <?= json_encode($defect_list) ?>;
         return defectList.map(def => 
@@ -224,7 +221,6 @@ document.addEventListener('DOMContentLoaded', function () {
         ).join('');
     }
 
-    // Fungsi: Option jumlah 1–10
     function getJumlahOptions() {
         let options = '<option value="">Jumlah</option>';
         for (let i = 1; i <= 10; i++) {

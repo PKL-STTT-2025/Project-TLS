@@ -423,10 +423,65 @@ public function getDetailWithJoins($id_transaksi_checking)
     return $this->db->get()->result();
 }
 
+public function getDefectsByOpDetailId($id_detail)
+{
+    $this->db->select('td.id_defect, md.deskripsi_defect');
+    $this->db->from('transaksi_defect td');
+    $this->db->join('master_defect md', 'td.id_defect = md.id', 'left');
+    $this->db->where('td.id_transaksi_checking_detail', $id_detail);
+    return $this->db->get()->result_array();
+}
+
 public function getLayoutsByWorkgroupAndStyle($id_wg, $id_opb)
 {
     $this->db->where('id_wg', $id_wg);
     $this->db->where('id_opb', $id_opb);
     return $this->db->get('transaksi_checking')->result_array(); 
 }
+// TransaksiChecking_model
+
+public function update_detail($id, $data)
+{
+    $this->db->where('id_transaksi_checking_detail', $id);
+    return $this->db->update('transaksi_checking_detail', $data);
+}
+
+public function insert_detail($data)
+{
+    $this->db->insert('transaksi_checking_detail', $data);
+    return $this->db->insert_id();
+}
+
+public function update_defect($id, $data)
+{
+    $this->db->where('id_transaksi_defect', $id);
+    return $this->db->update('transaksi_defect', $data);
+}
+
+public function insert_defect($data)
+{
+    $this->db->insert('transaksi_defect', $data);
+}
+public function getLineNameByTransaksi($id)
+{
+    $this->db->select('wg.Workgroup AS line_name');
+    $this->db->from('transaksi_checking tc');
+    $this->db->join('mstworkgroup wg', 'tc.id_wg = wg.idWG');
+    $this->db->where('tc.id_transaksi_checking', $id);
+    $query = $this->db->get();
+    return $query->row()->line_name?? ''; 
+}
+
+// application/models/TransaksiChecking_model.php
+
+public function getDetailByTransaksi($id_transaksi)
+{
+    $this->db->select('d.id_transaksi_checking_detail, d.op_name, d.op_code, d.id_master_opt_layout, d.id_jnsbarang, d.empID, d.id_jnsbarang AS machine_name');
+    $this->db->from('transaksi_checking_detail d');
+    $this->db->where('d.id_transaksi_checking', $id_transaksi);
+    $query = $this->db->get();
+    return $query->result_array();
+}
+
+
 }
