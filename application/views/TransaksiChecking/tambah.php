@@ -87,17 +87,27 @@
                                 <small><?= htmlspecialchars($layout->machine_name ?? '') ?></small>
                             </p>
 
-                            <input type="hidden" name="id_wg" value="<?= htmlspecialchars($line ?? '') ?>">
-                            <input type="hidden" name="id_opb" value="<?= htmlspecialchars($id_style ?? '') ?>">
-                            <input type="hidden" name="color" id="color" class="form-control" value="<?= htmlspecialchars($this->input->get('color') ?? '') ?>">
-                            <input type="hidden" name="orc" id="orc" class="form-control"value="<?= htmlspecialchars($this->input->get('orc') ?? '') ?>">
-                            <input type="hidden" name="op_name[]" value="<?= htmlspecialchars($layout->op_name ?? '') ?>">
-                            <input type="hidden" name="op_code[]" value="<?= htmlspecialchars($layout->op_code ?? '') ?>">
-                            <input type="hidden" name="id_master_opt_layout[]" value="<?= htmlspecialchars($layout->id_master_opt_layout ?? '') ?>">
+                                <input type="hidden" name="id_wg" value="<?= htmlspecialchars($line ?? '') ?>">
+                                <input type="hidden" name="id_opb" value="<?= htmlspecialchars($id_style ?? '') ?>">
+                                <input type="hidden" name="color" id="color" class="form-control" value="<?= htmlspecialchars($this->input->get('color') ?? '') ?>">
+                                <input type="hidden" name="orc" id="orc" class="form-control" value="<?= htmlspecialchars($this->input->get('orc') ?? '') ?>">
 
-                            <!-- <?php foreach ($layouts as $i => $layout): ?>
-                                <input type="hidden" name="id_jnsbarang[]" value="<?id_jnsbarang?>">
-                            <?php endforeach; ?> -->
+                                <?php if (!empty($layouts)): ?>
+                                    <?php foreach ($layouts as $i => $layout): ?>
+                                        <input type="hidden" name="id_master_opt_layout[]" value="<?= htmlspecialchars($layout->id_master_opt_layout ?? '') ?>">
+                                        <input type="hidden" name="op_name[]" value="<?= htmlspecialchars($layout->op_name ?? '') ?>">
+                                        <input type="hidden" name="op_code[]" value="<?= htmlspecialchars($layout->op_code ?? '') ?>">
+
+                                        <?php if (isset($layout->id_jnsbarang)): ?>
+                                            <input type="hidden" name="id_jnsbarang[]" value="<?= htmlspecialchars($layout->id_jnsbarang) ?>">
+                                        <?php else: ?>
+                                            <input type="hidden" name="id_jnsbarang[]" value="">
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <p><em>Data layout tidak ditemukan.</em></p>
+                                <?php endif; ?>
+
 
                             <div class="form-group mt-2">
                                 <select class="form-control" name="empID[]" required>
@@ -258,10 +268,8 @@ document.addEventListener('DOMContentLoaded', function () {
             light.style.backgroundColor = 'red';
         } else if (minorCount >= 2 && totalDefect <= 4) {
             light.style.backgroundColor = 'yellow';
-        } else if (totalDefect <= 1) {
+        } else  (totalDefect <= 1) {
             light.style.backgroundColor = 'green';
-        } else {
-            light.style.backgroundColor = 'gray';
         }
     }
 

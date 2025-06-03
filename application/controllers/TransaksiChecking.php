@@ -67,6 +67,7 @@ class TransaksiChecking extends CI_Controller
         $this->form_validation->set_rules('op_name', 'Operation Name', 'required');
         $this->form_validation->set_rules('op_code', 'Operation code', 'required');
         $this->form_validation->set_rules('id_master_opt_layout', 'ID Master Opt Layout', 'required');
+        $this->form_validation->set_rules('id_jnsbarang', 'ID Jenis Barang', 'required');
         $this->form_validation->set_rules('deskripsi_defect', 'Deskripsi Defect', 'required');
     
         // Data untuk dropdown
@@ -99,6 +100,7 @@ class TransaksiChecking extends CI_Controller
         $data['operators'] = $this->TransaksiChecking_model->getLimitedEmployee(2);
         $data['operation_name'] = $this->TransaksiChecking_model->getLimitedOperation(2);
         $data['layouts'] = $this->TransaksiChecking_model->getLayoutWithMesin(2);
+       
         
         if($this->form_validation->run()==FALSE) {
             $this->load->view('templates/header', $data);
@@ -114,6 +116,7 @@ class TransaksiChecking extends CI_Controller
                 'operation_code'=>$this->input->post('operation_code'),
                 'operation_name'=>$this->input->post('operation_name'),
                 'id_master_opt_layout'=>$this->input->post('id_master_opt_layout'),
+                'id_jnsbarang'=>$this->input->post('id_jnsbarang'),
                 'deskripsi_defect'=>$this->input->post('deskripsi_defect'),
             ] ;
             $this->TransaksiChecking_model->tambahDataInputDefect($data);
@@ -124,6 +127,9 @@ class TransaksiChecking extends CI_Controller
 
     public function simpan()
     {
+        // echo "Sampai di fungsi simpan."; 
+        // exit;
+        
         $this->db->trans_start();
     
         $id_wg = $this->input->post('id_wg');
@@ -139,7 +145,11 @@ class TransaksiChecking extends CI_Controller
         ];
         $this->db->insert('transaksi_checking', $data_transaksi); 
         $transaksi_id = $this->db->insert_id();
-
+        
+        if (!$transaksi_id) {
+            echo "Gagal menyimpan transaksi utama.";
+            exit;
+        }
         // echo "<pre>";
         // print_r($this->input->post());
         // echo "</pre>";
@@ -155,21 +165,24 @@ class TransaksiChecking extends CI_Controller
         $id_jnsbarang = $this->input->post('id_jnsbarang');
     
         foreach ($empIDs as $i => $empID) {
+            $id_jnsbarang_clean = $id_jnsbarang[$i] !== '' ? $id_jnsbarang[$i] : null;
+        
             $detail_data = [
                 'id_transaksi_checking' => $transaksi_id,
                 'id_master_opt_layout' => $id_master_layouts[$i],
-                // 'id_jnsbarang' => $id_jnsbarang[$i],
+                'id_jnsbarang' => $id_jnsbarang_clean,
                 'op_code' => $op_codes[$i],
                 'op_name' => $op_names[$i],
                 'empID' => $empID
             ];
+        
             $detail_id = $this->TransaksiChecking_model->simpanDetail($detail_data);
-    
+        
             if (isset($defects[$i])) {
                 foreach ($defects[$i] as $j => $defect_description) {
                     $defect_data = $this->TransaksiChecking_model->getDefectByDescription($defect_description);
                     if (!$defect_data) continue;
-    
+        
                     $defect = [
                         'id_transaksi_checking_detail' => $detail_id,
                         'id_defect' => $defect_data->id,
@@ -179,6 +192,7 @@ class TransaksiChecking extends CI_Controller
                 }
             }
         }
+        
     
         $this->db->trans_complete(); 
     
@@ -200,30 +214,53 @@ class TransaksiChecking extends CI_Controller
         $this->session->set_flashdata('flash', 'Data berhasil dihapus');
         redirect('TransaksiChecking');
     }
-    public function detail($id)
+    public function detail($id_transaksi_checking)
     {
-        $data['detail_checking'] = $this->TransaksiChecking_model->getDetailWithJoins($id);
-        $result = $this->TransaksiChecking_model->getTransaksiById($id);
 
-        if (!$result) {
-            show_404(); 
-        }
-        $operation_defects = $this->TransaksiChecking_model->getDefectsByTransaksi($id);
-        $operations = $result['operations'];
- 
-        foreach ($operations as &$op) {
-            $op['defects'] = array_filter($operation_defects, function ($defect) use ($op) {
-                return trim($defect['op_code']) === trim($op['op_code']);
-            });
-        }
-        unset($op); 
+        $data['title'] = 'Detail Checking Time';
+        $data['line_name'] = '';
+        $data['operators'] = $this->TransaksiChecking_model->getLimitedOperator($id_transaksi_checking);
+        $data['operation_name'] = $this->TransaksiChecking_model->getLimitedOperation(2);
+        $data['layout'] = $this->TransaksiChecking_model->getLayout($id_transaksi_checking);
+        $data['operation_defects'] = $this->TransaksiChecking_model->getDefectsPerOperation($id_transaksi_checking);
 
-        $data = [
-            'title' => 'Detail Transaksi',
-            'transaksi' => $result['transaksi'], 
-            'operations' => $operations,
-            'operation_defects' => $operation_defects
-        ];
+        // Ambil layout
+        $layout = $this->TransaksiChecking_model->getLayout($id_transaksi_checking);
+
+        // Ambil defects per operator
+        $operation_defects = $this->TransaksiChecking_model->getDefectsPerOperation($id_transaksi_checking);
+
+        // Hitung defect count per op_code
+        $defectCounts = [];
+        foreach ($operation_defects as $defect) {
+            $id_detail = $defect['id_transaksi_checking_detail'];
+            if (!isset($defectCounts[$id_detail])) {
+                $defectCounts[$id_detail] = 0;
+            }
+            $defectCounts[$id_detail] += $defect['jumlah'];
+        }
+
+        // Tambahkan defect_count & operator_name ke masing-masing layout item
+        foreach ($layout as $opt_layout) {
+            $opt_layout->defect_count = 0;
+            $opt_layout->operator_name = '-';
+
+            foreach ($data['operators'] as $op) {
+                if (trim($opt_layout->op_code) === trim($op->op_code)) {
+                    $opt_layout->operator_name = $op->operator_name;
+
+                    // cari defect count dari transaksi_checking_detail yang sesuai
+                    foreach ($operation_defects as $defect) {
+                        if ($defect['id_transaksi_checking_detail'] == $op->id_transaksi_checking_detail) {
+                            $opt_layout->defect_count += $defect['jumlah'];
+                        }
+                    }
+                }
+            }
+        }
+
+        $data['layout'] = $layout;
+        $data['operation_defects'] = $operation_defects;
 
         $this->load->view('templates/header', $data);
         $this->load->view('TransaksiChecking/detail', $data);
