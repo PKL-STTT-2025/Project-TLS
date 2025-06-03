@@ -25,7 +25,6 @@ class TransaksiChecking extends CI_Controller
         $id_line = $this->input->post('id_line'); 
         $this->TransaksiChecking_model->getLineById($id_line); 
 
-         // Jika user sudah pilih Line dan klik Search
          if ($this->input->post('Workgroup')) {
             $line = $this->input->post('Workgroup');
             $style = $this->input->post('style');
@@ -33,8 +32,14 @@ class TransaksiChecking extends CI_Controller
         } elseif ($this->input->post('keyword')) {
             $data['transaksi_checking'] = $this->TransaksiChecking_model->cariTransaksiChecking($keyword);
         } else {
-            // Awalnya tampilkan semua data
             $data['transaksi_checking'] = $this->TransaksiChecking_model->getAllTransaksiChecking();
+        }
+
+        $keyword = $this->input->get('keyword');
+        if (!empty($keyword)) {
+            $data['transaksi'] = $this->TransaksiChecking_model->searchData($keyword);
+        } else {
+            $data['transaksi'] = $this->TransaksiChecking_model->get_all();
         }
         
         $this->load->view('templates/header', $data);
@@ -269,46 +274,46 @@ class TransaksiChecking extends CI_Controller
 
 
     public function ubah($id)
-{
-    $data['judul'] = 'Form Ubah Transaksi Checking';
-    $data['transaksi_checking'] = $this->TransaksiChecking_model->getTransaksiById($id); 
+    {
+        $data['judul'] = 'Form Ubah Transaksi Checking';
+        $data['transaksi_checking'] = $this->TransaksiChecking_model->getTransaksiById($id); 
 
-    if (empty($data['transaksi_checking'])) {
-        show_404();
-    }
-
-    $id_wg = $data['transaksi_checking']['transaksi']['id_wg'];
-    $id_opb = $data['transaksi_checking']['transaksi']['id_opb'];
-
-    $data['line_name'] = $this->TransaksiChecking_model->getLineNameByTransaksi($id);
-    $data['layouts'] = $this->TransaksiChecking_model->getLayoutsByWorkgroupAndStyle($id_wg, $id_opb);
-    $data['id_transaksi_checking_detail'] = $id;
-    $data['id_transaksi'] = $id;
-    $data['data_detail'] = $this->TransaksiChecking_model->getDetailByTransaksi($id);
-
-    $data['operators'] = $this->TransaksiChecking_model->getAllMasterEmployee();
-    $data['operation_name'] = $this->TransaksiChecking_model->getAllOperationCode();
-    $data['defect_list'] = $this->TransaksiChecking_model->getAllDefect();
-
-    $transaksi = $data['transaksi_checking']['transaksi'];
-    $operations = isset($data['transaksi_checking']['operations']) && is_array($data['transaksi_checking']['operations']) 
-        ? $data['transaksi_checking']['operations'] : [];
-
-    foreach ($operations as &$op) {
-        if (isset($op['id_transaksi_checking_detail'])) {
-            $op['defects'] = $this->TransaksiChecking_model->getDefectsByOpDetailId($op['id_transaksi_checking_detail']);
-        } else {
-            $op['defects'] = [];
+        if (empty($data['transaksi_checking'])) {
+            show_404();
         }
+
+        $id_wg = $data['transaksi_checking']['transaksi']['id_wg'];
+        $id_opb = $data['transaksi_checking']['transaksi']['id_opb'];
+
+        $data['line_name'] = $this->TransaksiChecking_model->getLineNameByTransaksi($id);
+        $data['layouts'] = $this->TransaksiChecking_model->getLayoutsByWorkgroupAndStyle($id_wg, $id_opb);
+        $data['id_transaksi_checking_detail'] = $id;
+        $data['id_transaksi'] = $id;
+        $data['data_detail'] = $this->TransaksiChecking_model->getDetailByTransaksi($id);
+
+        $data['operators'] = $this->TransaksiChecking_model->getAllMasterEmployee();
+        $data['operation_name'] = $this->TransaksiChecking_model->getAllOperationCode();
+        $data['defect_list'] = $this->TransaksiChecking_model->getAllDefect();
+
+        $transaksi = $data['transaksi_checking']['transaksi'];
+        $operations = isset($data['transaksi_checking']['operations']) && is_array($data['transaksi_checking']['operations']) 
+            ? $data['transaksi_checking']['operations'] : [];
+
+            $data_defect = [];
+            foreach ($operations as $op) {
+                if (isset($op['id_transaksi_checking_detail'])) {
+                    $data_defect[$op['id_transaksi_checking_detail']] = $this->TransaksiChecking_model->getDefectsByOpDetailId($op['id_transaksi_checking_detail']);
+                }
+            }
+            $data['data_defect'] = $data_defect;
+            
+        $data['transaksi'] = $transaksi;
+        $data['operations'] = $operations;
+
+        $this->load->view('templates/header', $data);
+        $this->load->view('TransaksiChecking/ubah', $data);
+        $this->load->view('templates/footer');
     }
-
-    $data['transaksi'] = $transaksi;
-    $data['operations'] = $operations;
-
-    $this->load->view('templates/header', $data);
-    $this->load->view('TransaksiChecking/ubah', $data);
-    $this->load->view('templates/footer');
-}
 
     public function update($id)
     {

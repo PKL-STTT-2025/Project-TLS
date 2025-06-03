@@ -293,15 +293,20 @@ class TransaksiChecking_model extends CI_Model
         return $this->db->get()->row();
     }
 
-    // public function searchData($keyword)
-    // {
-    //     $this->db->like('employee_name', $keyword);
-    //     $this->db->or_like('op_name', $keyword);
-    //     $this->db->or_like('op_code', $keyword);
-    //     $this->db->or_like('deskripsi_defect', $keyword);
-    //     $this->db->or_like('kategori_defect', $keyword);
-    //     return $this->db->get('transaksi_checking')->result_array();
-    // }
+    public function searchData($keyword)
+    {
+        $this->db->like('id_wg', $keyword);
+        $this->db->or_like('id_opb', $keyword);
+        $this->db->or_like('color', $keyword);
+        $this->db->or_like('orc', $keyword);
+        return $this->db->get('transaksi_checking')->result_array();
+    }
+
+    public function get_all()
+    {
+        return $this->db->get('transaksi_checking')->result_array(); 
+    }
+
     // Dalam TransaksiChecking_model.php
     public function getLimitedEmployee($limit = 2)
     {
@@ -523,14 +528,20 @@ public function getDetailWithJoins($id_transaksi_checking)
     return $this->db->get()->result();
 }
 
-public function getDefectsByOpDetailId($id_detail)
+public function getDefectsByOpDetailId($id_detail) 
 {
-    $this->db->select('td.id_defect, md.deskripsi_defect');
+    $this->db->select('
+        td.id_defect, 
+        td.jumlah, 
+        md.deskripsi_defect, 
+        md.kategori_defect
+    ');
     $this->db->from('transaksi_defect td');
     $this->db->join('master_defect md', 'td.id_defect = md.id', 'left');
     $this->db->where('td.id_transaksi_checking_detail', $id_detail);
     return $this->db->get()->result_array();
 }
+
 
 public function getLayoutsByWorkgroupAndStyle($id_wg, $id_opb)
 {

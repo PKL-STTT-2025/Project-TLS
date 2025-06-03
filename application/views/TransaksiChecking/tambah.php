@@ -239,39 +239,27 @@ document.addEventListener('DOMContentLoaded', function () {
         return options;
     }
 
-    // Fungsi: Hitung dan ubah warna lampu
     function updateTrafficLight(cardBody) {
-        let totalDefect = 0;
-        let majorCount = 0;
-        let minorCount = 0;
+    let totalDefect = 0;
 
-        const defectGroups = cardBody.querySelectorAll('.defect-group');
+    const defectGroups = cardBody.querySelectorAll('.defect-group');
 
-        defectGroups.forEach(group => {
-            const defectSelect = group.querySelector('select[name^="deskripsi_defect"]');
-            const jumlahSelect = group.querySelector('select[name^="jumlah"]');
+    defectGroups.forEach(group => {
+        const jumlahSelect = group.querySelector('select[name^="jumlah"]');
+        const jumlah = parseInt(jumlahSelect?.value) || 0;
+        totalDefect += jumlah;
+    });
 
-            const kategori = defectSelect?.selectedOptions[0]?.getAttribute('data-kategori-defect');
-            const jumlah = parseInt(jumlahSelect?.value) || 0;
+    const light = cardBody.querySelector('.traffic-light .light');
 
-            if (kategori === "Major") {
-                majorCount += jumlah;
-            } else if (kategori === "Minor") {
-                minorCount += jumlah;
-            }
-
-            totalDefect += jumlah;
-        });
-
-        const light = cardBody.querySelector('.traffic-light .light');
-        if ((majorCount >= 1 && minorCount >= 3) || totalDefect >= 5) {
-            light.style.backgroundColor = 'red';
-        } else if (minorCount >= 2 && totalDefect <= 4) {
-            light.style.backgroundColor = 'yellow';
-        } else  (totalDefect <= 1) {
-            light.style.backgroundColor = 'green';
-        }
+    if (totalDefect === 0) {
+        light.style.backgroundColor = 'green';
+    } else if (totalDefect === 1 || totalDefect === 2) {
+        light.style.backgroundColor = 'yellow';
+    } else if (totalDefect >= 3) {
+        light.style.backgroundColor = 'red';
     }
+}
 
 });
 </script>
