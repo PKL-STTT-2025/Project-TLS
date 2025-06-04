@@ -13,35 +13,28 @@ class TransaksiChecking extends CI_Controller
     public function index()
     {
         $data['title'] = 'Transaksi Checking';
-        $data['TransaksiChecking'] = $this->TransaksiChecking_model->getAllTransaksiChecking();
-        // digunakan untuk menampilkan data style dan line
         $data['line_list'] = $this->TransaksiChecking_model->getAlllines();
-
-        if($this->input->get('Workgroup'))  { 
-            $data['selected_line'] = $this->input->get('Workgroup');
+        $data['selected_line'] = $this->input->get('Workgroup');
+        $data['style_list'] = [];
+        
+        if ($data['selected_line']) {
             $data['style_list'] = $this->TransaksiChecking_model->getStyleByLine($data['selected_line']);
-        } 
-        
-        $id_line = $this->input->post('id_line'); 
-        $this->TransaksiChecking_model->getLineById($id_line); 
-
-         if ($this->input->post('Workgroup')) {
-            $line = $this->input->post('Workgroup');
-            $style = $this->input->post('style');
-            $data['transaksi_checking'] = $this->TransaksiChecking_model->getFilteredTransaksi($line, $style);
-        } elseif ($this->input->post('keyword')) {
-            $data['transaksi_checking'] = $this->TransaksiChecking_model->cariTransaksiChecking($keyword);
-        } else {
-            $data['transaksi_checking'] = $this->TransaksiChecking_model->getAllTransaksiChecking();
         }
 
+        $line = $this->input->get('Workgroup');
+        $style = $this->input->get('style');
+        $color = $this->input->get('color');
+        $orc = $this->input->get('orc');
         $keyword = $this->input->get('keyword');
-        if (!empty($keyword)) {
-            $data['transaksi'] = $this->TransaksiChecking_model->searchData($keyword);
+
+        if ($keyword) {
+            $data['TransaksiChecking'] = $this->TransaksiChecking_model->searchData($keyword);
+        } elseif ($line && $style) {
+            $data['TransaksiChecking'] = $this->TransaksiChecking_model->getFilteredTransaksi($line, $style, $color, $orc);
         } else {
-            $data['transaksi'] = $this->TransaksiChecking_model->get_all();
+            $data['TransaksiChecking'] = $this->TransaksiChecking_model->getAllTransaksiChecking();
         }
-        
+
         $this->load->view('templates/header', $data);
         $this->load->view('TransaksiChecking/index', $data);
         $this->load->view('templates/footer');
@@ -90,7 +83,6 @@ class TransaksiChecking extends CI_Controller
 
         $data['line_name'] = $line ? $line->Workgroup : '';
         $data['Workgroup'] = $line;
-            
         
         // load data style dari url
         $id_style = $this->input->get('style');
@@ -101,6 +93,11 @@ class TransaksiChecking extends CI_Controller
         
         $data['style_name'] = $style ? $style->style : 'Style tidak ditemukan';
         $data['id_style'] = $id_style;
+        $color = $this->input->get('color');
+        $orc = $this->input->get('orc');
+        //view
+        $data['color'] = $color;
+        $data['orc'] = $orc;
         
         $data['operators'] = $this->TransaksiChecking_model->getLimitedEmployee(2);
         $data['operation_name'] = $this->TransaksiChecking_model->getLimitedOperation(2);
@@ -223,19 +220,27 @@ class TransaksiChecking extends CI_Controller
     {
 
         $data['title'] = 'Detail Checking Time';
-        $data['line_name'] = '';
+        $result = $this->TransaksiChecking_model->getTransaksiById($id_transaksi_checking);
+        $data['transaksi'] = $result['transaksi'];
+        $data['operations'] = $result['operations'];
+
+        if (!empty($data['transaksi'])) {
+            $id_wg = $data['transaksi']['id_wg'];
+            $line = $this->TransaksiChecking_model->getLineById($id_wg);
+            $data['line_name'] = $line['Workgroup'] ?? ''; 
+        } else {
+            $data['line_name'] = '';
+        }
+
         $data['operators'] = $this->TransaksiChecking_model->getLimitedOperator($id_transaksi_checking);
         $data['operation_name'] = $this->TransaksiChecking_model->getLimitedOperation(2);
         $data['layout'] = $this->TransaksiChecking_model->getLayout($id_transaksi_checking);
         $data['operation_defects'] = $this->TransaksiChecking_model->getDefectsPerOperation($id_transaksi_checking);
-
-        // Ambil layout
+ 
         $layout = $this->TransaksiChecking_model->getLayout($id_transaksi_checking);
 
-        // Ambil defects per operator
         $operation_defects = $this->TransaksiChecking_model->getDefectsPerOperation($id_transaksi_checking);
 
-        // Hitung defect count per op_code
         $defectCounts = [];
         foreach ($operation_defects as $defect) {
             $id_detail = $defect['id_transaksi_checking_detail'];
@@ -316,62 +321,42 @@ class TransaksiChecking extends CI_Controller
     }
 
     public function update($id)
-    {
-        $transaksi_detail = $this->input->post('operators'); 
+{
+    $id_details = $this->input->post('id_transaksi_checking_detail');
+    date_default_timezone_set('Asia/Jakarta');
 
-        if (!$transaksi_detail || !is_array($transaksi_detail)) {
-            $this->session->set_flashdata('error', 'Data tidak valid.');
-            redirect('TransaksiChecking/ubah/' . $id);
-        }
+    foreach ($id_details as $index => $id_detail) {
+        $data_detail = [
+            'empID' => $this->input->post('empID')[$index],
+            'op_name' => $this->input->post('op_name')[$index],
+            'op_code' => trim($this->input->post('op_code')[$index]),
+            'date_updated' => date('Y-m-d H:i:s')
+        ];
 
-        foreach ($transaksi_detail as $detail) {
-            $id_detail = $detail['id_transaksi_checking_detail'] ?? null;
+        $this->TransaksiChecking_model->update_detail($id_detail, $data_detail);
 
-            $data_detail = [
-                'empID' => $detail['empID'],
-                'employee_name' => $detail['employee_name'],
-                'op_name' => $detail['op_name'],
-                'op_code' => $detail['op_code'],
-                'date_updated' => date('Y-m-d H:i:s'),
+        // Hapus defect lama dulu (opsional, tergantung sistem)
+        $this->db->where('id_transaksi_checking_detail', $id_detail);
+        $this->db->delete('transaksi_defect');
+
+        $deskripsi_defect = $this->input->post('deskripsi_defect')[$index];
+        $jumlah_defect = $this->input->post('jumlah')[$index];
+
+        foreach ($deskripsi_defect as $i => $desc) {
+            $data_defect = [
+                'id_transaksi_checking_detail' => $id_detail,
+                'id_defect' => $desc,
+                'jumlah' => $jumlah_defect[$i],
+                'date_created' => date('Y-m-d H:i:s')
             ];
-
-            if ($id_detail) {
-                $this->TransaksiChecking_model->update_detail($id_detail, $data_detail);
-            } else {
-                $data_detail['id_transaksi_checking_detail'] = $id;
-                $data_detail['date_created'] = date('Y-m-d H:i:s');
-                $id_detail = $this->TransaksiChecking_model->insert_detail($data_detail);
-            }
-            if (!empty($detail['defects'])) {
-                foreach ($detail['defects'] as $defect) {
-                    $id_defect = $defect['id_defect'] ?? null;
-
-                    $data_defect = [
-                        // 'kode_defect' => $defect['kode_defect'],
-                        // 'deskripsi_defect' => $defect['deskripsi_defect'],
-                        // 'kategori_defect' => $defect['kategori_defect'],
-                        'id_transaksi_checking_detail' => $id_detail,
-                        'id_defect' => $defect['id_defect'],
-                        'note' => $detail['note'] ?? null,
-                        'jumlah' => $defect['jumlah'],
-                        'date_updated' => date('Y-m-d H:i:s'),
-                    ];
-
-                    if ($id_defect) {
-                        $this->TransaksiChecking_model->update_defect($id_defect, $data_defect);
-                    } else {
-                        $data_defect['id_transaksi_defect'] = $id;
-                        $data_defect['id_transaksi_checkingdetail'] = $id_detail;
-                        $data_defect['date_created'] = date('Y-m-d H:i:s');
-                        $this->TransaksiChecking_model->insert_defect($data_defect);
-                    }
-                }
-            }
+            $this->db->insert('transaksi_defect', $data_defect);
         }
-
-        $this->session->set_flashdata('success', 'Data berhasil diperbarui.');
-        redirect('TransaksiChecking');
     }
+
+    $this->session->set_flashdata('success', 'Data berhasil diperbarui.');
+    redirect('TransaksiChecking');
+}
+
 } 
     
     // public function search()

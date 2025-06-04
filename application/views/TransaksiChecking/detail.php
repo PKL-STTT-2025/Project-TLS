@@ -77,9 +77,9 @@
     }
 </style>
 
-<<div class="container mt-4">
+<div class="container mt-4">
     <?php if (!empty($layout) && !empty($operators)): ?>
-        <h3>Data Operator per Line - LINE <?= strtoupper($line_name) ?></h3>
+        <h3>Detail Data Transaksi - <?= isset($line_name) ? 'LINE ' . strtoupper($line_name) : 'TIDAK DIKETAHUI' ?></h3>
 
         <form method="post" action="<?= base_url('TransaksiChecking/detail'); ?>">
             <div class="grid-container">

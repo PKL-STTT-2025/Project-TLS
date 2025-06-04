@@ -81,12 +81,31 @@ class TransaksiChecking_model extends CI_Model
 // }
 
 
-    public function getFilteredTransaksi($line, $style)
-    {
-        $this->db->where('Workgroup', $line);
-        $this->db->where('style', $style);
-        $query = $this->db->get('mstworkgroup');
-        return $query->result_array();
+public function getFilteredTransaksi($line, $style, $color, $orc)
+{
+    $this->db->select('*');
+    $this->db->from('transaksi_checking');
+    $this->db->join('mstworkgroup', 'transaksi_checking.id_wg = mstworkgroup.idWG');
+    $this->db->join('operation_breakdown', 'transaksi_checking.id_opb = operation_breakdown.id');
+
+    if (!empty($line)) {
+        $this->db->where('transaksi_checking.id_wg', $line);
+    }
+
+    if (!empty($style)) {
+        $this->db->where('transaksi_checking.id_opb', $style);
+    }
+
+    if (!empty($color)) {
+        $this->db->where('transaksi_checking.color', $color);
+    }
+
+    if (!empty($orc)) {
+        $this->db->where('transaksi_checking.orc', $orc);
+    }
+
+    return $this->db->get()->result_array();
+}
 
         
 //     $layout = $this->db
@@ -104,7 +123,6 @@ class TransaksiChecking_model extends CI_Model
 //     'layout' => $layout,
 //     'style_data' => $style_data
 // ];
-    }
 
     public function tambahDataInputDefect()
     {
@@ -290,8 +308,14 @@ class TransaksiChecking_model extends CI_Model
         $this->db->select('Workgroup');
         $this->db->from('mstworkgroup');
         $this->db->where('idWG', $id);
-        return $this->db->get()->row();
+        return $this->db->get()->row_array();
     }
+
+    // public function getLineByWorkgroupId($id_wg)
+    // {
+    //     return $this->db->get_where('mstworkgroup', ['idWG' => $id_wg])->row_array();
+    // }
+
 
     public function searchData($keyword)
     {
