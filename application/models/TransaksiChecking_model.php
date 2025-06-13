@@ -10,13 +10,22 @@ class TransaksiChecking_model extends CI_Model
 
     public function getAllTransaksiChecking()
     {
-        $query = $this->db->get('transaksi_checking');
-        if ($query->num_rows() > 0) {
-            return $query->result_array();
-        } else {
-            return array(); 
-        }
+        $query = "SELECT 
+        transaksi_checking.*, 
+        wg.Workgroup AS line_name,
+        transaksi_checking.id_wg AS id_workgroup, 
+        ob.style 
+    FROM 
+        transaksi_checking 
+    LEFT JOIN 
+        mstworkgroup wg ON wg.idWG = transaksi_checking.id_wg
+    LEFT JOIN
+        operation_breakdown ob ON ob.id = transaksi_checking.id_opb
+    ORDER BY 
+        transaksi_checking.id_transaksi_checking DESC";
+    return $this->db->query($query)->result_array();
     }
+
     public function cariTransaksiChecking($keyword)
     {
     $this->input->post('keyword', true);
@@ -331,21 +340,51 @@ public function getFilteredTransaksi($line, $style, $color, $orc)
         return $this->db->get('transaksi_checking')->result_array(); 
     }
 
-    // Dalam TransaksiChecking_model.php
-    public function getLimitedEmployee($limit = 2)
+    public function getLimitedEmployee($limit = null, $idWG = null)
+    {
+    $this->db->select('*');
+    $this->db->from('mstemp');
+    $this->db->where('activeEmp', 1);
+    $this->db->where_in('idDiv', [1, 19]);
+    $this->db->where_in('idPost', [24, 23, 164, 130]);
+
+    if ($idWG !== null) {
+        $this->db->where('idWG', $idWG); 
+    }
+
+    if ($limit !== null) {
+        $this->db->limit($limit);
+    }
+
+    return $this->db->get()->result_array();
+    }
+
+    // public function getProsesByLine($id_wg, $id_opb)
+    // {
+    // $this->db->where('id_wg', $id_wg);
+    // $this->db->where('id_opb', $id_opb);
+    // $this->db->order_by('op_code', 'ASC');
+
+    // $query = $this->db->get('master_opt_layout');
+    // // echo $this->db->last_query(); exit; 
+    // return $query->result_array();
+    // }
+
+
+    public function getLimitedOperation($limit, $id_opb)
     {
         $this->db->select('*');
-        $this->db->from('mstemp'); 
-        $this->db->limit($limit);
+        $this->db->from('master_opt_layout');
+        $this->db->where('id_opb', $id_opb);
+
+        // kalau limit bernilai 0, if tidak dijalankan
+        if ($limit > 0) {
+            $this->db->limit($limit);;
+        }
+
+        $this->db->order_by('op_code', 'ASC');
         return $this->db->get()->result_array();
     }
-    public function getLimitedOperation($limit = 2)
-{
-    $this->db->select('*');
-    $this->db->from('master_opt_layout'); 
-    $this->db->limit($limit);
-    return $this->db->get()->result_array();
-}
 
 public function getLimitedOperator($id_transaksi_checking)
 {
@@ -382,25 +421,28 @@ public function getLayout($id_transaksi_checking)
 public function getDefectsPerOperation($id_transaksi_checking)
 {
     $query = "SELECT 
-    tcd.op_name,
-    td.id_transaksi_defect,
-    td.id_transaksi_checking_detail,
-    td.id_defect,
-    md.deskripsi_defect,
-    td.jumlah,
-    td.note
-FROM 
-    transaksi_defect td
-JOIN 
-    master_defect md ON td.id_defect = md.id
-JOIN
-    transaksi_checking_detail tcd ON td.id_transaksi_checking_detail = tcd.id_transaksi_checking_detail
-WHERE 
-    tcd.id_transaksi_checking = $id_transaksi_checking
-ORDER BY tcd.op_name ASC
-";
+        tcd.op_name,
+        tcd.op_code,
+        td.id_transaksi_defect,
+        td.id_transaksi_checking_detail,
+        td.id_defect,
+        md.deskripsi_defect,
+        td.jumlah,
+        td.note
+    FROM 
+        transaksi_defect td
+    JOIN 
+        master_defect md ON td.id_defect = md.id
+    JOIN
+        transaksi_checking_detail tcd ON td.id_transaksi_checking_detail = tcd.id_transaksi_checking_detail
+    WHERE 
+        tcd.id_transaksi_checking = $id_transaksi_checking
+    ORDER BY tcd.op_name ASC
+    ";
+    
     return $this->db->query($query)->result_array();
 }
+
 
 public function getDefectsByDetail($id_transaksi_checking_detail)
     {
@@ -431,7 +473,7 @@ public function getDefectsByDetail($id_transaksi_checking_detail)
 //     $this->db->limit($limit);
 //     return $this->db->get()->result();
 // }
-public function getLayoutWithMesin($limit = 2)
+public function getLayoutWithMesin($limit, $id_opb)
 {
     $this->db->select('
         l.id as id_master_opt_layout,
@@ -443,7 +485,16 @@ public function getLayoutWithMesin($limit = 2)
     ');
     $this->db->from('master_opt_layout l');
     $this->db->join('jns_barang m', 'm.id_jnsbarang = l.id_machine', 'left');
-    $this->db->limit($limit);
+    
+    $this->db->where('l.id_opb', $id_opb);
+
+    // kalau limit bernilai 0, if tidak dijalankan
+    if ($limit > 0) {
+        $this->db->limit($limit);;
+    }
+
+    $this->db->order_by('l.op_code', 'ASC');
+
     return $this->db->get()->result();
 }
 

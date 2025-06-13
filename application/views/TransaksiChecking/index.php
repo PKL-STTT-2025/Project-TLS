@@ -1,5 +1,6 @@
-<div class="container p-5">
-    <title>Transaksi Checking</title>
+<div class="container-fluid px-4 py-5">
+    <h2 class="mb-4">Transaksi Checking</h2>
+
     <?php if ($this->session->flashdata('success')): ?>
         <div class="alert alert-success">
             <?= $this->session->flashdata('success') ?>
@@ -98,26 +99,26 @@
 
             <div class="row mt-3">
                 <div class="col-md-12">
-                    <table class="table table-bordered table-striped">
+                    <table class="table">
                         <thead>
                             <tr>
-                                <th>No</th>
-                                <th>Line</th>
-                                <th>Style</th>
-                                <th>Color</th>
-                                <th>ORC</th>
-                                <th>Aksi</th>
-                                <th>Masalah Selesai</th>
+                                <th scope="col">#</th>
+                                <th scope="col">Line</th>
+                                <th scope="col">Style</th>
+                                <th scope="col">Color</th>
+                                <th scope="col">ORC</th>
+                                <th scope="col">Aksi</th>
+                                <th scope="col">Masalah Selesai</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="table-group-divider">
                             <?php if (!empty($TransaksiChecking)) : ?>
                                 <?php $i = 1; ?>
                                 <?php foreach ($TransaksiChecking as $transaksi) : ?>
                                     <tr>
-                                        <td><?= $i++; ?></td>
-                                        <td><?= $transaksi['id_wg'] ?? '-' ?></td>
-                                        <td><?= $transaksi['id_opb'] ?? '-' ?></td>
+                                        <th scope="row"><?= $i++; ?></th>
+                                        <td><?= $transaksi['line_name'] ?? '-' ?></td>
+                                        <td><?= $transaksi['style'] ?? '-' ?></td>
                                         <td><?= $transaksi['color'] ?? '-' ?></td>
                                         <td><?= $transaksi['orc'] ?? '-' ?></td>
                                         <td>
@@ -183,6 +184,12 @@ $(document).ready(function() {
         if($(this).val()) {
             $('#selectionForm').submit();
         }
+    });
+    $('#color').change(function() {
+        $('#selectionForm').submit();
+    });
+    $('#orc').change(function() {
+        $('#selectionForm').submit();
     });
 
     // Tambah tombol Add Data agar membawa color dan orc juga

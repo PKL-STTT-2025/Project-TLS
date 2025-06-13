@@ -91,14 +91,19 @@
                             </div>
 
                             <h5 class="card-title"><?= htmlspecialchars($item->op_name) ?></h5>
-                            <p class="card-text"><small>(<?= htmlspecialchars($item->op_code) ?>)</small></p>
+                            <p class="card-text">
+                                <small>(<?= isset($item->op_code) ? htmlspecialchars($item->op_code) : 'TIDAK ADA KODE' ?>)</small>
+                            </p>
                             <p class="card-text"><small><?= htmlspecialchars($item->nama_mesin) ?></small></p>
                             <p class="card-text"><small>Total Defect: <?= $item->defect_count ?></small></p>
 
                             <!-- Nama operator -->
                             <div class="form-group">
                                 <?php foreach ($operators as $op): ?>
-                                    <?php if (trim($op->op_code) === trim($item->op_code)): ?>
+                                    <?php if (
+                                        isset($op->op_code, $item->op_code) &&
+                                        trim((string)$op->op_code) === trim((string)$item->op_code)
+                                    ): ?>
                                         <p><?= htmlspecialchars($op->operator_name) ?></p>
                                     <?php endif; ?>
                                 <?php endforeach; ?>
@@ -124,7 +129,10 @@
                                             $found_defect = false;
                                             if (!empty($operation_defects)) {
                                                 foreach ($operation_defects as $defect) {
-                                                    if (trim($defect['op_name']) === trim($item->op_name)) {
+                                                    if (
+                                                        isset($defect['op_code'], $item->op_code) &&
+                                                        trim((string)$defect['op_code']) === trim((string)$item->op_code)
+                                                    ) {
                                                         $found_defect = true;
                                                         break;
                                                     }
@@ -136,19 +144,23 @@
                                                 <?php
                                                 $grouped = [];
                                                 foreach ($operation_defects as $defect) {
-                                                    if (trim($defect['op_name']) === trim($item->op_name)) {
-                                                        $grouped[$defect['op_name']][] = $defect;
+                                                    if (
+                                                        isset($defect['op_code'], $item->op_code) &&
+                                                        trim((string)$defect['op_code']) === trim((string)$item->op_code)
+                                                    ) {
+                                                        $grouped[$defect['op_code']][] = $defect;
                                                     }
                                                 }
                                                 ?>
-                                                <?php foreach ($grouped as $op_name => $defects): ?>
+                                                <?php foreach ($grouped as $op_code => $defects): ?>
                                                     <div class="mb-3">
-                                                        <h6><strong><?= htmlspecialchars($op_name) ?></strong></h6>
+                                                        <h6><strong><?= htmlspecialchars($item->op_name) ?></strong></h6>
                                                         <ul class="pl-3">
                                                             <?php foreach ($defects as $d): ?>
                                                                 <li>
                                                                     <?= htmlspecialchars($d['deskripsi_defect']) ?> - 
-                                                                    Jumlah: <?= $d['jumlah'] ?><?= $d['note'] ? ', Note: ' . htmlspecialchars($d['note']) : '' ?>
+                                                                    Jumlah: <?= $d['jumlah'] ?>
+                                                                    <?= !empty($d['note']) ? ', Note: ' . htmlspecialchars($d['note']) : '' ?>
                                                                 </li>
                                                             <?php endforeach; ?>
                                                         </ul>
@@ -170,11 +182,10 @@
                             <div class="traffic-light mt-2">
                                 <?php
                                 $defect = $item->defect_count ?? 0;
-                                if ($defect == 0) {
-                                    $color = 'green';
-                                } elseif ($defect == 1) {
+                                $color = 'green';
+                                if ($defect == 1) {
                                     $color = 'yellow';
-                                } else {
+                                } elseif ($defect > 1) {
                                     $color = 'red';
                                 }
                                 echo '<span class="light ' . $color . '"></span>';
@@ -192,7 +203,4 @@
 
 <a href="<?= base_url('TransaksiChecking'); ?>" class="btn btn-secondary ml-4 mt-3">Kembali</a>
 
-<script
-    src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"
-    crossorigin="anonymous">
-</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous"></script>

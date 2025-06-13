@@ -1,4 +1,9 @@
 <style>
+    .container-fluid {
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
     .grid-container {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -67,13 +72,15 @@
     }
 </style>
 
-<div class="container mt-4">
+<div class="container-fluid mt-4">
     <h3>Data Operator per Line - LINE <?= strtoupper($line_name) ?></h3>
+    <h4>Total <span class="text-danger"><?= strtoupper($jumlah_proses) ?></span> proses</h4>
+
     <form method="post" action="<?= base_url('TransaksiChecking/simpan'); ?>">
 
         <div class="row">
             <?php foreach ($layouts as $layout_index => $layout): ?>
-                <div class="col-md-4 mb-4">
+                <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
                     <div class="card text-center shadow-sm">
                         <div class="card-body">
 
@@ -87,75 +94,64 @@
                                 <small><?= htmlspecialchars($layout->machine_name ?? '') ?></small>
                             </p>
 
-                                <input type="hidden" name="id_wg" value="<?= htmlspecialchars($line ?? '') ?>">
-                                <input type="hidden" name="id_opb" value="<?= htmlspecialchars($id_style ?? '') ?>">
-                                <input type="hidden" name="color" id="color" class="form-control" value="<?= htmlspecialchars($this->input->get('color') ?? '') ?>">
-                                <input type="hidden" name="orc" id="orc" class="form-control" value="<?= htmlspecialchars($this->input->get('orc') ?? '') ?>">
+                            <input type="hidden" name="id_wg" value="<?= htmlspecialchars($line ?? '') ?>">
+                            <input type="hidden" name="id_opb" value="<?= htmlspecialchars($id_style ?? '') ?>">
+                            <input type="hidden" name="color" value="<?= htmlspecialchars($this->input->get('color') ?? '') ?>">
+                            <input type="hidden" name="orc" value="<?= htmlspecialchars($this->input->get('orc') ?? '') ?>">
 
-                                <?php if (!empty($layouts)): ?>
-                                    <?php foreach ($layouts as $i => $layout): ?>
-                                        <input type="hidden" name="id_master_opt_layout[]" value="<?= htmlspecialchars($layout->id_master_opt_layout ?? '') ?>">
-                                        <input type="hidden" name="op_name[]" value="<?= htmlspecialchars($layout->op_name ?? '') ?>">
-                                        <input type="hidden" name="op_code[]" value="<?= htmlspecialchars($layout->op_code ?? '') ?>">
+                            <input type="hidden" name="id_master_opt_layout[]" value="<?= htmlspecialchars($layout->id_master_opt_layout ?? '') ?>">
+                            <input type="hidden" name="op_name[]" value="<?= htmlspecialchars($layout->op_name ?? '') ?>">
+                            <input type="hidden" name="op_code[]" value="<?= htmlspecialchars($layout->op_code ?? '') ?>">
+                            <input type="hidden" name="id_jnsbarang[]" value="<?= htmlspecialchars($layout->id_jnsbarang ?? '') ?>">
 
-                                        <?php if (isset($layout->id_jnsbarang)): ?>
-                                            <input type="hidden" name="id_jnsbarang[]" value="<?= htmlspecialchars($layout->id_jnsbarang) ?>">
-                                        <?php else: ?>
-                                            <input type="hidden" name="id_jnsbarang[]" value="">
-                                        <?php endif; ?>
-                                    <?php endforeach; ?>
-                                <?php else: ?>
-                                    <p><em>Data layout tidak ditemukan.</em></p>
-                                <?php endif; ?>
-
-
+                           
                             <div class="form-group mt-2">
-                                <select class="form-control" name="empID[]" required>
-                                    <option value="">-- Pilih Nama Operator --</option>
-                                    <?php foreach ($operators as $op): ?>
-                                        <option value="<?= $op['empID'] ?>"><?= $op['name'] ?></option>
+                                <?php foreach ($operators as $index => $default_operator): ?>
                                     <?php endforeach; ?>
-                                </select>
-                            </div>
+                                    <select name="empID[]" class="form-control" required>
+                                        <option value="" selected hidden><?= $default_operator['name'] ?></option>
+
+                                        <?php foreach ($operators as $op): ?>
+                                            <option value="<?= $op['empID'] ?>"><?= $op['name'] ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+
 
                             <div class="defect-wrapper">
                                 <div class="defect-group mb-2">
-                                    <div class="row">
-                                        <div class="col-7">
+                                    <div class="row align-items-center">
+                                        <div class="col-5">
                                             <select class="form-control" name="deskripsi_defect[<?= $layout_index ?>][]" required>
                                                 <option value="">-- Pilih Nama Defect --</option>
                                                 <?php foreach ($defect_list as $def): ?>
-                                                    <option 
-                                                        value="<?= $def['deskripsi_defect']; ?>" 
-                                                        data-kode-defect="<?= htmlspecialchars($def['kode_defect']); ?>" 
-                                                        data-kategori-defect="<?= htmlspecialchars($def['kategori_defect']); ?>">
+                                                    <option value="<?= $def['deskripsi_defect']; ?>">
                                                         <?= $def['deskripsi_defect']; ?>
                                                     </option>
                                                 <?php endforeach; ?>
                                             </select>
                                         </div>
-                                        <div class="col-3">
-                                        <select class="form-control" name="jumlah[<?= $layout_index ?>][]">
-                                                <option value="">Jumlah</option>
-                                                <?php for ($i = 1; $i <= 10; $i++): ?>
-                                                    <option value="<?= $i ?>"><?= $i ?></option>
-                                                <?php endfor; ?>
-                                            </select>
+                                        <div class="col-2">
+                                            <input type="number" name="jumlah[<?= $layout_index ?>][]" class="form-control" placeholder="Jumlah" required>
                                         </div>
-                                        <div class="col-2 d-flex align-items-center">
-                                            <button type="button" class="btn text-danger remove-defect" style="font-size: 20px; line-height: 1;">×</button>
+                                        <div class="col-4">
+                                            <input type="text" name="catatan[<?= $layout_index ?>][]" class="form-control" placeholder="Catatan">
+                                        </div>
+                                        <div class="col-1 d-flex align-items-center">
+                                            <button type="button" class="btn text-danger remove-defect" style="font-size: 20px;">×</button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
+                            <!-- Tombol Tambah -->
                             <div class="text-center mt-2">
                                 <button type="button" class="btn btn-primary btn-sm add-defect">+ Tambah Defect</button>
                             </div>
 
                             <!-- Traffic Light -->
                             <div class="traffic-light mt-3">
-                                <span class="light" style="background-color: red; width: 20px; height: 20px; display: inline-block; border-radius: 50%;"></span>
+                                <span class="light" style="background-color: green; width: 20px; height: 20px; display: inline-block; border-radius: 50%;"></span>
                             </div>
                         </div>
                     </div>
@@ -170,14 +166,28 @@
     </form>
 </div>
 
+<!-- Inline CSS -->
+<style>
+    .defect-group input, .defect-group select {
+        font-size: 0.9rem;
+    }
+    .defect-group .form-control {
+        padding: 0.25rem 0.5rem;
+    }
+    .card-title {
+        font-size: 1.1rem;
+        font-weight: bold;
+    }
+    .traffic-light .light {
+        transition: background-color 0.3s;
+    }
+</style>
 
-
+<!-- Script Defect & Traffic Light -->
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-
-    // Fungsi: Tambahkan baris defect baru
     document.querySelectorAll('.add-defect').forEach((button, layoutIndex) => {
-        button.setAttribute('data-layout-index', layoutIndex); // inject layout index ke tombol
+        button.setAttribute('data-layout-index', layoutIndex);
 
         button.addEventListener('click', function () {
             const layoutIndex = this.getAttribute('data-layout-index');
@@ -185,23 +195,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const defectHTML = `
                 <div class="defect-group mb-2">
-                    <div class="row">
-                        <div class="col-7">
+                    <div class="row align-items-center">
+                        <div class="col-5">
                             <select class="form-control" name="deskripsi_defect[${layoutIndex}][]" required>
                                 <option value="">-- Pilih Nama Defect --</option>
                                 ${getDefectOptions()}
                             </select>
                         </div>
-                        <div class="col-3">
-                            <select class="form-control" name="jumlah[${layoutIndex}][]">
-                                ${getJumlahOptions()}
-                            </select>
+                        <div class="col-2">
+                            <input type="number" class="form-control" name="jumlah[${layoutIndex}][]" placeholder="Jumlah" min="1" required />
                         </div>
-                        <div class="col-2 d-flex align-items-center">
+                        <div class="col-4">
+                            <input type="text" class="form-control" name="catatan[${layoutIndex}][]" placeholder="Catatan">
+                        </div>
+                        <div class="col-1 d-flex align-items-center">
                             <button type="button" class="btn text-danger remove-defect" style="font-size: 20px;">×</button>
                         </div>
                     </div>
-                </div> 
+                </div>
             `;
 
             container.insertAdjacentHTML('beforeend', defectHTML);
@@ -218,7 +229,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.querySelectorAll('.card-body').forEach(cardBody => {
         cardBody.addEventListener('change', function (e) {
-            if (e.target.matches('select')) {
+            if (e.target.matches('input[type="number"], select[name^="deskripsi_defect"]')) {
                 updateTrafficLight(cardBody);
             }
         });
@@ -226,40 +237,34 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function getDefectOptions() {
         const defectList = <?= json_encode($defect_list) ?>;
-        return defectList.map(def => 
+        return defectList.map(def =>
             `<option value="${def.deskripsi_defect}" data-kategori-defect="${def.kategori_defect}">${def.deskripsi_defect}</option>`
         ).join('');
     }
 
-    function getJumlahOptions() {
-        let options = '<option value="">Jumlah</option>';
-        for (let i = 1; i <= 10; i++) {
-            options += `<option value="${i}">${i}</option>`;
-        }
-        return options;
-    }
-
     function updateTrafficLight(cardBody) {
-    let totalDefect = 0;
+        let totalDefect = 0;
+        const defectGroups = cardBody.querySelectorAll('.defect-group');
 
-    const defectGroups = cardBody.querySelectorAll('.defect-group');
+        defectGroups.forEach(group => {
+            const jumlahInput = group.querySelector('input[name^="jumlah"]');
+            const jumlah = parseInt(jumlahInput?.value) || 0;
+            totalDefect += jumlah;
+        });
 
-    defectGroups.forEach(group => {
-        const jumlahSelect = group.querySelector('select[name^="jumlah"]');
-        const jumlah = parseInt(jumlahSelect?.value) || 0;
-        totalDefect += jumlah;
-    });
+        const light = cardBody.querySelector('.traffic-light .light');
 
-    const light = cardBody.querySelector('.traffic-light .light');
-
-    if (totalDefect === 0) {
-        light.style.backgroundColor = 'green';
-    } else if (totalDefect === 1 || totalDefect === 2) {
-        light.style.backgroundColor = 'yellow';
-    } else if (totalDefect >= 3) {
-        light.style.backgroundColor = 'red';
+        if (light) {
+            if (totalDefect === 0) {
+                light.style.backgroundColor = 'green';
+            } else if (totalDefect === 1 || totalDefect === 2) {
+                light.style.backgroundColor = 'yellow';
+            } else {
+                light.style.backgroundColor = 'red';
+            }
+        }
     }
-}
-
 });
 </script>
+
+

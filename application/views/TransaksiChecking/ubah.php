@@ -231,26 +231,42 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function updateTrafficLight(cardBody) {
     let totalDefect = 0;
+    let totalMinor = 0;
+    let totalMajor = 0;
 
     const defectGroups = cardBody.querySelectorAll('.defect-group');
 
     defectGroups.forEach(group => {
         const jumlahSelect = group.querySelector('select[name^="jumlah"]');
+        const defectSelect = group.querySelector('select[name^="deskripsi_defect"]');
+
         const jumlah = parseInt(jumlahSelect?.value) || 0;
+
+        // Ambil <option> yang dipilih
+        const selectedOption = defectSelect?.options[defectSelect.selectedIndex];
+        const kategori = selectedOption?.getAttribute('data-kategori-defect');
+
         totalDefect += jumlah;
+
+        if (kategori === 'minor') {
+            totalMinor += jumlah;
+        } else if (kategori === 'major') {
+            totalMajor += jumlah;
+        }
     });
 
     const light = cardBody.querySelector('.traffic-light .light');
 
     if (totalDefect === 0) {
         light.style.backgroundColor = 'green';
-    } else if (totalDefect === 1 || totalDefect === 2) {
+    } else if (totalMinor === 2 && totalMajor === 0) {
         light.style.backgroundColor = 'yellow';
-    } else if (totalDefect >= 3) {
+    } else if ((totalMajor >= 1 && totalMinor >= 3) || totalDefect >= 5) {
         light.style.backgroundColor = 'red';
+    } else {
+        light.style.backgroundColor = 'yellow';
     }
 }
-
-
+    updateTrafficLight(document.querySelector('.card-body')); 
 });
 </script>
