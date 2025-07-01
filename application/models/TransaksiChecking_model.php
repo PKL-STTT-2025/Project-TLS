@@ -402,8 +402,8 @@ public function getLimitedOperator($id_transaksi_checking)
 
 public function getLayout($id_transaksi_checking)
 {
-
     $query = "SELECT 
+        d.id_transaksi_checking_detail,
         d.op_code,
         d.op_name,
         jb.name AS nama_mesin,
@@ -412,10 +412,10 @@ public function getLayout($id_transaksi_checking)
         LEFT JOIN jns_barang jb ON jb.id_jnsbarang = d.id_jnsbarang
         LEFT JOIN transaksi_defect td ON td.id_transaksi_checking_detail = d.id_transaksi_checking_detail
         WHERE d.id_transaksi_checking = ?
-        GROUP BY d.op_code
+        GROUP BY d.id_transaksi_checking_detail, d.op_code
         ORDER BY defect_count DESC
     ";
-     return $this->db->query($query, [$id_transaksi_checking])->result();
+    return $this->db->query($query, [$id_transaksi_checking])->result();
 }
 
 public function getDefectsPerOperation($id_transaksi_checking)

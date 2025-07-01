@@ -136,26 +136,27 @@ class TransaksiChecking extends CI_Controller
     public function simpan()
     {
         $this->db->trans_start();
-
+    
         $id_wg = $this->input->post('id_wg');
         $id_opb = $this->input->post('id_opb');
         $color = $this->input->post('color');
         $orc = $this->input->post('orc');
-
+    
         $data_transaksi = [
             'id_wg' => $id_wg,
             'id_opb' => $id_opb,
             'color' => $color,
-            'orc' => $orc
+            'orc' => $orc,
+            'date_created' => date('Y-m-d H:i:s')
         ];
         $this->db->insert('transaksi_checking', $data_transaksi); 
         $transaksi_id = $this->db->insert_id();
-
+    
         if (!$transaksi_id) {
             echo "Gagal menyimpan transaksi utama.";
             exit;
         }
-
+    
         $empIDs = $this->input->post('empID');
         $op_names = $this->input->post('op_name');
         $op_codes = $this->input->post('op_code');
@@ -164,30 +165,32 @@ class TransaksiChecking extends CI_Controller
         $deskripsi_defect = $this->input->post('deskripsi_defect'); 
         $catatan = $this->input->post('catatan'); 
         $jumlahs = $this->input->post('jumlah'); 
-
+    
         foreach ($empIDs as $i => $empID) {
             $id_jnsbarang_clean = $id_jnsbarang[$i] !== '' ? $id_jnsbarang[$i] : null;
-
+    
             $detail_data = [
                 'id_transaksi_checking' => $transaksi_id,
                 'id_master_opt_layout' => $id_master_layouts[$i],
                 'id_jnsbarang' => $id_jnsbarang_clean,
                 'op_code' => $op_codes[$i],
                 'op_name' => $op_names[$i],
-                'empID' => $empID
+                'empID' => $empID,
+                'date_created' => date('Y-m-d H:i:s')
             ];
-
+    
             $detail_id = $this->TransaksiChecking_model->simpanDetail($detail_data);
-
+    
             if (isset($deskripsi_defect[$i])) {
                 foreach ($deskripsi_defect[$i] as $j => $defect_description) {
+                    // Kalau kamu sudah tahu ID defect-nya dari form, ga usah query ke DB lagi
                     $defect_data = $this->TransaksiChecking_model->getDefectByDescription($defect_description);
                     if (!$defect_data) continue;
-
+    
                     $defect = [
                         'id_transaksi_checking_detail' => $detail_id,
                         'id_defect' => $defect_data->id,
-                        'note'=> $notes[$i][$j] ?? '',
+                        'note' => $catatan[$i][$j] ?? '',
                         'jumlah' => $jumlahs[$i][$j] ?? 1, 
                         'date_created' => date('Y-m-d H:i:s')
                     ];
@@ -195,17 +198,18 @@ class TransaksiChecking extends CI_Controller
                 }
             }
         }
-
+    
         $this->db->trans_complete(); 
-
+    
         if ($this->db->trans_status() === FALSE) {
             echo "Gagal menyimpan data. Semua rollback.";
             exit;
         }
-
+    
         $this->session->set_flashdata('flash', 'Ditambahkan');
         redirect('TransaksiChecking');
     }
+    
 
 
     public function hapus($id)

@@ -78,21 +78,12 @@
 </style>
 
 <div class="container mt-4">
-    <?php if (!empty($layout) && !empty($operators)): ?>
-        <h3>Detail Data Transaksi - <?= isset($line_name) ? 'LINE ' . strtoupper($line_name) : 'TIDAK DIKETAHUI' ?></h3>
+    <h3>Data Operator per Line - LINE <?= strtoupper($line_name) ?></h3>
+    <form method="post" action="<?= base_url('Supervisor/detail'); ?>">
 
-        <?php
-        // Group defect data
-        $grouped = [];
-        foreach ($operation_defects as $defect) {
-            $group_key = $defect['op_code'] . '_' . $defect['id_transaksi_checking_detail'];
-            $grouped[$group_key][] = $defect;
-        }
-        ?>
-
-        <form method="post" action="<?= base_url('TransaksiChecking/detail'); ?>">
-            <div class="grid-container">
-                <?php foreach ($layout as $index => $item): ?>
+        <div class="grid-container">
+            <?php if (!empty($layouts)): ?>
+                <?php foreach ($layouts as $item): ?>
                     <div class="card text-center shadow-sm card-operator">
                         <div class="card-body">
                             <div class="avatar-icon">
@@ -100,61 +91,57 @@
                             </div>
 
                             <h5 class="card-title"><?= htmlspecialchars($item->op_name) ?></h5>
-                            <p class="card-text">
-                                <small>(<?= isset($item->op_code) ? htmlspecialchars($item->op_code) : 'TIDAK ADA KODE' ?>)</small>
-                            </p>
+                            <p class="card-text"><small>(<?= htmlspecialchars($item->op_code) ?>)</small></p>
                             <p class="card-text"><small><?= htmlspecialchars($item->nama_mesin) ?></small></p>
-                            <p class="card-text"><small>Total Defect: <?= $item->defect_count ?></small></p>
+                            <p class="card-text"><small>Total Defect: <?= ($item->defect_count) ?></small></p>
 
-                            <!-- Nama operator -->
+                            <!-- Tampilkan Nama Operator Langsung -->
                             <div class="form-group">
                                 <?php foreach ($operators as $op): ?>
-                                    <?php if (
-                                        isset($op->op_code, $item->op_code, $op->id_transaksi_checking_detail, $item->id_transaksi_checking_detail) &&
-                                        trim((string)$op->op_code) === trim((string)$item->op_code) &&
-                                        (string)$op->id_transaksi_checking_detail === (string)$item->id_transaksi_checking_detail
-                                    ): ?>
+                                    <?php if (trim($op->op_code) === trim($item->op_code)): ?>
                                         <p><?= htmlspecialchars($op->operator_name) ?></p>
                                     <?php endif; ?>
                                 <?php endforeach; ?>
                             </div>
 
-                            <!-- Tombol modal -->
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#defectsModal<?= $index ?>">
+                            <!-- Tombol untuk membuka modal -->
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#defectsModal_<?= md5($item->op_name) ?>">
                                 Lihat Defect
                             </button>
 
                             <!-- Modal -->
-                            <div class="modal fade" id="defectsModal<?= $index ?>" tabindex="-1" role="dialog" aria-labelledby="defectsModalLabel<?= $index ?>" aria-hidden="true">
+                            <div class="modal fade" id="defectsModal_<?= md5($item->op_name) ?>" tabindex="-1" role="dialog" aria-labelledby="defectsModalLabel_<?= md5($item->op_name) ?>" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="defectsModalLabel<?= $index ?>">Daftar Defect</h5>
+                                            <h5 class="modal-title" id="defectsModalLabel_<?= md5($item->op_name) ?>">Daftar Defect</h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
+
                                         <div class="modal-body">
                                             <?php
-                                            $group_key = $item->op_code . '_' . $item->id_transaksi_checking_detail;
-                                            if (isset($grouped[$group_key])):
+                                            // Filter defect sesuai op_name layout ini
+                                            $filteredDefects = array_filter($operation_defects, function ($defect) use ($item) {
+                                                return trim($defect['op_name']) === trim($item->op_name);
+                                            });
                                             ?>
-                                                <div class="mb-3">
-                                                    <h6><strong><?= htmlspecialchars($item->op_name) ?></strong></h6>
-                                                    <ul class="pl-3">
-                                                        <?php foreach ($grouped[$group_key] as $d): ?>
-                                                            <li>
-                                                                <?= htmlspecialchars($d['deskripsi_defect']) ?> -
-                                                                Jumlah: <?= $d['jumlah'] ?>
-                                                                <?= !empty($d['note']) ? ', Note: ' . htmlspecialchars($d['note']) : '' ?>
-                                                            </li>
-                                                        <?php endforeach; ?>
-                                                    </ul>
-                                                </div>
+
+                                            <?php if (!empty($filteredDefects)): ?>
+                                                <ul class="pl-3">
+                                                    <?php foreach ($filteredDefects as $d): ?>
+                                                        <li>
+                                                            <?= htmlspecialchars($d['deskripsi_defect']) ?> -
+                                                            Jumlah: <?= $d['jumlah'] ?><?= $d['note'] ? ', Note: ' . htmlspecialchars($d['note']) : '' ?>
+                                                        </li>
+                                                    <?php endforeach; ?>
+                                                </ul>
                                             <?php else: ?>
-                                                <p class="text-muted">Tidak ada defect untuk operator ini.</p>
+                                                <p class="text-muted">Tidak ada defect yang tercatat.</p>
                                             <?php endif; ?>
                                         </div>
+
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
                                         </div>
@@ -162,29 +149,63 @@
                                 </div>
                             </div>
 
-                            <!-- Traffic light -->
+
                             <div class="traffic-light mt-2">
                                 <?php
                                 $defect = $item->defect_count ?? 0;
-                                $color = 'green';
-                                if ($defect == 1) {
+                                if ($defect == 0) {
+                                    $color = 'green';
+                                } elseif ($defect == 1) {
                                     $color = 'yellow';
-                                } elseif ($defect > 1) {
+                                } else {
                                     $color = 'red';
                                 }
                                 echo '<span class="light ' . $color . '"></span>';
                                 ?>
                             </div>
+
+
                         </div>
                     </div>
                 <?php endforeach; ?>
-            </div>
-        </form>
-    <?php else: ?>
-        <p class="text-danger">Data transaksi tidak ditemukan.</p>
-    <?php endif; ?>
+            <?php else: ?>
+                <p class="text-center text-muted">Tidak ada data layout yang tersedia.</p>
+            <?php endif; ?>
+        </div>
+    </form>
 </div>
 
-<a href="<?= base_url('TransaksiChecking'); ?>" class="btn btn-secondary ml-4 mt-3">Kembali</a>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const addButtons = document.querySelectorAll('.add-defect');
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous"></script>
+        addButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const parent = btn.closest('.card-body');
+                const defectGroup = parent.querySelector('.defect-group');
+                const clone = defectGroup.cloneNode(true);
+                clone.querySelector('select').value = '';
+                clone.querySelector('input').value = '';
+
+                parent.insertBefore(clone, btn.parentElement);
+            });
+        });
+
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-defect')) {
+                const group = e.target.closest('.defect-group');
+                const allGroups = group.parentElement.querySelectorAll('.defect-group');
+                if (allGroups.length > 1) {
+                    group.remove();
+                }
+            }
+        });
+    });
+</script>
+
+<a href="<?= base_url('Supervisor'); ?>" class="btn btn-secondary ml-4 mt-3 ">Kembali</a>
+
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"
+    crossorigin="anonymous">
+</script>

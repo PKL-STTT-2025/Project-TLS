@@ -86,6 +86,12 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link collapsed" href="<?php echo base_url('Supervisor/index'); ?>">
+                    <i class="fas fa-keyboard"></i>
+                    <span>List Checking Time</span>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link collapsed" href="<?php echo base_url('Report/report_operator'); ?>">
                     <i class="fas fa-chart-line"></i>
                     <span>Report Operator</span>
@@ -103,9 +109,9 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Data Report:</h6>
-                        <a class="collapse-item" href="<?php echo base_url('Dashboard/reportHari'); ?>">Report/Hari</a>
-                        <a class="collapse-item" href="<?php echo base_url('Dashboard/reportMinggu'); ?>">Report/Minggu</a>
-                        <a class="collapse-item" href="<?php echo base_url('Dashboard/reportBulan'); ?>">Report/Bulan</a>
+                        <a class="collapse-item" href="<?php echo base_url('Report_Defect/reportHari'); ?>">Report/Hari</a>
+                        <a class="collapse-item" href="<?php echo base_url('Report_Defect/reportMinggu'); ?>">Report/Minggu</a>
+                        <a class="collapse-item" href="<?php echo base_url('Report_Defect/reportBulan'); ?>">Report/Bulan</a>
                     </div>
                 </div>
             </li>
