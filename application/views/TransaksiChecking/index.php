@@ -1,146 +1,173 @@
-<div class="container-fluid px-4 py-5">
-    <h2 class="mb-4">Transaksi Checking</h2>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f8f9fa;
+    color: #000000; 
+  }
+  .card-custom {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  }
+  .btn-round {
+    border-radius: 2rem;
+    padding: 0.3rem 1rem;
+    font-size: 0.875rem;
+    margin-left: 0.5rem;
+  }
+  .dashboard-title {
+    font-weight: 600;
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+    color: #000000;
+  }
+  label {
+    color: #000000;
+  }
+  .round-buttons {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  .round-buttons .btn {
+    background-color: #e0f0ff;
+    color: #005b96;
+    border: 1px solid #c2e0f4;
+  }
+  .round-buttons .btn:hover {
+    background-color: #d0e9ff;
+  }
+</style>
 
-    <?php if ($this->session->flashdata('success')): ?>
-        <div class="alert alert-success">
-            <?= $this->session->flashdata('success') ?>
-        </div>
-    <?php endif; ?>
-
-    <div class="card mb-4">
-        <div class="card-header bg-warning text-black">
-            <h5>Form Pemilihan Line, Style, Warna & ORC</h5>
-        </div>
-        <div class="card-body">
-            <form id="selectionForm" method="get" action="<?= site_url('TransaksiChecking') ?>">
-                <div class="row">
-                    <!-- Line -->
-                    <div class="col-md-3">
-                        <label>Line:</label>
-                        <select class="form-control" name="Workgroup" id="Workgroup" required>
-                            <option value="">-- Pilih Line --</option>
-                            <?php foreach ($line_list as $line): ?>
-                                <option value="<?= $line['idWG']; ?>" 
-                                    <?= ($this->input->get('Workgroup') == $line['idWG']) ? 'selected' : '' ?>>
-                                    <?= $line['Workgroup']; ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-
-                    <!-- Style -->
-                    <div class="col-md-3">
-                        <label>Style:</label>
-                        <select class="form-control" name="style" id="style" required <?= empty($this->input->get('Workgroup')) ? 'disabled' : '' ?>>
-                            <option value="">-- Pilih Style --</option>
-                            <?php if(!empty($style_list)): ?>
-                                <?php foreach ($style_list as $style): ?>
-                                    <option value="<?= $style['id_operation_breakdown']; ?>" 
-                                        <?= ($this->input->get('style') == $style['id_operation_breakdown']) ? 'selected' : '' ?>>
-                                        <?= $style['style']; ?> (<?= date('d/m/Y', strtotime($style['date_created'])); ?>)
-                                    </option>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </select>
-                    </div>
-
-                    <!-- Color -->
-                    <div class="col-md-3">
-                        <label>Color:</label>
-                        <input type="text" class="form-control" id="color" name="color" value="<?= htmlspecialchars($this->input->get('color') ?? '') ?>">
-                    </div>
-
-                    <!-- ORC -->
-                    <div class="col-md-3">
-                        <label>ORC:</label>
-                        <input type="text" class="form-control" id="orc" name="orc" value="<?= htmlspecialchars($this->input->get('orc') ?? '') ?>">
-                    </div>
-                </div>
-            </form>
-        </div>
+<div class="container-fluid px-4 py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="dashboard-title mb-0">GI - TLS Input Defect</h2>
+    <div class="round-buttons">
+      <button type="button" class="btn btn-round">Round 1</button>
+      <button type="button" class="btn btn-round">Round 2</button>
+      <button type="button" class="btn btn-round">Round 3</button>
+      <button type="button" class="btn btn-round">Round 4</button>
     </div>
+  </div>
 
-    <?php if ($this->session->flashdata('flash')) : ?>
-        <div class="row mt-3">
-            <div class="col-md-6">
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    Data Input Defect <strong><?= $this->session->flashdata('flash'); ?></strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            </div>
-        </div>
-    <?php endif; ?>
-
-    <div class="row mt-3">
-        <div class="col-md-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <h2>Transaksi Checking</h2>
-                <?php 
-                    $workgroup = $this->input->get('Workgroup');
-                    $style = $this->input->get('style');
-                    $color = $this->input->get('color');
-                    $orc = $this->input->get('orc');
-                ?>
-                <?php if($workgroup && $style): ?>
-                    <button class="btn btn-success" id="btnAdd">
-                        <i class="fas fa-plus"></i> Add Data
-                    </button>
-                <?php else: ?>
-                    <button class="btn btn-secondary" disabled id="btnAdd">
-                        <i class="fas fa-plus"></i> Add Data
-                    </button>
-                <?php endif; ?>
-            </div>
-
-            <form action="<?= base_url('TransaksiChecking/index') ?>" method="get" class="d-flex mt-3">
-                <input type="text" name="keyword" class="form-control me-2" placeholder="Search..." aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
-
-            <div class="row mt-3">
-                <div class="col-md-12">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Line</th>
-                                <th scope="col">Style</th>
-                                <th scope="col">Color</th>
-                                <th scope="col">ORC</th>
-                                <th scope="col">Aksi</th>
-                                <th scope="col">Masalah Selesai</th>
-                            </tr>
-                        </thead>
-                        <tbody class="table-group-divider">
-                            <?php if (!empty($TransaksiChecking)) : ?>
-                                <?php $i = 1; ?>
-                                <?php foreach ($TransaksiChecking as $transaksi) : ?>
-                                    <tr>
-                                        <th scope="row"><?= $i++; ?></th>
-                                        <td><?= $transaksi['line_name'] ?? '-' ?></td>
-                                        <td><?= $transaksi['style'] ?? '-' ?></td>
-                                        <td><?= $transaksi['color'] ?? '-' ?></td>
-                                        <td><?= $transaksi['orc'] ?? '-' ?></td>
-                                        <td>
-                                            <a href="<?= base_url('TransaksiChecking/detail/'.$transaksi['id_transaksi_checking']) ?>" class="btn btn-sm btn-info">Detail</a>
-                                            <a href="<?= base_url('TransaksiChecking/ubah/'.$transaksi['id_transaksi_checking']) ?>" class="btn btn-sm btn-warning">Ubah</a>
-                                            <a href="<?= base_url('TransaksiChecking/hapus/'.$transaksi['id_transaksi_checking']) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Yakin?');">Hapus</a>
-                                        </td>
-                                        <td><?= ($transaksi['masalah_selesai'] === '1') ? "Done" : "Not Done" ?></td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            <?php else : ?>
-                                <tr>
-                                    <td colspan="7" class="text-center">Belum ada data. Silakan pilih Line dan Style terlebih dahulu.</td>
-                                </tr>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+  <?php if ($this->session->flashdata('success')): ?>
+    <div class="alert alert-success mt-2 mb-3">
+      <?= $this->session->flashdata('success') ?>
     </div>
+  <?php endif; ?>
+
+  <div class="card card-custom mb-4">
+    <div class="card-header bg-white border-bottom">
+      <h5 class="mb-0">Form Input Line, Style, Color & ORC</h5>
+    </div>
+    <div class="card-body">
+      <form id="selectionForm" method="get" action="<?= site_url('TransaksiChecking') ?>">
+        <div class="row g-3">
+          <div class="col-md-3">
+            <label>Line</label>
+            <select class="form-control" name="Workgroup" id="Workgroup" required>
+              <option value="">-- Pilih Line --</option>
+              <?php foreach ($line_list as $line): ?>
+                <option value="<?= $line['idWG']; ?>" <?= ($this->input->get('Workgroup') == $line['idWG']) ? 'selected' : '' ?>><?= $line['Workgroup']; ?></option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label>Style</label>
+            <select class="form-control" name="style" id="style" required <?= empty($this->input->get('Workgroup')) ? 'disabled' : '' ?>>
+              <option value="">-- Pilih Style --</option>
+              <?php if(!empty($style_list)): ?>
+                <?php foreach ($style_list as $style): ?>
+                  <option value="<?= $style['id_operation_breakdown']; ?>" <?= ($this->input->get('style') == $style['id_operation_breakdown']) ? 'selected' : '' ?>><?= $style['style']; ?> (<?= date('d/m/Y', strtotime($style['date_created'])); ?>)</option>
+                <?php endforeach; ?>
+              <?php endif; ?>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label>Color</label>
+            <input type="text" class="form-control" id="color" name="color" value="<?= htmlspecialchars($this->input->get('color') ?? '') ?>">
+          </div>
+          <div class="col-md-3">
+            <label>ORC</label>
+            <input type="text" class="form-control" id="orc" name="orc" value="<?= htmlspecialchars($this->input->get('orc') ?? '') ?>">
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">Daftar Transaksi Checking</h4>
+    <?php if($this->input->get('Workgroup') && $this->input->get('style') && $this->input->get('color') && $this->input->get('orc')): ?>
+      <button class="btn btn-success" id="btnAdd"><i class="fas fa-plus"></i> Tambah Data</button>
+    <?php else: ?>
+      <button class="btn btn-secondary" disabled><i class="fas fa-plus"></i> Tambah Data</button>
+    <?php endif; ?>
+  </div>
+
+    <nav class="navbar navbar-light bg-light">
+        <form class="form-inline" method="get" action="<?= base_url('TransaksiChecking') ?>">
+            <input class="form-control mr-sm-2" type="search" name="keyword" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+    </nav>
+
+
+  <div class="card card-custom">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>No</th>
+              <th>Line</th>
+              <th>Style</th>
+              <th>Color</th>
+              <th>ORC</th>
+              <th>Tanggal</th>
+              <th>Aksi</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php if (!empty($TransaksiChecking)) : ?>
+              <?php $i = 1; foreach ($TransaksiChecking as $transaksi): ?>
+                <tr>
+                  <td><?= $i++; ?></td>
+                  <td><?= $transaksi['line_name'] ?? '-' ?></td>
+                  <td><?= $transaksi['style'] ?? '-' ?></td>
+                  <td><?= $transaksi['color'] ?? '-' ?></td>
+                  <td><?= $transaksi['orc'] ?? '-' ?></td>
+                  <td><?= date('d-m-Y H:i', strtotime($transaksi['date_created'])) ?></td>
+                  <td>
+                    <a href="<?= base_url('TransaksiChecking/detail/'.$transaksi['id_transaksi_checking']) ?>" class="btn btn-sm btn-info">Detail</a>
+                    <a href="<?= base_url('TransaksiChecking/ubah/'.$transaksi['id_transaksi_checking']) ?>" class="btn btn-sm btn-warning">Ubah</a>
+                    <a href="<?= base_url('TransaksiChecking/hapus/'.$transaksi['id_transaksi_checking']) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Yakin?');">Hapus</a>
+                  </td>
+                  <td>
+                    <?php if ($transaksi['masalah_selesai'] === '1'): ?>
+                      <span class="badge bg-success">Done</span>
+                    <?php else: ?>
+                      <span class="badge bg-danger">Not Done</span>
+                    <?php endif; ?>
+                  </td>
+                </tr>
+              <?php endforeach; ?>
+            <?php else : ?>
+              <tr>
+                <td colspan="7" class="text-center">Belum ada data. Silakan pilih Line, Style, ORC, dan Color terlebih dahulu.</td>
+              </tr>
+            <?php endif; ?>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
+
+
+
 
 <!-- Script -->
 <script>
