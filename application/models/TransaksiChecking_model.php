@@ -326,14 +326,42 @@ public function getFilteredTransaksi($line, $style, $color, $orc)
     // }
 
 
-    public function searchData($keyword)
+    // public function searchData($keyword)
+    // {
+    //     $this->db->like('id_wg', $keyword);
+    //     $this->db->or_like('id_opb', $keyword);
+    //     $this->db->or_like('color', $keyword);
+    //     $this->db->or_like('orc', $keyword);
+    //     return $this->db->get('transaksi_checking')->result_array();
+    // }
+
+    public function searchDataHariIni($keyword)
     {
-        $this->db->like('id_wg', $keyword);
-        $this->db->or_like('id_opb', $keyword);
-        $this->db->or_like('color', $keyword);
-        $this->db->or_like('orc', $keyword);
-        return $this->db->get('transaksi_checking')->result_array();
+    $this->db->where('DATE(date_created)', date('Y-m-d'));
+    $this->db->like('id_wg', $keyword);
+    $this->db->or_like('id_opb', $keyword);
+    $this->db->or_like('color', $keyword);
+    $this->db->or_like('orc', $keyword);
+    return $this->db->get('transaksi_checking')->result_array();
     }
+
+    public function getFilteredTransaksiHariIni($line, $style, $color, $orc)
+    {
+    $this->db->where('DATE(date_created)', date('Y-m-d'));
+    $this->db->where('id_wg', $line);
+    $this->db->where('id_opb', $style);
+    
+    if (!empty($color)) {
+        $this->db->where('color', $color);
+    }
+
+    if (!empty($orc)) {
+        $this->db->where('orc', $orc);
+    }
+
+    return $this->db->get('transaksi_checking')->result_array();
+    }
+
 
     public function get_all()
     {
@@ -497,6 +525,21 @@ public function getLayoutWithMesin($limit, $id_opb)
 
     return $this->db->get()->result();
 }
+
+public function getDefaultOperatorFromHistori($id_layout, $id_wg)
+{
+    $this->db->select('tc_detail.empID, emp.name');
+    $this->db->from('transaksi_checking_detail tc_detail');
+    $this->db->join('transaksi_checking tc', 'tc.id_transaksi_checking = tc_detail.id_transaksi_checking');
+    $this->db->join('mstemp emp', 'tc_detail.empID = emp.empID');
+    $this->db->where('tc_detail.id_master_opt_layout', $id_layout);
+    $this->db->where('tc.id_wg', $id_wg);
+    $this->db->order_by('tc_detail.date_created', 'DESC');
+    $this->db->limit(1);
+
+    return $this->db->get()->row(); 
+}
+
 
 public function getCodeandDeskripsiDefectByID($id)
 {
@@ -667,6 +710,16 @@ public function getDetailByTransaksi($id_transaksi)
     $this->db->where('d.id_transaksi_checking', $id_transaksi);
     $query = $this->db->get();
     return $query->result_array();
+}
+
+public function getDataHariIni()
+{
+    $this->db->select('tc.*, wg.Workgroup AS line_name, op.style AS style');
+    $this->db->from('transaksi_checking tc');
+    $this->db->join('mstworkgroup wg', 'tc.id_wg = wg.idWG', 'left');
+    $this->db->join('operation_breakdown op', 'tc.id_opb = op.id', 'left');
+    $this->db->where('DATE(tc.date_created)', date('Y-m-d'));
+    return $this->db->get()->result_array();
 }
 
 

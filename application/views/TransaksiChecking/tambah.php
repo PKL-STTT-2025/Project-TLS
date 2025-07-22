@@ -104,18 +104,23 @@
                             <input type="hidden" name="op_code[]" value="<?= htmlspecialchars($layout->op_code ?? '') ?>">
                             <input type="hidden" name="id_jnsbarang[]" value="<?= htmlspecialchars($layout->id_jnsbarang ?? '') ?>">
 
-                           
-                            <div class="form-group mt-2">
-                                <?php foreach ($operators as $index => $default_operator): ?>
-                                    <?php endforeach; ?>
-                                    <select name="empID[]" class="form-control" required>
-                                        <option value="" selected hidden><?= $default_operator['name'] ?></option>
-
+                            
+                                <div class="form-group mt-2">
+                                    <label><?= $layout->op_name; ?></label>
+                                    <select name="empID[<?= $layout->id_master_opt_layout; ?>]" class="form-control" required>
                                         <?php foreach ($operators as $op): ?>
-                                            <option value="<?= $op['empID'] ?>"><?= $op['name'] ?></option>
+                                            <option value="<?= $op['empID']; ?>"
+                                                <?= (
+                                                    isset($layout->default_operator) &&
+                                                    is_object($layout->default_operator) &&
+                                                    $op['empID'] == $layout->default_operator->empID
+                                                ) ? 'selected' : ''; ?>>
+                                                <?= $op['name']; ?>
+                                            </option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
+                           
 
 
                             <div class="defect-wrapper">

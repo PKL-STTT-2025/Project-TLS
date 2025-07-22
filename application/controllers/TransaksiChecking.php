@@ -12,32 +12,32 @@ class TransaksiChecking extends CI_Controller
 
     public function index()
     {
-        $data['title'] = 'Transaksi Checking';
-        $data['line_list'] = $this->TransaksiChecking_model->getAlllines();
-        $data['selected_line'] = $this->input->get('Workgroup');
-        $data['style_list'] = [];
-        
-        if ($data['selected_line']) {
-            $data['style_list'] = $this->TransaksiChecking_model->getStyleByLine($data['selected_line']);
-        }
+    $data['title'] = 'Transaksi Checking';
+    $data['line_list'] = $this->TransaksiChecking_model->getAlllines();
+    $data['selected_line'] = $this->input->get('Workgroup');
+    $data['style_list'] = [];
 
-        $line = $this->input->get('Workgroup');
-        $style = $this->input->get('style');
-        $color = $this->input->get('color');
-        $orc = $this->input->get('orc');
-        $keyword = $this->input->get('keyword');
+    if ($data['selected_line']) {
+        $data['style_list'] = $this->TransaksiChecking_model->getStyleByLine($data['selected_line']);
+    }
 
-        if ($keyword) {
-            $data['TransaksiChecking'] = $this->TransaksiChecking_model->searchData($keyword);
-        } elseif ($line && $style) {
-            $data['TransaksiChecking'] = $this->TransaksiChecking_model->getFilteredTransaksi($line, $style, $color, $orc);
-        } else {
-            $data['TransaksiChecking'] = $this->TransaksiChecking_model->getAllTransaksiChecking();
-        }
+    $line = $this->input->get('Workgroup');
+    $style = $this->input->get('style');
+    $color = $this->input->get('color');
+    $orc = $this->input->get('orc');
+    $keyword = $this->input->get('keyword');
 
-        $this->load->view('templates/header', $data);
-        $this->load->view('TransaksiChecking/index', $data);
-        $this->load->view('templates/footer');
+    if ($keyword) {
+        $data['TransaksiChecking'] = $this->TransaksiChecking_model->searchDataHariIni($keyword);
+    } elseif ($line && $style) {
+        $data['TransaksiChecking'] = $this->TransaksiChecking_model->getFilteredTransaksiHariIni($line, $style, $color, $orc);
+    } else {
+        $data['TransaksiChecking'] = $this->TransaksiChecking_model->getDataHariIni();
+    }
+
+    $this->load->view('templates/header', $data);
+    $this->load->view('TransaksiChecking/index', $data);
+    $this->load->view('templates/footer');
     }
 
     public function getStyleByLine()
@@ -106,6 +106,14 @@ class TransaksiChecking extends CI_Controller
         
         // $data['operation_name'] = $this->TransaksiChecking_model->getLimitedOperation(0, $id_style);
         $data['layouts'] = $this->TransaksiChecking_model->getLayoutWithMesin(0, $id_style);
+        foreach ($data['layouts'] as &$layout) 
+        {
+        $layout->default_operator = $this->TransaksiChecking_model->getDefaultOperatorFromHistori($layout->id_master_opt_layout, $idWG);
+        }
+        
+// echo '<pre>';
+// print_r($data['layouts']);
+// exit;
         $data['jumlah_proses'] = count($data['layouts']);
        
         

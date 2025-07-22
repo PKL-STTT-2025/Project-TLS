@@ -43,12 +43,6 @@
 <div class="container-fluid px-4 py-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="dashboard-title mb-0">GI - TLS Input Defect</h2>
-    <div class="round-buttons">
-      <button type="button" class="btn btn-round">Round 1</button>
-      <button type="button" class="btn btn-round">Round 2</button>
-      <button type="button" class="btn btn-round">Round 3</button>
-      <button type="button" class="btn btn-round">Round 4</button>
-    </div>
   </div>
 
   <?php if ($this->session->flashdata('success')): ?>
@@ -106,12 +100,23 @@
     <?php endif; ?>
   </div>
 
-    <nav class="navbar navbar-light bg-light">
+  <div class="d-flex justify-content-start align-items-center mb-3 gap-2">  
+  <nav class="navbar navbar-light bg-light">
         <form class="form-inline" method="get" action="<?= base_url('TransaksiChecking') ?>">
             <input class="form-control mr-sm-2" type="search" name="keyword" placeholder="Search" aria-label="Search">
             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
         </form>
     </nav>
+
+  <div class="d-flex gap-2 ms-3">
+    <!-- <h6 class="mb-0"> Session </h6> -->
+    <button class="btn btn-outline-primary rounded-0">1</button>
+    <button class="btn btn-outline-primary rounded-0">2</button>
+    <button class="btn btn-outline-primary rounded-0">3</button>
+    <button class="btn btn-outline-primary rounded-0">4</button>
+  </div>
+</div>
+
 
 
   <div class="card card-custom">
