@@ -78,7 +78,7 @@
 </style>
 
 <div class="container mt-4">
-    <?php if (!empty($layout) && !empty($operators)): ?>
+    <?php if (!empty($layout)): ?>
         <h3>Detail Data Transaksi - <?= isset($line_name) ? 'LINE ' . strtoupper($line_name) : 'TIDAK DIKETAHUI' ?></h3>
 
         <?php
@@ -100,10 +100,14 @@
                             </div>
 
                             <h5 class="card-title"><?= htmlspecialchars($item->op_name) ?></h5>
+                            <p class="card-text"><strong>Operator:</strong> <?= htmlspecialchars($item->name ?? '-') ?></p>
                             <p class="card-text">
                                 <small>(<?= isset($item->op_code) ? htmlspecialchars($item->op_code) : 'TIDAK ADA KODE' ?>)</small>
                             </p>
-                            <p class="card-text"><small><?= htmlspecialchars($item->nama_mesin) ?></small></p>
+                            <p class="card-text">
+                            <small><?= isset($item->machine_name) ? htmlspecialchars($item->machine_name) : '-' ?></small>
+                            </p>
+
                             <p class="card-text"><small>Total Defect: <?= $item->defect_count ?></small></p>
 
                             <!-- Nama operator -->
@@ -114,7 +118,7 @@
                                         trim((string)$op->op_code) === trim((string)$item->op_code) &&
                                         (string)$op->id_transaksi_checking_detail === (string)$item->id_transaksi_checking_detail
                                     ): ?>
-                                        <p><?= htmlspecialchars($op->operator_name) ?></p>
+                                        <p><?= htmlspecialchars($item->empID) ?></p>
                                     <?php endif; ?>
                                 <?php endforeach; ?>
                             </div>

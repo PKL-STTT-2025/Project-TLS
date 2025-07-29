@@ -40,6 +40,23 @@
   }
 </style>
 
+<?php
+function hitungSesiDariJam($time) {
+    $time = date('H:i', strtotime($time));
+    if ($time >= '07:15' && $time <= '09:59') {
+        return 'Sesi 1';
+    } elseif ($time >= '10:00' && $time <= '11:29') {
+        return 'Sesi 2';
+    } elseif ($time >= '13:00' && $time <= '14:59') {
+        return 'Sesi 3';
+    } elseif ($time >= '15:00' && $time <= '16:15') {
+        return 'Sesi 4';
+    } else {
+        return '-';
+    }
+}
+?>
+
 <div class="container-fluid px-4 py-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="dashboard-title mb-0">GI - TLS Input Defect</h2>
@@ -92,7 +109,7 @@
   </div>
 
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">Daftar Transaksi Checking</h4>
+    <h4 class="mb-0">Daftar QC Inline</h4>
     <?php if($this->input->get('Workgroup') && $this->input->get('style') && $this->input->get('color') && $this->input->get('orc')): ?>
       <button class="btn btn-success" id="btnAdd"><i class="fas fa-plus"></i> Tambah Data</button>
     <?php else: ?>
@@ -100,7 +117,7 @@
     <?php endif; ?>
   </div>
 
-  <div class="d-flex justify-content-start align-items-center mb-3 gap-2">  
+  <!-- <div class="d-flex justify-content-start align-items-center mb-3 gap-2">   -->
   <nav class="navbar navbar-light bg-light">
         <form class="form-inline" method="get" action="<?= base_url('TransaksiChecking') ?>">
             <input class="form-control mr-sm-2" type="search" name="keyword" placeholder="Search" aria-label="Search">
@@ -108,14 +125,14 @@
         </form>
     </nav>
 
-  <div class="d-flex gap-2 ms-3">
-    <!-- <h6 class="mb-0"> Session </h6> -->
+  <!-- <div class="d-flex gap-2 ms-3">
+    <h6 class="mb-0"> Session </h6>
     <button class="btn btn-outline-primary rounded-0">1</button>
     <button class="btn btn-outline-primary rounded-0">2</button>
     <button class="btn btn-outline-primary rounded-0">3</button>
     <button class="btn btn-outline-primary rounded-0">4</button>
   </div>
-</div>
+</div> -->
 
 
 
@@ -131,6 +148,7 @@
               <th>Color</th>
               <th>ORC</th>
               <th>Tanggal</th>
+              <th>Session</th>
               <th>Aksi</th>
               <th>Status</th>
             </tr>
@@ -145,6 +163,7 @@
                   <td><?= $transaksi['color'] ?? '-' ?></td>
                   <td><?= $transaksi['orc'] ?? '-' ?></td>
                   <td><?= date('d-m-Y H:i', strtotime($transaksi['date_created'])) ?></td>
+                  <td><?= hitungSesiDariJam($transaksi['date_created']) ?></td>
                   <td>
                     <a href="<?= base_url('TransaksiChecking/detail/'.$transaksi['id_transaksi_checking']) ?>" class="btn btn-sm btn-info">Detail</a>
                     <a href="<?= base_url('TransaksiChecking/ubah/'.$transaksi['id_transaksi_checking']) ?>" class="btn btn-sm btn-warning">Ubah</a>
@@ -161,7 +180,7 @@
               <?php endforeach; ?>
             <?php else : ?>
               <tr>
-                <td colspan="7" class="text-center">Belum ada data. Silakan pilih Line, Style, ORC, dan Color terlebih dahulu.</td>
+                <td colspan="7" class="text-center">Belum ada data. Silakan pilih Line, Style, Color, dan ORC terlebih dahulu.</td>
               </tr>
             <?php endif; ?>
           </tbody>
@@ -171,13 +190,9 @@
   </div>
 </div>
 
-
-
-
-<!-- Script -->
 <script>
 $(document).ready(function() {
-    // Load style berdasarkan line yang dipilih
+
     $('#Workgroup').change(function() {
         var lineId = $(this).val();
         var styleSelect = $('#style');
@@ -211,7 +226,6 @@ $(document).ready(function() {
         }
     });
 
-    // Submit form ketika style dipilih
     $('#style').change(function() {
         if($(this).val()) {
             $('#selectionForm').submit();
@@ -224,7 +238,6 @@ $(document).ready(function() {
         $('#selectionForm').submit();
     });
 
-    // Tambah tombol Add Data agar membawa color dan orc juga
     $('#btnAdd').click(function(e) {
         e.preventDefault();
         const line = $('#Workgroup').val();

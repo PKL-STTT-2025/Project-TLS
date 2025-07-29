@@ -100,6 +100,22 @@ class TransaksiChecking extends CI_Controller
         $data['color'] = $color;
         $data['orc'] = $orc;
         
+        date_default_timezone_set('Asia/Jakarta');
+        $currenttime = date('H:i');
+        $session = null;
+
+        if ($currenttime >= '07:15' && $currenttime <= '09:59') {
+            $session = 1;
+        } elseif ($currenttime >= '10:00' && $currenttime <= '11:29') {
+            $session = 2;
+        } elseif ($currenttime >= '13:00' && $currenttime <= '14:59') {
+            $session = 3;
+        } elseif ($currenttime >= '15:00' && $currenttime <= '16:15') {
+            $session = 4;
+        }
+
+        $data['session'] = $session; 
+
         $idWG = $this->input->get('Workgroup'); 
         $data['operators'] = $this->TransaksiChecking_model->getLimitedEmployee(null, $idWG);
         // $data['list_proses'] = $this->TransaksiChecking_model->getProsesByLine($id_wg, $id_opb);
@@ -149,7 +165,8 @@ class TransaksiChecking extends CI_Controller
         $id_opb = $this->input->post('id_opb');
         $color = $this->input->post('color');
         $orc = $this->input->post('orc');
-    
+        $session = $this->input->post('session');
+         
         $data_transaksi = [
             'id_wg' => $id_wg,
             'id_opb' => $id_opb,
@@ -174,9 +191,13 @@ class TransaksiChecking extends CI_Controller
         $catatan = $this->input->post('catatan'); 
         $jumlahs = $this->input->post('jumlah'); 
     
-        foreach ($empIDs as $i => $empID) {
-            $id_jnsbarang_clean = $id_jnsbarang[$i] !== '' ? $id_jnsbarang[$i] : null;
-    
+        $total_operator = count($id_master_layouts); // atau count($op_codes), terserah mana yang fix
+
+        for ($i = 0; $i < $total_operator; $i++) {
+            $empID = $empIDs[$id_master_layouts[$i]] ?? null;
+
+            $id_jnsbarang_clean = !empty($id_jnsbarang[$i]) ? $id_jnsbarang[$i] : null;
+            
             $detail_data = [
                 'id_transaksi_checking' => $transaksi_id,
                 'id_master_opt_layout' => $id_master_layouts[$i],
@@ -214,8 +235,9 @@ class TransaksiChecking extends CI_Controller
             exit;
         }
     
-        $this->session->set_flashdata('flash', 'Ditambahkan');
-        redirect('TransaksiChecking');
+        $this->session->set_flashdata('flash', 'Ditambahkan (Sesi: ' . ($session ?? '-') . ')');
+        redirect('TransaksiChecking?Workgroup=' . $id_wg . '&style=' . $id_opb . '&color=' . urlencode($color) . '&orc=' . urlencode($orc));
+
     }
     
 
@@ -229,69 +251,60 @@ class TransaksiChecking extends CI_Controller
         $this->session->set_flashdata('flash', 'Data berhasil dihapus');
         redirect('TransaksiChecking');
     }
-    public function detail($id_transaksi_checking)
+   public function detail($id_transaksi_checking)
     {
+    $data['title'] = 'Detail Checking Time';
+    $result = $this->TransaksiChecking_model->getTransaksiById($id_transaksi_checking);
+    $data['transaksi'] = $result['transaksi'];
+    $data['operations'] = $result['operations'];
 
-        $data['title'] = 'Detail Checking Time';
-        $result = $this->TransaksiChecking_model->getTransaksiById($id_transaksi_checking);
-        $data['transaksi'] = $result['transaksi'];
-        $data['operations'] = $result['operations'];
+    if (!empty($data['transaksi'])) {
+        $id_wg = $data['transaksi']['id_wg'];
+        $id_opb = $data['transaksi']['id_opb'];
+        $line = $this->TransaksiChecking_model->getLineById($id_wg);
+        $data['line_name'] = $line['Workgroup'] ?? ''; 
+    } else {
+        $data['line_name'] = '';
+        $id_opb = null;
+    }
 
-        if (!empty($data['transaksi'])) {
-            $id_wg = $data['transaksi']['id_wg'];
-            $line = $this->TransaksiChecking_model->getLineById($id_wg);
-            $data['line_name'] = $line['Workgroup'] ?? ''; 
-        } else {
-            $data['line_name'] = '';
+    $layout = $this->TransaksiChecking_model->getLayoutWithMesin(0, $id_opb);
+    // echo '<pre>'; print_r($layout); echo '</pre>'; exit;
+    $details = $this->TransaksiChecking_model->getDetailByTransaksi($id_transaksi_checking);
+    // echo '<pre>'; print_r($details); echo '</pre>'; exit;
+
+    $data['operators'] = $details;
+
+    $detail_by_layout = [];
+        foreach ($details as $detail) {
+        $layout_id = $detail['id_master_opt_layout'];
+        if (!isset($detail_by_layout[$layout_id])) {
+            $detail_by_layout[$layout_id] = [];
         }
-
-        $data['operators'] = $this->TransaksiChecking_model->getLimitedOperator($id_transaksi_checking);
-
-        $limit = 45; 
-        $id_op = $this->input->get('id_opb');
-
-        $data['operation_name'] = $this->TransaksiChecking_model->getLimitedOperation($limit, $id_op);
-        $data['layout'] = $this->TransaksiChecking_model->getLayout($id_transaksi_checking);
-        $data['operation_defects'] = $this->TransaksiChecking_model->getDefectsPerOperation($id_transaksi_checking);
- 
-        $layout = $this->TransaksiChecking_model->getLayout($id_transaksi_checking);
-
-        $operation_defects = $this->TransaksiChecking_model->getDefectsPerOperation($id_transaksi_checking);
-
-        $defectCounts = [];
-        foreach ($operation_defects as $defect) {
-            $id_detail = $defect['id_transaksi_checking_detail'];
-            if (!isset($defectCounts[$id_detail])) {
-                $defectCounts[$id_detail] = 0;
-            }
-            $defectCounts[$id_detail] += $defect['jumlah'];
+        $detail_by_layout[$layout_id][] = $detail;
         }
-        foreach ($layout as $opt_layout) {
-            $opt_layout->defect_count = 0;
-            $opt_layout->operator_name = '-';
+            foreach ($layout as &$l) {
+            $l->operator_name = '-';
+            $l->defect_count = 0;
 
-            foreach ($data['operators'] as $op) {
-                if (trim($opt_layout->op_code) === trim($op->op_code)) {
-                    $opt_layout->operator_name = $op->operator_name;
-
-                    // cari defect count dari transaksi_checking_detail yang sesuai
-                    foreach ($operation_defects as $defect) {
-                        if ($defect['id_transaksi_checking_detail'] == $op->id_transaksi_checking_detail) {
-                            $opt_layout->defect_count += $defect['jumlah'];
-                        }
-                    }
+            if (isset($detail_by_layout[$l->id_master_opt_layout])) {
+                foreach ($detail_by_layout[$l->id_master_opt_layout] as $detail) {
+                    $l->operator_name = $detail['op_name'] ?? '-';
+                    $l->name = $detail['name'] ?? '-';
+                    $l->defect_count += $this->TransaksiChecking_model->countDefectByDetailId($detail['id_transaksi_checking_detail']);
+                    $l->id_transaksi_checking_detail = $detail['id_transaksi_checking_detail'];
                 }
             }
         }
 
-        $data['layout'] = $layout;
-        $data['operation_defects'] = $operation_defects;
 
-        $this->load->view('templates/header', $data);
-        $this->load->view('TransaksiChecking/detail', $data);
-        $this->load->view('templates/footer');
+    $data['layout'] = $layout;
+    $data['operation_defects'] = $this->TransaksiChecking_model->getDefectsPerOperation($id_transaksi_checking);
+
+    $this->load->view('templates/header', $data);
+    $this->load->view('TransaksiChecking/detail', $data);
+    $this->load->view('templates/footer');
     }
-
 
     public function ubah($id)
     {
@@ -350,17 +363,18 @@ class TransaksiChecking extends CI_Controller
 
         $this->TransaksiChecking_model->update_detail($id_detail, $data_detail);
 
-        // Hapus defect lama dulu (opsional, tergantung sistem)
         $this->db->where('id_transaksi_checking_detail', $id_detail);
         $this->db->delete('transaksi_defect');
 
-        $deskripsi_defect = $this->input->post('deskripsi_defect')[$index];
+       $id_defects = $this->input->post('deskripsi_defect')[$index];
         $jumlah_defect = $this->input->post('jumlah')[$index];
 
-        foreach ($deskripsi_defect as $i => $desc) {
+        foreach ($id_defects as $i => $id_defect) {
+            if (!is_numeric($id_defect) || $id_defect == 0) continue;
+
             $data_defect = [
                 'id_transaksi_checking_detail' => $id_detail,
-                'id_defect' => $desc,
+                'id_defect' => $id_defect,
                 'jumlah' => $jumlah_defect[$i],
                 'date_created' => date('Y-m-d H:i:s')
             ];

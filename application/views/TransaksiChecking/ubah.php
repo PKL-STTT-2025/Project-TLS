@@ -111,20 +111,19 @@
                                         <div class="defect-group mb-2">
                                             <div class="row">
                                                 <div class="col-7">
-                                                    <select class="form-control" name="deskripsi_defect[<?= $index ?>][]">
+                                                    <select class="form-control" name="id_defect[<?= $index ?>][]" required>
                                                         <option value="">-- Pilih Defect --</option>
                                                         <?php foreach ($defect_list as $d): ?>
-                                                            <option value="<?= $d['deskripsi_defect'] ?>"
-                                                                    data-kategori-defect="<?= $d['kategori_defect'] ?>"
-                                                                    <?= ($d['deskripsi_defect'] == $def['deskripsi_defect']) ? 'selected' : '' ?>>
-                                                                <?= $d['deskripsi_defect'] ?>
-                                                            </option>
-
+                                                            <option value="<?= $d['id'] ?>"
+                                                            data-kategori-defect="<?= $d['kategori_defect'] ?>"
+                                                            <?= ($d['id'] == $def['id_defect']) ? 'selected' : '' ?>>
+                                                            <?= $d['deskripsi_defect'] ?>
+                                                        </option>
                                                         <?php endforeach; ?>
                                                     </select>
                                                 </div>
                                                 <div class="col-3">
-                                                    <select class="form-control" name="jumlah[<?= $index ?>][]">
+                                                    <select class="form-control" name="jumlah[<?= $index ?>][]" required>
                                                         <option value="">Jumlah</option>
                                                         <?php for ($i = 1; $i <= 10; $i++): ?>
                                                             <option value="<?= $i ?>" <?= ($i == $def['jumlah']) ? 'selected' : '' ?>><?= $i ?></option>
@@ -146,7 +145,7 @@
 
                             <!-- Lampu indikator -->
                             <div class="traffic-light mt-3">
-                                <span class="light" style="background-color: red; width: 20px; height: 20px; border-radius: 50%; display: inline-block;"></span>
+                                <span class="light" style="background-color: green; width: 20px; height: 20px; border-radius: 50%; display: inline-block;"></span>
                             </div>
 
                         </div>
@@ -165,10 +164,57 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    function getDefectOptions() {
+        const defectList = <?= json_encode($defect_list) ?>;
+        return defectList.map(def =>
+            `<option value="${def.id}" data-kategori-defect="${def.kategori_defect}">${def.deskripsi_defect}</option>`
+        ).join('');
+    }
 
-    document.querySelectorAll('.add-defect').forEach((button, layoutIndex) => {
-        button.setAttribute('data-layout-index', layoutIndex); 
+    function getJumlahOptions() {
+        let options = '<option value="">Jumlah</option>';
+        for (let i = 1; i <= 10; i++) {
+            options += `<option value="${i}">${i}</option>`;
+        }
+        return options;
+    }
 
+    function updateTrafficLight(cardBody) {
+        let totalDefect = 0;
+        let totalMinor = 0;
+        let totalMajor = 0;
+
+        const defectGroups = cardBody.querySelectorAll('.defect-group');
+        defectGroups.forEach(group => {
+            const jumlahInput = group.querySelector('select[name^="jumlah"]');
+            const jumlah = parseInt(jumlahInput?.value);
+            if (isNaN(jumlah)) return;
+
+            const defectSelect = group.querySelector('select[name^="id_defect"]');
+            const selectedOption = defectSelect?.options[defectSelect.selectedIndex];
+            const kategori = selectedOption?.getAttribute('data-kategori-defect') || '';
+
+            if (kategori.toLowerCase() === 'minor') totalMinor += jumlah;
+            else if (kategori.toLowerCase() === 'major') totalMajor += jumlah;
+
+            totalDefect += jumlah;
+        });
+
+        const light = cardBody.querySelector('.traffic-light .light');
+        if (light) {
+            if (totalDefect === 0) {
+                light.style.backgroundColor = 'green';
+            } else if (totalMajor >= 1 || totalDefect >= 2 || (totalMajor >= 1 && totalMinor >= 1)) {
+                light.style.backgroundColor = 'red';
+            } else if (totalMinor === 2 && totalMajor === 0) {
+                light.style.backgroundColor = 'yellow';
+            } else {
+                light.style.backgroundColor = 'yellow';
+            }
+        }
+    }
+
+    document.querySelectorAll('.add-defect').forEach(button => {
         button.addEventListener('click', function () {
             const layoutIndex = this.getAttribute('data-layout-index');
             const container = this.closest('.card-body').querySelector('.defect-wrapper');
@@ -177,13 +223,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div class="defect-group mb-2">
                     <div class="row">
                         <div class="col-7">
-                            <select class="form-control" name="deskripsi_defect[${layoutIndex}][]" required>
+                            <select class="form-control" name="id_defect[${layoutIndex}][]" required>
                                 <option value="">-- Pilih Nama Defect --</option>
                                 ${getDefectOptions()}
                             </select>
                         </div>
                         <div class="col-3">
-                            <select class="form-control" name="jumlah[${layoutIndex}][]">
+                            <select class="form-control" name="jumlah[${layoutIndex}][]" required>
                                 ${getJumlahOptions()}
                             </select>
                         </div>
@@ -191,9 +237,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             <button type="button" class="btn text-danger remove-defect" style="font-size: 20px;">×</button>
                         </div>
                     </div>
-                </div> 
-            `;
-
+                </div>`;
             container.insertAdjacentHTML('beforeend', defectHTML);
         });
     });
@@ -212,61 +256,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 updateTrafficLight(cardBody);
             }
         });
+        updateTrafficLight(cardBody); // force update saat load
     });
-
-    function getDefectOptions() {
-        const defectList = <?= json_encode($defect_list) ?>;
-        return defectList.map(def => 
-            `<option value="${def.deskripsi_defect}" data-kategori-defect="${def.kategori_defect}">${def.deskripsi_defect}</option>`
-        ).join('');
-    }
-
-    function getJumlahOptions() {
-        let options = '<option value="">Jumlah</option>';
-        for (let i = 1; i <= 10; i++) {
-            options += `<option value="${i}">${i}</option>`;
-        }
-        return options;
-    }
-
-    function updateTrafficLight(cardBody) {
-    let totalDefect = 0;
-    let totalMinor = 0;
-    let totalMajor = 0;
-
-    const defectGroups = cardBody.querySelectorAll('.defect-group');
-
-    defectGroups.forEach(group => {
-        const jumlahSelect = group.querySelector('select[name^="jumlah"]');
-        const defectSelect = group.querySelector('select[name^="deskripsi_defect"]');
-
-        const jumlah = parseInt(jumlahSelect?.value) || 0;
-
-        // Ambil <option> yang dipilih
-        const selectedOption = defectSelect?.options[defectSelect.selectedIndex];
-        const kategori = selectedOption?.getAttribute('data-kategori-defect');
-
-        totalDefect += jumlah;
-
-        if (kategori === 'minor') {
-            totalMinor += jumlah;
-        } else if (kategori === 'major') {
-            totalMajor += jumlah;
-        }
-    });
-
-    const light = cardBody.querySelector('.traffic-light .light');
-
-    if (totalDefect === 0) {
-        light.style.backgroundColor = 'green';
-    } else if (totalMinor === 2 && totalMajor === 0) {
-        light.style.backgroundColor = 'yellow';
-    } else if ((totalMajor >= 1 && totalMinor >= 3) || totalDefect >= 5) {
-        light.style.backgroundColor = 'red';
-    } else {
-        light.style.backgroundColor = 'yellow';
-    }
-}
-    updateTrafficLight(document.querySelector('.card-body')); 
 });
 </script>
+

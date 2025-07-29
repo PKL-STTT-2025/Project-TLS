@@ -76,6 +76,19 @@
     <h3>Data Operator per Line - LINE <?= strtoupper($line_name) ?></h3>
     <h4>Total <span class="text-danger"><?= strtoupper($jumlah_proses) ?></span> proses</h4>
 
+        <?php if (isset($session)): ?>
+        <div class="alert alert-info">
+            <strong>Sesi Otomatis: Sesi <?= $session ?></strong>
+            <br>Jam sekarang: <?= date('H:i') ?>
+        </div>
+    <?php else: ?>
+        <div class="alert alert-warning">
+            Di luar jam kerja (07:15–16:15), sesi tidak terdeteksi.
+            <br>Jam sekarang: <?= date('H:i') ?>
+        </div>
+    <?php endif; ?>
+
+
     <form method="post" action="<?= base_url('TransaksiChecking/simpan'); ?>">
 
         <div class="row">
@@ -129,11 +142,11 @@
                                         <div class="col-5">
                                             <select class="form-control" name="deskripsi_defect[<?= $layout_index ?>][]" required>
                                                 <option value="">-- Pilih Nama Defect --</option>
-                                                <?php foreach ($defect_list as $def): ?>
-                                                    <option value="<?= $def['deskripsi_defect']; ?>">
-                                                        <?= $def['deskripsi_defect']; ?>
-                                                    </option>
-                                                <?php endforeach; ?>
+                                                    <?php foreach ($defect_list as $def): ?>
+                                                        <option value="<?= $def['deskripsi_defect']; ?>" data-kategori-defect="<?= strtolower($def['kategori_defect']) ?>">
+                                                            <?= $def['deskripsi_defect']; ?>
+                                                        </option>
+                                                    <?php endforeach; ?>
                                             </select>
                                         </div>
                                         <div class="col-2">
@@ -165,6 +178,7 @@
         </div>
 
         <div class="mt-4">
+            <input type="hidden" name="session" value="<?= $session ?>">
             <button type="submit" name="aksi" value="simpan" class="btn btn-success">Simpan</button>
             <a href="<?= base_url('TransaksiChecking'); ?>" class="btn btn-secondary">Kembali</a>
         </div>
@@ -248,27 +262,45 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function updateTrafficLight(cardBody) {
-        let totalDefect = 0;
-        const defectGroups = cardBody.querySelectorAll('.defect-group');
+    let totalDefect = 0;
+    let totalMinor = 0;
+    let totalMajor = 0;
 
-        defectGroups.forEach(group => {
-            const jumlahInput = group.querySelector('input[name^="jumlah"]');
-            const jumlah = parseInt(jumlahInput?.value) || 0;
-            totalDefect += jumlah;
-        });
+    const defectGroups = cardBody.querySelectorAll('.defect-group');
 
-        const light = cardBody.querySelector('.traffic-light .light');
+    defectGroups.forEach(group => {
+        const jumlahInput = group.querySelector('input[name^="jumlah"]');
+        const jumlah = parseInt(jumlahInput?.value) || 0;
 
-        if (light) {
-            if (totalDefect === 0) {
-                light.style.backgroundColor = 'green';
-            } else if (totalDefect === 1 || totalDefect === 2) {
-                light.style.backgroundColor = 'yellow';
-            } else {
-                light.style.backgroundColor = 'red';
-            }
+        const defectSelect = group.querySelector('select[name^="deskripsi_defect"]');
+        const selectedOption = defectSelect?.options[defectSelect.selectedIndex];
+        const kategori = selectedOption?.getAttribute('data-kategori-defect')?.toLowerCase();
+
+        totalDefect += jumlah;
+
+        if (kategori === 'minor') {
+            totalMinor += jumlah;
+        } else if (kategori === 'major') {
+            totalMajor += jumlah;
+        }
+    });
+
+    const light = cardBody.querySelector('.traffic-light .light');
+
+    if (light) {
+        if (totalDefect === 0) {
+            light.style.backgroundColor = 'green';
+        } else if ((totalMajor >= 1 && totalMinor >= 3) || totalDefect >= 5) {
+            light.style.backgroundColor = 'red';
+        } else if (totalMajor >= 1) {
+            light.style.backgroundColor = 'red';
+        } else if (totalMinor <= 2 && totalMajor === 0) {
+            light.style.backgroundColor = 'yellow';
+        } else {
+            light.style.backgroundColor = 'red'; // fallback
         }
     }
+}
 });
 </script>
 

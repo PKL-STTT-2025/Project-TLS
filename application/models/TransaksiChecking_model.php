@@ -337,30 +337,46 @@ public function getFilteredTransaksi($line, $style, $color, $orc)
 
     public function searchDataHariIni($keyword)
     {
-    $this->db->where('DATE(date_created)', date('Y-m-d'));
-    $this->db->like('id_wg', $keyword);
-    $this->db->or_like('id_opb', $keyword);
-    $this->db->or_like('color', $keyword);
-    $this->db->or_like('orc', $keyword);
-    return $this->db->get('transaksi_checking')->result_array();
+    $this->db->select('tc.*, wg.Workgroup AS line_name, op.style AS style');
+    $this->db->from('transaksi_checking tc');
+    $this->db->join('mstworkgroup wg', 'tc.id_wg = wg.idWG', 'left');
+    $this->db->join('operation_breakdown op', 'tc.id_opb = op.id', 'left');
+    $this->db->where('DATE(tc.date_created)', date('Y-m-d'));
+
+    $this->db->group_start();
+    $this->db->like('wg.Workgroup', $keyword); 
+    $this->db->or_like('op.style', $keyword); 
+    $this->db->or_like('tc.color', $keyword);
+    $this->db->or_like('tc.orc', $keyword);
+    $this->db->group_end();
+
+    return $this->db->get()->result_array();
     }
 
-    public function getFilteredTransaksiHariIni($line, $style, $color, $orc)
+
+
+
+    public function getFilteredTransaksiHariIni($line, $style, $color = null, $orc = null)
     {
-    $this->db->where('DATE(date_created)', date('Y-m-d'));
-    $this->db->where('id_wg', $line);
-    $this->db->where('id_opb', $style);
-    
+    $this->db->select('tc.*, wg.Workgroup AS line_name, op.style AS style');
+    $this->db->from('transaksi_checking tc');
+    $this->db->join('mstworkgroup wg', 'tc.id_wg = wg.idWG', 'left');
+    $this->db->join('operation_breakdown op', 'tc.id_opb = op.id', 'left');
+    $this->db->where('DATE(tc.date_created)', date('Y-m-d'));
+    $this->db->where('tc.id_wg', $line);
+    $this->db->where('tc.id_opb', $style);
+
     if (!empty($color)) {
-        $this->db->where('color', $color);
+        $this->db->where('tc.color', $color);
     }
 
     if (!empty($orc)) {
-        $this->db->where('orc', $orc);
+        $this->db->where('tc.orc', $orc);
     }
 
-    return $this->db->get('transaksi_checking')->result_array();
+    return $this->db->get()->result_array();
     }
+
 
 
     public function get_all()
@@ -646,14 +662,9 @@ public function getDetailWithJoins($id_transaksi_checking)
     return $this->db->get()->result();
 }
 
-public function getDefectsByOpDetailId($id_detail) 
+public function getDefectsByOpDetailId($id_detail)
 {
-    $this->db->select('
-        td.id_defect, 
-        td.jumlah, 
-        md.deskripsi_defect, 
-        md.kategori_defect
-    ');
+    $this->db->select('td.id_defect, md.deskripsi_defect, md.kategori_defect, td.jumlah');
     $this->db->from('transaksi_defect td');
     $this->db->join('master_defect md', 'td.id_defect = md.id', 'left');
     $this->db->where('td.id_transaksi_checking_detail', $id_detail);
@@ -701,15 +712,33 @@ public function getLineNameByTransaksi($id)
     return $query->row()->line_name?? ''; 
 }
 
-// application/models/TransaksiChecking_model.php
-
-public function getDetailByTransaksi($id_transaksi)
+public function getDetailByTransaksi($id_transaksi_checking)
 {
-    $this->db->select('d.id_transaksi_checking_detail, d.op_name, d.op_code, d.id_master_opt_layout, d.id_jnsbarang, d.empID, d.id_jnsbarang AS machine_name');
+    $this->db->select('
+        d.id_transaksi_checking_detail,
+        d.op_name,
+        d.op_code,
+        d.id_master_opt_layout,
+        d.id_jnsbarang,
+        d.empID,
+        j.name AS machine_name,
+        e.name
+    ');
     $this->db->from('transaksi_checking_detail d');
-    $this->db->where('d.id_transaksi_checking', $id_transaksi);
+    $this->db->join('mstemp e', 'd.empID = e.empID', 'left');
+    $this->db->join('jns_barang j', 'd.id_jnsbarang = j.id_jnsbarang', 'left');
+    $this->db->where('d.id_transaksi_checking', $id_transaksi_checking);
     $query = $this->db->get();
     return $query->result_array();
+}
+
+
+public function countDefectByDetailId($id_detail)
+{
+    $this->db->select_sum('jumlah');
+    $this->db->where('id_transaksi_checking_detail', $id_detail);
+    $result = $this->db->get('transaksi_defect')->row();
+    return $result ? $result->jumlah : 0;
 }
 
 public function getDataHariIni()
