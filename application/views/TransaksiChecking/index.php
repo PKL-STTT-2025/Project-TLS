@@ -1,5 +1,20 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <style>
+  @media (max-width: 576px) {
+  .dashboard-title {
+    font-size: 1.3rem;
+  }
+
+  .table th,
+  .table td {
+    font-size: 0.8rem;
+  }
+
+  .btn {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+}
   body {
     font-family: 'Inter', sans-serif;
     background-color: #f8f9fa;
@@ -57,7 +72,7 @@ function hitungSesiDariJam($time) {
 }
 ?>
 
-<div class="container-fluid px-4 py-4">
+<div class="container px-3 py-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="dashboard-title mb-0">GI - TLS Input Defect</h2>
   </div>
@@ -75,7 +90,7 @@ function hitungSesiDariJam($time) {
     <div class="card-body">
       <form id="selectionForm" method="get" action="<?= site_url('TransaksiChecking') ?>">
         <div class="row g-3">
-          <div class="col-md-3">
+          <div class="col-12 col-md-6 col-lg-3">
             <label>Line</label>
             <select class="form-control" name="Workgroup" id="Workgroup" required>
               <option value="">-- Pilih Line --</option>
@@ -84,7 +99,7 @@ function hitungSesiDariJam($time) {
               <?php endforeach; ?>
             </select>
           </div>
-          <div class="col-md-3">
+          <div class="col-12 col-md-6 col-lg-3">
             <label>Style</label>
             <select class="form-control" name="style" id="style" required <?= empty($this->input->get('Workgroup')) ? 'disabled' : '' ?>>
               <option value="">-- Pilih Style --</option>
@@ -95,11 +110,11 @@ function hitungSesiDariJam($time) {
               <?php endif; ?>
             </select>
           </div>
-          <div class="col-md-3">
+          <div class="col-12 col-md-6 col-lg-3">
             <label>Color</label>
             <input type="text" class="form-control" id="color" name="color" value="<?= htmlspecialchars($this->input->get('color') ?? '') ?>">
           </div>
-          <div class="col-md-3">
+          <div class="col-12 col-md-6 col-lg-3">
             <label>ORC</label>
             <input type="text" class="form-control" id="orc" name="orc" value="<?= htmlspecialchars($this->input->get('orc') ?? '') ?>">
           </div>

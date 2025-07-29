@@ -22,6 +22,7 @@ class Supervisor_model extends CI_Model
         $query = "SELECT 
             tc.id_transaksi_checking,
             tc.id_wg,
+            tc.orc AS kode_orc,
             wg.Workgroup AS line_name,
             tc.masalah_selesai,
             ob.style AS style
@@ -57,16 +58,21 @@ class Supervisor_model extends CI_Model
     {
 
         $query = "SELECT 
-            d.op_code,
-            d.op_name,
-            jb.name AS nama_mesin,
-            IFNULL(SUM(td.jumlah), 0) AS defect_count
-        FROM transaksi_checking_detail d
-        LEFT JOIN jns_barang jb ON jb.id_jnsbarang = d.id_jnsbarang
-        LEFT JOIN transaksi_defect td ON td.id_transaksi_checking_detail = d.id_transaksi_checking_detail
-        WHERE d.id_transaksi_checking = ?
-        GROUP BY d.op_code
-        ORDER BY defect_count DESC
+        d.op_code,
+        d.op_name,
+        jb.name AS nama_mesin,
+        wg.Workgroup AS line_name,
+        ob.style,
+        IFNULL(SUM(td.jumlah), 0) AS defect_count
+    FROM transaksi_checking_detail d
+    LEFT JOIN jns_barang jb ON jb.id_jnsbarang = d.id_jnsbarang
+    LEFT JOIN transaksi_defect td ON td.id_transaksi_checking_detail = d.id_transaksi_checking_detail
+    LEFT JOIN transaksi_checking tc ON tc.id_transaksi_checking = d.id_transaksi_checking
+    LEFT JOIN mstworkgroup wg ON wg.idWG = tc.id_wg
+    LEFT JOIN operation_breakdown ob ON ob.id = tc.id_opb
+    WHERE d.id_transaksi_checking = ?
+    GROUP BY d.op_code
+    ORDER BY defect_count DESC
     ";
 
         return $this->db->query($query, [$id_transaksi_checking])->result();
@@ -94,6 +100,31 @@ class Supervisor_model extends CI_Model
     ";
         return $this->db->query($query)->result_array();
     }
+
+    // public function searchActionPlan($id_wg, $keyword)
+    // {
+    //     $query = "SELECT 
+    //             md.id,
+    //             md.deskripsi_defect,
+    //             SUM(td.jumlah) AS jumlah_defect
+    //         FROM 
+    //             transaksi_defect td
+    //         JOIN 
+    //             master_defect md ON td.id_defect = md.id
+    //         JOIN 
+    //             transaksi_checking_detail tcd ON td.id_transaksi_checking_detail = tcd.id_transaksi_checking_detail
+    //         JOIN 
+    //             transaksi_checking tc ON tcd.id_transaksi_checking = tc.id_transaksi_checking
+    //         WHERE 
+    //             tc.id_wg = ? 
+    //             AND md.deskripsi_defect LIKE ?
+    //         GROUP BY 
+    //             md.id, md.deskripsi_defect
+    //         ORDER BY 
+    //             jumlah_defect DESC, md.deskripsi_defect ASC";
+
+    //     return $this->db->query($query, [$id_wg, "%$keyword%"])->result();
+    // }
 
     public function searchActionPlan($keyword)
     {

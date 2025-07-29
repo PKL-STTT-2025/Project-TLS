@@ -1,4 +1,9 @@
 <style>
+    /* Judul */
+    h2 {
+        color: #000 !important;
+    }
+
     .grid-container {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -9,6 +14,7 @@
     .card-operator {
         width: 100%;
         max-width: 240px;
+        color: #000000;
     }
 
     .card-body {
@@ -30,13 +36,14 @@
     .card-title {
         font-size: 16px;
         font-weight: bold;
+        color: #000000;
         text-transform: uppercase;
         margin-bottom: 6px;
     }
 
     .card-text {
         font-size: 13px;
-        color: #6c757d;
+        color: #000000;
         margin-bottom: 4px;
     }
 
@@ -78,7 +85,7 @@
 </style>
 
 <div class="container mt-4">
-    <h3>Data Operator per Line - LINE <?= strtoupper($line_name) ?></h3>
+    <h3 class="text-center mb-4" style="color: #000;">Data Operator per Line - LINE <?= strtoupper($line_name) ?></h3>
     <form method="post" action="<?= base_url('Supervisor/detail'); ?>">
 
         <div class="grid-container">

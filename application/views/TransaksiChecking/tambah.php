@@ -93,6 +93,9 @@
 
         <div class="row">
             <?php foreach ($layouts as $layout_index => $layout): ?>
+                <!-- <pre>
+                    <?php var_dump($layout->default_operator); ?>
+                </pre> -->
                 <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
                     <div class="card text-center shadow-sm">
                         <div class="card-body">
@@ -133,8 +136,6 @@
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
-                           
-
 
                             <div class="defect-wrapper">
                                 <div class="defect-group mb-2">

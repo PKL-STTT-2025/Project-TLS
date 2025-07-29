@@ -15,6 +15,7 @@ class Supervisor extends CI_Controller
     }
     public function index()
     {
+
         $data['title'] = 'List Checking Time';
         $keyword = $this->input->get('keyword');
         if ($keyword) {
@@ -28,6 +29,10 @@ class Supervisor extends CI_Controller
     }
     public function selesai($id_transaksi_checking)
     {
+        if ($id_transaksi_checking === null) {
+            show_404(); // biar ketauan kalau null
+        }
+
         $this->db->where('id_transaksi_checking', $id_transaksi_checking);
         $this->db->update('transaksi_checking', ['masalah_selesai' => 1]);
 
@@ -40,7 +45,7 @@ class Supervisor extends CI_Controller
         $data['title'] = 'Detail Checking Time';
         $data['line_name'] = '';
         $data['operators'] = $this->Supervisor_model->getLimitedEmployee($id_transaksi_checking);
-        $data['operation_name'] = $this->Supervisor_model->getLimitedOperation(10);
+        $data['operation_name'] = $this->Supervisor_model->getLimitedOperation($id_transaksi_checking);
         $data['layouts'] = $this->Supervisor_model->getLayoutWithMesin($id_transaksi_checking);
         $data['operation_defects'] = $this->Supervisor_model->getDefectsPerOperation($id_transaksi_checking);
 
@@ -67,7 +72,7 @@ class Supervisor extends CI_Controller
                 ? $defectCountsPerOpName[$op_name]
                 : 0;
 
-            // Optional: tambahkan operator name kalau layout-nya memang punya relasi ke operator
+            // tambahan operator name krn punya relasi ke operator
             $layout->operator_name = '-';
             foreach ($data['operators'] as $op) {
                 if (trim($layout->op_code) === trim($op->op_code)) {
@@ -89,16 +94,18 @@ class Supervisor extends CI_Controller
     public function action_plan($id_transaksi_checking)
     {
         $data['title'] = 'List Checking Time';
-        // Ambil keyword dari input GET
         $keyword = $this->input->get('keyword');
+        $id_wg   = $this->input->get('id_wg');
 
         if ($keyword) {
             // Kalau ada keyword, cari yang sesuai
-            $data['ActionPlan'] = $this->Supervisor_model->searchActionPlan($keyword);
+            $data['ActionPlan'] = $this->Supervisor_model->searchActionPlan($id_wg, $keyword);
         } else {
             // Kalau ga ada keyword, ambil semua
             $data['ActionPlan'] = $this->Supervisor_model->getAction($id_transaksi_checking);
         }
+
+        $data['id_transaksi_checking'] = $id_transaksi_checking;
 
         $this->load->view('templates/header', $data);
         $this->load->view('Supervisor/action_plan', $data);

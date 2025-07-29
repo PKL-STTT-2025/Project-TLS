@@ -471,6 +471,7 @@ public function getDefectsPerOperation($id_transaksi_checking)
         td.id_transaksi_checking_detail,
         td.id_defect,
         md.deskripsi_defect,
+        md.kategori_defect,
         td.jumlah,
         td.note
     FROM 
@@ -552,7 +553,17 @@ public function getDefaultOperatorFromHistori($id_layout, $id_wg)
     $this->db->where('tc.id_wg', $id_wg);
     $this->db->order_by('tc_detail.date_created', 'DESC');
     $this->db->limit(1);
+    $result = $this->db->get()->row();
 
+    if ($result) return $result;
+
+    $this->db->select('tc_detail.empID, emp.name');
+    $this->db->from('transaksi_checking_detail tc_detail');
+    $this->db->join('transaksi_checking tc', 'tc.id_transaksi_checking = tc_detail.id_transaksi_checking');
+    $this->db->join('mstemp emp', 'tc_detail.empID = emp.empID');
+    $this->db->where('tc_detail.id_master_opt_layout', $id_layout);
+    $this->db->order_by('tc_detail.date_created', 'DESC');
+    $this->db->limit(1);
     return $this->db->get()->row(); 
 }
 

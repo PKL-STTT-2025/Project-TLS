@@ -349,43 +349,48 @@ class TransaksiChecking extends CI_Controller
     }
 
     public function update($id)
-{
-    $id_details = $this->input->post('id_transaksi_checking_detail');
-    date_default_timezone_set('Asia/Jakarta');
+    {
+        $id_details = $this->input->post('id_transaksi_checking_detail');
+        $id_defects_all = $this->input->post('id_defect');
+        $jumlah_all = $this->input->post('jumlah');
 
-    foreach ($id_details as $index => $id_detail) {
-        $data_detail = [
-            'empID' => $this->input->post('empID')[$index],
-            'op_name' => $this->input->post('op_name')[$index],
-            'op_code' => trim($this->input->post('op_code')[$index]),
-            'date_updated' => date('Y-m-d H:i:s')
-        ];
+        date_default_timezone_set('Asia/Jakarta');
 
-        $this->TransaksiChecking_model->update_detail($id_detail, $data_detail);
-
-        $this->db->where('id_transaksi_checking_detail', $id_detail);
-        $this->db->delete('transaksi_defect');
-
-       $id_defects = $this->input->post('deskripsi_defect')[$index];
-        $jumlah_defect = $this->input->post('jumlah')[$index];
-
-        foreach ($id_defects as $i => $id_defect) {
-            if (!is_numeric($id_defect) || $id_defect == 0) continue;
-
-            $data_defect = [
-                'id_transaksi_checking_detail' => $id_detail,
-                'id_defect' => $id_defect,
-                'jumlah' => $jumlah_defect[$i],
-                'date_created' => date('Y-m-d H:i:s')
+        foreach ($id_details as $index => $id_detail) {
+            $data_detail = [
+                'empID' => $this->input->post('empID')[$index],
+                'op_name' => $this->input->post('op_name')[$index],
+                'op_code' => trim($this->input->post('op_code')[$index]),
+                'date_updated' => date('Y-m-d H:i:s')
             ];
-            $this->db->insert('transaksi_defect', $data_defect);
+
+            $this->TransaksiChecking_model->update_detail($id_detail, $data_detail);
+
+            // Hapus defect lama
+            $this->db->where('id_transaksi_checking_detail', $id_detail);
+            $this->db->delete('transaksi_defect');
+
+            // Ambil defect baru
+            $id_defects = isset($id_defects_all[$index]) ? $id_defects_all[$index] : [];
+            $jumlah_defect = isset($jumlah_all[$index]) ? $jumlah_all[$index] : [];
+
+            foreach ($id_defects as $i => $id_defect) {
+                if (!is_numeric($id_defect) || $id_defect == 0) continue;
+
+                $data_defect = [
+                    'id_transaksi_checking_detail' => $id_detail,
+                    'id_defect' => $id_defect,
+                    'jumlah' => $jumlah_defect[$i] ?? 0,
+                    'date_created' => date('Y-m-d H:i:s')
+                ];
+
+                $this->db->insert('transaksi_defect', $data_defect);
+            }
         }
+
+        $this->session->set_flashdata('success', 'Data berhasil diperbarui.');
+        redirect('TransaksiChecking');
     }
-
-    $this->session->set_flashdata('success', 'Data berhasil diperbarui.');
-    redirect('TransaksiChecking');
-}
-
 } 
     
     // public function search()

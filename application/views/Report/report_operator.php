@@ -10,9 +10,38 @@
     .fw-bold {
         font-weight: 600;
     }
+
+    h2 {
+        color: #000 !important;
+    }
+
+    /* Untuk semua judul dan heading */
+    h1,
+    h6,
+    .card-header h6,
+    .text-muted {
+        color: #000 !important;
+    }
+
+    /* Label Defect Terbaru dan Info Operator */
+    .card-body h6 {
+        color: #000 !important;
+    }
+
+    /* Nama Operator, Mesin, Proses */
+    .card-body h5,
+    .card-body p,
+    .card-body small {
+        color: #000 !important;
+    }
+
+    .fw-bold,
+    small {
+        color: #000 !important;
+    }
 </style>
-<div class="container-fluid">
-    <h1 class="h3 mb-4 text-gray-800"><?= $title; ?></h1>
+<div class="container p-5">
+    <h1 class="text-left mb-4" style="color: #000;"><?= $title; ?></h1>
 
     <!-- Info Operator -->
     <div class="card shadow-sm mb-4">
@@ -22,12 +51,16 @@
                     <h6 class="text-muted mb-2">Defect Terbaru</h6>
                     <div class="p-3 rounded bg-light border">
                         <?php if (!empty($latest_defect)) : ?>
-                            <div class="fw-bold mb-1"><?= $latest_defect->deskripsi_defect; ?></div>
-                            <small class="text-muted">ID Transaksi: <?= $latest_defect->id_transaksi_checking; ?></small>
+                            <?php foreach ($latest_defect as $defect): ?>
+                                <div class="fw-bold mb-1"><?= $defect->deskripsi_defect; ?> (<?= $defect->jumlah; ?>)</div>
+                                <small class="text-muted">ID Transaksi: <?= $defect->id_transaksi_checking; ?></small>
+                                <br>
+                            <?php endforeach; ?>
                         <?php else : ?>
-                            <div class="text-muted">Tidak ada defect</div>
+                            <div style="color: #000;">Tidak ada defect</div>
                         <?php endif; ?>
                     </div>
+
                 </div>
                 <div class="col-md-6">
                     <h6 class="text-muted mb-2">Info Operator</h6>
@@ -62,7 +95,7 @@
             <div class="container-fluid">
                 <div class="row justify-content-center text-center">
                     <?php
-                    $histori = $this->Report_model->get_defect_operator();
+                    $histori = $histori_defect;
                     if (empty($histori)) {
                         $total_kunjungan = isset($total_kunjungan) ? $total_kunjungan : 0;
                     ?>
@@ -86,10 +119,11 @@
                                 foreach ($histori as $index => $row) {
                                     $nomor = $index + 1;
                                     $warna = 'gray';
-                                    $textcolor = '#00000';
-                                    if ($row['ada_defect'] == 0) $warna = '#4caf50';
-                                    elseif ($row['ada_defect'] == 1) $warna = 'yellow';
-                                    elseif ($row['ada_defect'] == 2) $warna = 'red';
+                                    $textcolor = '#000';
+
+                                    if ($row->jumlah == 0) $warna = '#4caf50';
+                                    elseif ($row->jumlah == 1) $warna = 'yellow';
+                                    elseif ($row->jumlah >= 2) $warna = 'red';
                                 ?>
                                     <div class="col-4 mb-3">
                                         <div style="width: 40px; height: 40px; border-radius: 50%; background-color: <?= $warna ?>; color: <?= $textcolor ?>; display: flex; align-items: center; justify-content: center;font-weight: bold;">
@@ -97,6 +131,7 @@
                                         </div>
                                     </div>
                                 <?php } ?>
+
                             </div>
                         </div>
                     <?php
@@ -106,4 +141,5 @@
             </div>
         </div>
     </div>
+    <a href="<?= base_url('Report/index?id_wg=' . $op->id_wg . '&id_opb=' . $op->id_opb) ?>" class="btn btn-secondary ml-4 mt-3">Kembali</a>
 </div>
